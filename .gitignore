@@ -1,24 +1,51 @@
-/.phpunit.cache
-/bootstrap/ssr
+# Laravel
+/vendor
 /node_modules
-/public/build
-/public/hot
 /public/storage
 /storage/*.key
-/storage/pail
-/vendor
+/storage/logs
+/storage/framework
+/bootstrap/cache
+.phpunit.result.cache
+.phpunit.cache
 .env
+.env.*
+Homestead.yaml
+Homestead.json
+auth.json
+
+# Laravel SSR / Vite
+/public/build
+/public/hot
+/resources/js/.vite/    # nếu xài Vite
+
+# IDE & Editor
+/.idea
+/.vscode
+/.fleet
+/.phpactor.json
+/.nova
+/.zed
+
+# Debug / log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# React build
+/build
+dist/
+
+# Mac / Linux / Windows system
+.DS_Store
+Thumbs.db
+
+# Optional backup
 .env.backup
 .env.production
-.phpactor.json
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
-/.fleet
-/.idea
-/.nova
-/.vscode
-/.zed
+
+# Laravel Telescope (nếu dùng)
+storage/telescope
+
+# Redis dump file
+dump.rdb

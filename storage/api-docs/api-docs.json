@@ -1,0 +1,36 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Podcast API",
+        "description": "Swagger documentation for the Podcast App",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Localhost API server"
+        }
+    ],
+    "paths": {
+        "/api/test": {
+            "get": {
+                "tags": [
+                    "Swagger Test"
+                ],
+                "summary": "Test Swagger endpoint",
+                "operationId": "2ff39654476701c93f7db85d3032c5a9",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Swagger Test",
+            "description": "Swagger Test"
+        }
+    ]
+}
