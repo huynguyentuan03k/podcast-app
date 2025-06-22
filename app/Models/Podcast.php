@@ -13,6 +13,8 @@ class Podcast extends Model
         'title',
         'description',
         'cover_image',
+        'slug',
+        'publisher_id'
     ];
 
     public function episodes(): HasMany
@@ -29,7 +31,7 @@ class Podcast extends Model
     {
         return $this->belongsToMany(Category::class);
     }
-    
+
     // 1 podcast just 1 publisher => name to publisher not publishers
     public function publisher(): BelongsTo
     {

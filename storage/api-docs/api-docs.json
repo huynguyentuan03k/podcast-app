@@ -12,6 +12,246 @@
         }
     ],
     "paths": {
+        "/api/podcasts": {
+            "get": {
+                "tags": [
+                    "Podcast"
+                ],
+                "description": "Get a filtered list of podcasts",
+                "operationId": "74471147bb5a65d449b5357445399019",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "publisher_id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "all",
+                        "in": "query",
+                        "description": "Search all fields",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "-created_at"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "fields[podcasts]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "id,title"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of podcasts",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": 1,
+                                            "title": "Sample Podcast",
+                                            "slug": "sample-podcast",
+                                            "description": "This is a podcast",
+                                            "publisher_id": 2
+                                        }
+                                    ],
+                                    "meta": {
+                                        "current_page": 1,
+                                        "per_page": 10,
+                                        "total": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Podcast"
+                ],
+                "description": "Create a new podcast",
+                "operationId": "b653b8c06d3bde71f8996de1f4b426ff",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Kane and Abel"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "\"Kane and Abel\" can refer to two distinct narratives: a biblical story and a novel by Jeffrey Archer."
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "kane-and-abel"
+                                    },
+                                    "publisher_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "cover_image": {
+                                        "description": "Image file for cover",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Podcast created"
+                    }
+                }
+            }
+        },
+        "/api/podcasts/{podcast}": {
+            "get": {
+                "tags": [
+                    "Podcast"
+                ],
+                "description": "Get a podcast by ID",
+                "operationId": "c993f9fc45e1142860519dc9fa92a247",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Podcast found"
+                    }
+                }
+            }
+        },
+        "/api/podcasts/{id}": {
+            "put": {
+                "tags": [
+                    "Podcast"
+                ],
+                "description": "Update a podcast",
+                "operationId": "9cf5198706fcc4e2630ab52034048de9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Podcast updated"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Podcast"
+                ],
+                "description": "Delete a podcast",
+                "operationId": "ad34860ba7e2917accdf74ad7558b605",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Podcast deleted"
+                    }
+                }
+            }
+        },
         "/api/test": {
             "get": {
                 "tags": [
@@ -28,6 +268,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Podcast",
+            "description": "Podcast"
+        },
         {
             "name": "Swagger Test",
             "description": "Swagger Test"

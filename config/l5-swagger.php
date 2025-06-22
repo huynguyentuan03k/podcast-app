@@ -99,10 +99,6 @@ return [
              * `scanOptions.exclude` overwrites this
              */
             'excludes' => [],
-            'annotations' => [
-                base_path('app'),
-            ],
-
         ],
 
         'scanOptions' => [
