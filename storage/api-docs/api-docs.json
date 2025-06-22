@@ -194,7 +194,7 @@
                     "Podcast"
                 ],
                 "description": "Update a podcast",
-                "operationId": "9cf5198706fcc4e2630ab52034048de9",
+                "operationId": "updatePodcast",
                 "parameters": [
                     {
                         "name": "id",
@@ -208,14 +208,27 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "title"
                                 ],
                                 "properties": {
                                     "title": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "Kane and Abel"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Some description"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "kane-and-abel"
+                                    },
+                                    "cover_image": {
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -225,7 +238,10 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Podcast updated"
+                        "description": "Podcast updated successfully"
+                    },
+                    "422": {
+                        "description": "Validation failed"
                     }
                 }
             },

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\CreatePodcastAction;
+use App\Actions\DeletePodcastAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePodcastRequest;
 use App\Http\Requests\UpdatePodcastRequest;
@@ -121,29 +122,48 @@ class PodcastController extends Controller
     #[OA\Put(
         path: '/api/podcasts/{id}',
         description: 'Update a podcast',
+        operationId: 'updatePodcast',
+        tags: ['Podcast'],
         parameters: [
-            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
         ],
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(
-                required: ['title'],
-                properties: [
-                    new OA\Property(property: 'title', type: 'string'),
-                ]
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    required: ['title'],
+                    properties: [
+                        new OA\Property(property: 'title', type: 'string', example: 'Kane and Abel'),
+                        new OA\Property(property: 'description', type: 'string', example: 'Some description'),
+                        new OA\Property(property: 'slug', type: 'string', example: 'kane-and-abel'),
+                        new OA\Property(property: 'cover_image', type: 'string', format: 'binary'),
+                    ]
+                )
             )
         ),
-        tags: ['Podcast'],
         responses: [
-            new OA\Response(response: 200, description: 'Podcast updated')
+            new OA\Response(response: 200, description: 'Podcast updated successfully'),
+            new OA\Response(response: 422, description: 'Validation failed')
         ]
     )]
-    public function update(UpdatePodcastRequest $request, Podcast $podcast,UpdatePodcastAction $action)
+    public function update(UpdatePodcastRequest $request, Podcast $podcast, UpdatePodcastAction $action)
     {
         $data = $request->validated();
-        $updated = $action->handle($podcast,$data);
-        return new PodcastResource($updated);
+
+        $updated = $action->handle($podcast, $data);
+
+        return response()->json([
+            'message' => 'Podcast updated successfully.',
+            'data' => $updated,
+        ], 200);
     }
+
 
     #[OA\Delete(
         path: '/api/podcasts/{id}',
@@ -156,9 +176,13 @@ class PodcastController extends Controller
             new OA\Response(response: 204, description: 'Podcast deleted')
         ]
     )]
-    public function destroy(Podcast $podcast)
+    public function destroy(Podcast $podcast, DeletePodcastAction $action)
     {
-        $podcast->delete();
-        return response()->json(null, 204);
+        $action->handle($podcast);
+
+        return response()->json([
+            'message' => 'Podcast deleted successfully.',
+        ], 204);
     }
+    
 }
