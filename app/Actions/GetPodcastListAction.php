@@ -26,6 +26,6 @@ class GetPodcastListAction
             ->allowedSorts(['id', 'title', 'created_at'])
             ->allowedFields(['id', 'title', 'slug', 'description', 'publisher_id']);
 
-        return $perPage ? $query->paginate($perPage) : $query->get();
+        return $query->paginate($perPage ?? 10);
     }
 }

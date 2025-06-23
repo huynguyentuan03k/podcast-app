@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EpisodeController;
 use App\Http\Controllers\Api\PodcastController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,3 +16,5 @@ Route::post('podcasts', [PodcastController::class, 'store']);
 Route::put('podcasts/{podcast}', [PodcastController::class, 'update']);
 Route::patch('podcasts/{podcast}', [PodcastController::class, 'update']);
 Route::delete('podcasts/{podcast}', [PodcastController::class, 'destroy']);
+
+Route::get('episodes',[EpisodeController::class, 'index']);

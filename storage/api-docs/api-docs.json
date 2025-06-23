@@ -12,6 +12,113 @@
         }
     ],
     "paths": {
+        "/api/episodes": {
+            "get": {
+                "tags": [
+                    "Episode"
+                ],
+                "description": "Get a filtered and sorted list of episodes",
+                "operationId": "7ec4c2e40b12c6630cbd49f872f4e1b0",
+                "parameters": [
+                    {
+                        "name": "filter[podcast_id]",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[title]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[description]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[audio_file]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[duration]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[published_at]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "description": "Comma-separated list of fields to sort by. Prefix with \"-\" for descending order.",
+                            "type": "string"
+                        },
+                        "example": "-created_at"
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of episodes",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": 1,
+                                            "title": "Episode 1",
+                                            "description": "This is episode 1",
+                                            "audio_file": "/storage/episodes/audio.mp3",
+                                            "duration": "00:03:15",
+                                            "published_at": "2025-06-22T00:00:00.000000Z",
+                                            "podcast_id": 1
+                                        }
+                                    ],
+                                    "meta": {
+                                        "current_page": 1,
+                                        "per_page": 10,
+                                        "total": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/podcasts": {
             "get": {
                 "tags": [
@@ -284,6 +391,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Episode",
+            "description": "Episode"
+        },
         {
             "name": "Podcast",
             "description": "Podcast"
