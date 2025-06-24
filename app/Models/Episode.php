@@ -14,6 +14,7 @@ class Episode extends Model
         'audio_file',
         'duration',
         'published_at',
+        'cover_image'
     ];
 
     public function podcast(): BelongsTo

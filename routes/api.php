@@ -18,3 +18,4 @@ Route::patch('podcasts/{podcast}', [PodcastController::class, 'update']);
 Route::delete('podcasts/{podcast}', [PodcastController::class, 'destroy']);
 
 Route::get('episodes',[EpisodeController::class, 'index']);
+Route::post('episodes',[EpisodeController::class, 'store']);

@@ -117,6 +117,71 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Episode"
+                ],
+                "description": "Create a new episode with audio file upload",
+                "operationId": "7065efab022e9b074c3a726627738807",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "slug"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Episode 1"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "episode-1"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is episode 1"
+                                    },
+                                    "audio_file": {
+                                        "description": "Audio file to upload (e.g. .mp3)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "cover_image": {
+                                        "description": "Cover image to upload (.jpg, .png, etc)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "duration": {
+                                        "type": "integer",
+                                        "example": 195
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Episode created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "created episode successfully"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
             }
         },
         "/api/podcasts": {

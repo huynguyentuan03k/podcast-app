@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\CreateEpisodeAction;
 use App\Actions\GetEpisodeListAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateEpisodeRequest;
 use App\Http\Resources\EpisodeResource;
 use Illuminate\Http\Request;
 use OpenApi\Attributes as OA;
@@ -57,7 +59,6 @@ class EpisodeController extends Controller
             )
         ]
     )]
-
     public function index(GetEpisodeListAction $action)
     {
         $perPage = request()->query('per_page');
@@ -65,12 +66,61 @@ class EpisodeController extends Controller
         return EpisodeResource::collection($episode);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    #[OA\Post(
+        path: '/api/episodes',
+        description: 'Create a new episode with audio file upload',
+        tags: ['Episode'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    type: 'object',
+                    required: ['title', 'slug'],
+                    properties: [
+                        new OA\Property(property: 'title', type: 'string', example: 'Episode 1'),
+                        new OA\Property(property: 'slug', type: 'string', example: 'episode-1'),
+                        new OA\Property(property: 'description', type: 'string', example: 'This is episode 1'),
+                        new OA\Property(
+                            property: 'audio_file',
+                            type: 'string',
+                            format: 'binary',
+                            description: 'Audio file to upload (e.g. .mp3)'
+                        ),
+                        new OA\Property(
+                            property: 'cover_image',
+                            type: 'string',
+                            format: 'binary',
+                            description: 'Cover image to upload (.jpg, .png, etc)'
+                        ),
+                        new OA\Property(property: 'duration', type: 'integer', example: 195),
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Episode created successfully',
+                content: new OA\JsonContent(
+                    example: [
+                        'message' => 'created episode successfully'
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Validation error'
+            )
+        ]
+    )]
+    public function store(CreateEpisodeRequest $request, CreateEpisodeAction $action)
     {
-        //
+        $data = $request->validated();
+        $episode = $action->handle($data);
+        return response()->json([
+            'message' => 'created episode successfully'
+        ], 200);
     }
 
     /**
