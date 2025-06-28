@@ -6,11 +6,13 @@ use Illuminate\Http\UploadedFile;
 
 class AudioFileService
 {
-    public static function uploadAudio(UploadedFile $file, string $slug):string
+    public static function uploadAudio(UploadedFile $file, string $slug): string
     {
-        $folder = "episodes/{$slug}";
-        $filename = $file->getClientOriginalName();
-        $path = $file->storeAs($folder,$filename);
-        return $file->getClientOriginalName();
+        $filename = $slug . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+        // Lưu vào MinIO (disk s3)
+        $path = $file->storeAs('episodes', $filename, 's3');
+
+        return $path; // Có thể là URL nếu cần: Storage::disk('s3')->url($path)
     }
 }

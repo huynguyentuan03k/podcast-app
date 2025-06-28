@@ -116,6 +116,7 @@ class EpisodeController extends Controller
     )]
     public function store(CreateEpisodeRequest $request, CreateEpisodeAction $action)
     {
+        
         $data = $request->validated();
         $episode = $action->handle($data);
         return response()->json([

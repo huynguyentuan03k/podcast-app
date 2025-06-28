@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\EpisodeController;
 use App\Http\Controllers\Api\PodcastController;
+use App\Http\Controllers\EpisodeUploadController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,3 +20,5 @@ Route::delete('podcasts/{podcast}', [PodcastController::class, 'destroy']);
 
 Route::get('episodes',[EpisodeController::class, 'index']);
 Route::post('episodes',[EpisodeController::class, 'store']);
+Route::post('/episodes/presign-audio', [EpisodeUploadController::class, 'generatePresignedUrl']);
+

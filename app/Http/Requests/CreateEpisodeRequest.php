@@ -14,12 +14,12 @@ class CreateEpisodeRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'title' => ['required','string','unique:episodes,title'],
-        'description' => ['nullable','string'],
-        'audio_file' => ['nullable'],
-        'duration' => ['integer','nullable'],
-        'slug' => ['required','string'],
-        'cover_image' => ['nullable','string'],
+            'title' => ['required', 'string', 'unique:episodes,title'],
+            'description' => ['nullable', 'string'],
+            'audio_file' => ['nullable', 'file', 'mimes:mp3,wav,mpeg'],
+            'duration' => ['nullable', 'integer'],
+            'slug' => ['required', 'string'],
+            'cover_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp'],
         ];
     }
 }
