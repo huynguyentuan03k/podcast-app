@@ -76,13 +76,13 @@ class EpisodeController extends Controller
                 mediaType: 'multipart/form-data',
                 schema: new OA\Schema(
                     type: 'object',
-                    required: ['title', 'slug'],
+                    required: ['title', 'slug','podcast_id'],
                     properties: [
                         new OA\Property(property: 'title', type: 'string', example: 'Episode 1'),
                         new OA\Property(property: 'slug', type: 'string', example: 'episode-1'),
                         new OA\Property(property: 'description', type: 'string', example: 'This is episode 1'),
                         new OA\Property(
-                            property: 'audio_file',
+                            property: 'audio_path',
                             type: 'string',
                             format: 'binary',
                             description: 'Audio file to upload (e.g. .mp3)'
@@ -94,6 +94,7 @@ class EpisodeController extends Controller
                             description: 'Cover image to upload (.jpg, .png, etc)'
                         ),
                         new OA\Property(property: 'duration', type: 'integer', example: 195),
+                        new OA\Property(property: 'podcast_id', type: 'integer', example: 7),
                     ]
                 )
             )
@@ -116,7 +117,7 @@ class EpisodeController extends Controller
     )]
     public function store(CreateEpisodeRequest $request, CreateEpisodeAction $action)
     {
-        
+
         $data = $request->validated();
         $episode = $action->handle($data);
         return response()->json([

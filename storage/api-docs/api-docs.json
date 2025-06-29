@@ -131,7 +131,8 @@
                             "schema": {
                                 "required": [
                                     "title",
-                                    "slug"
+                                    "slug",
+                                    "podcast_id"
                                 ],
                                 "properties": {
                                     "title": {
@@ -146,7 +147,7 @@
                                         "type": "string",
                                         "example": "This is episode 1"
                                     },
-                                    "audio_file": {
+                                    "audio_path": {
                                         "description": "Audio file to upload (e.g. .mp3)",
                                         "type": "string",
                                         "format": "binary"
@@ -159,6 +160,10 @@
                                     "duration": {
                                         "type": "integer",
                                         "example": 195
+                                    },
+                                    "podcast_id": {
+                                        "type": "integer",
+                                        "example": 7
                                     }
                                 },
                                 "type": "object"

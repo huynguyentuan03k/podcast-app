@@ -16,10 +16,11 @@ class CreateEpisodeRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'unique:episodes,title'],
             'description' => ['nullable', 'string'],
-            'audio_file' => ['nullable', 'file', 'mimes:mp3,wav,mpeg'],
+            'audio_path' => ['nullable', 'file', 'mimes:mp3,wav,mpeg'],
             'duration' => ['nullable', 'integer'],
             'slug' => ['required', 'string'],
             'cover_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp'],
+            'podcast_id' => ['required','integer'],
         ];
     }
 }
