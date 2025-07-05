@@ -11,10 +11,10 @@ class Podcast extends Model
 {
     protected $fillable = [
         'title',
-        'description',
-        'cover_image',
         'slug',
-        'publisher_id'
+        'description',
+        'publisher_id',
+        'cover_image',
     ];
 
     public function episodes(): HasMany

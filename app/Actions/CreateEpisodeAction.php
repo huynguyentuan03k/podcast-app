@@ -12,7 +12,6 @@ class CreateEpisodeAction
 {
     public function handle(array $data): Episode
     {
-        dd("data ",$data);
         if (isset($data['audio_path']) && $data['audio_path'] instanceof UploadedFile) {
             $data['audio_path'] = EpisodeUploadService::uploadAudio($data['audio_path'], $data['slug']);
         }

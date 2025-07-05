@@ -16,15 +16,14 @@ class GetPodcastListAction
         $query = QueryBuilder::for(Podcast::query())
             ->allowedFilters([
                 AllowedFilter::exact('id'),
+                AllowedFilter::exact('publisher_id'),
                 'title',
                 'slug',
                 'description',
-                'publisher_id',
                 AllowedFilter::custom('all', new PodcastListSearchAllFilter()),
             ])
             ->defaultSort('-created_at')
-            ->allowedSorts(['id', 'title', 'created_at'])
-            ->allowedFields(['id', 'title', 'slug', 'description', 'publisher_id']);
+            ->allowedSorts(['id', 'title', 'created_at']);
 
         return $query->paginate($perPage ?? 10);
     }

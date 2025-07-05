@@ -350,7 +350,7 @@
                 "operationId": "c993f9fc45e1142860519dc9fa92a247",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "podcast",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -363,9 +363,7 @@
                         "description": "Podcast found"
                     }
                 }
-            }
-        },
-        "/api/podcasts/{id}": {
+            },
             "put": {
                 "tags": [
                     "Podcast"
@@ -421,7 +419,9 @@
                         "description": "Validation failed"
                     }
                 }
-            },
+            }
+        },
+        "/api/podcasts/{id}": {
             "delete": {
                 "tags": [
                     "Podcast"
@@ -441,6 +441,247 @@
                 "responses": {
                     "204": {
                         "description": "Podcast deleted"
+                    }
+                }
+            }
+        },
+        "/api/publishers": {
+            "get": {
+                "tags": [
+                    "Publisher"
+                ],
+                "description": "Get a filtered list of publishers",
+                "operationId": "9a0fdd4383afd0c4b7d0c0920a9e2d09",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "slug",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "all",
+                        "in": "query",
+                        "description": "Search all fields",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "-created_at"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "fields[publishers]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "example": "id,name"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of publishers",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "data": [
+                                        {
+                                            "id": 1,
+                                            "name": "Example Publisher",
+                                            "slug": "example-publisher",
+                                            "description": "A publisher of great content",
+                                            "created_at": "2025-07-01T12:00:00Z",
+                                            "updated_at": "2025-07-01T12:00:00Z"
+                                        }
+                                    ],
+                                    "meta": {
+                                        "current_page": 1,
+                                        "per_page": 10,
+                                        "total": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Publisher"
+                ],
+                "description": "Create a new publisher",
+                "operationId": "c3d281ee2ed8ec68f724ca9ffb658b8e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "OpenAI"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "San Francisco"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "info@openai.com"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "example": "https://openai.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "123456789"
+                                    },
+                                    "established_year": {
+                                        "type": "integer",
+                                        "example": 2015
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Publisher created"
+                    }
+                }
+            }
+        },
+        "/api/publishers/{publisher}": {
+            "put": {
+                "tags": [
+                    "Publisher"
+                ],
+                "summary": "Update a publisher",
+                "description": "Update the information of an existing publisher by ID.",
+                "operationId": "0d7cf88cda3140db1f02c3b419e792c7",
+                "parameters": [
+                    {
+                        "name": "publisher",
+                        "in": "path",
+                        "description": "ID of the publisher to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated Publisher Name"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Main St, City"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "contact@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+123456789"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "format": "url",
+                                        "example": "https://publisher.example.com"
+                                    },
+                                    "established_year": {
+                                        "type": "integer",
+                                        "example": 1999
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Publisher updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "publisher updated successfully.",
+                                    "data": {
+                                        "id": 1,
+                                        "name": "Updated Publisher Name",
+                                        "address": "123 Main St, City",
+                                        "email": "contact@example.com",
+                                        "phone": "+123456789",
+                                        "website": "https://publisher.example.com",
+                                        "established_year": 1999,
+                                        "created_at": "2025-07-01T12:00:00.000000Z",
+                                        "updated_at": "2025-07-02T14:00:00.000000Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "Publisher not found"
                     }
                 }
             }
@@ -468,6 +709,10 @@
         {
             "name": "Podcast",
             "description": "Podcast"
+        },
+        {
+            "name": "Publisher",
+            "description": "Publisher"
         },
         {
             "name": "Swagger Test",

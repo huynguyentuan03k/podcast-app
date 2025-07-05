@@ -23,8 +23,6 @@ class UpdatePodcastAction
         //     FileUploadService::moveCoverImage($oldSlug, $data['slug']);
         // }
 
-        dd("data update ",$data);
-
         $podcast->update($data);
 
         return $podcast;

@@ -96,7 +96,6 @@ class PodcastController extends Controller
     )]
     public function store(CreatePodcastRequest $request, CreatePodcastAction $action)
     {
-
         $record = $action->handle($request->validated());
         return response()->json([
             'message' => 'podcast created successfully. ',
@@ -107,7 +106,7 @@ class PodcastController extends Controller
         path: '/api/podcasts/{podcast}',
         description: 'Get a podcast by ID',
         parameters: [
-            new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
+            new OA\Parameter(name: 'podcast', in: 'path', required: true, schema: new OA\Schema(type: 'integer'))
         ],
         tags: ['Podcast'],
         responses: [
@@ -120,7 +119,7 @@ class PodcastController extends Controller
     }
 
     #[OA\Put(
-        path: '/api/podcasts/{id}',
+        path: '/api/podcasts/{podcast}',
         description: 'Update a podcast',
         operationId: 'updatePodcast',
         tags: ['Podcast'],
@@ -184,5 +183,4 @@ class PodcastController extends Controller
             'message' => 'Podcast deleted successfully.',
         ], 204);
     }
-    
 }

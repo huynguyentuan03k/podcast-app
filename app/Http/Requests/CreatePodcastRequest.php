@@ -14,11 +14,11 @@ class CreatePodcastRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255','unique:podcasts,title'],
-            'slug' => ['required', 'string', 'max:255','unique:podcasts,slug'],
+            'title' => ['required', 'string', 'max:255', 'unique:podcasts,title'],
+            'slug' => ['required', 'string', 'max:255', 'unique:podcasts,slug'],
             'description' => ['nullable', 'string'],
-            'publisher_id' => ['required', 'integer', 'exists:publishers,id'],
-            'cover_image' => 'nullable|image|max:2048', 
+            'publisher_id' => ['nullable', 'integer'],
+            'cover_image' => 'nullable|image|max:2048',
         ];
     }
 }
