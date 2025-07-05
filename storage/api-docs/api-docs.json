@@ -372,7 +372,7 @@
                 "operationId": "updatePodcast",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "podcast",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -413,10 +413,59 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Podcast updated successfully"
+                        "description": "Podcast updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Kane and Abel"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "A captivating story"
+                                                },
+                                                "slug": {
+                                                    "type": "string",
+                                                    "example": "kane-and-abel"
+                                                },
+                                                "cover_image": {
+                                                    "type": "string",
+                                                    "example": "https://example.com/cover.jpg"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Podcast updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "422": {
                         "description": "Validation failed"
+                    },
+                    "404": {
+                        "description": "Podcast not found"
                     }
                 }
             }

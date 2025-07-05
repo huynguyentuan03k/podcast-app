@@ -10,8 +10,8 @@ class UpdatePodcastAction
 {
     public function handle(Podcast $podcast, array $data): Podcast
     {
-        $oldSlug = $podcast->slug;
-
+        // $oldSlug = $podcast->slug;
+        
         // if new image
         // if (isset($data['slug']) && $data['cover_image'] instanceof UploadedFile) {
         //     FileUploadService::deleteCoverImage($oldSlug);

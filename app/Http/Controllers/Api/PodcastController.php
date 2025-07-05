@@ -125,7 +125,7 @@ class PodcastController extends Controller
         tags: ['Podcast'],
         parameters: [
             new OA\Parameter(
-                name: 'id',
+                name: 'podcast', // dùng 'podcast' thay vì 'id'
                 in: 'path',
                 required: true,
                 schema: new OA\Schema(type: 'integer')
@@ -147,16 +147,33 @@ class PodcastController extends Controller
             )
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Podcast updated successfully'),
-            new OA\Response(response: 422, description: 'Validation failed')
+            new OA\Response(
+                response: 200,
+                description: 'Podcast updated successfully',
+                content: new OA\JsonContent(
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'data', type: 'object', properties: [
+                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                            new OA\Property(property: 'title', type: 'string', example: 'Kane and Abel'),
+                            new OA\Property(property: 'description', type: 'string', example: 'A captivating story'),
+                            new OA\Property(property: 'slug', type: 'string', example: 'kane-and-abel'),
+                            new OA\Property(property: 'cover_image', type: 'string', example: 'https://example.com/cover.jpg'),
+                            new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
+                            new OA\Property(property: 'updated_at', type: 'string', format: 'date-time'),
+                        ]),
+                        new OA\Property(property: 'message', type: 'string', example: 'Podcast updated successfully')
+                    ]
+                )
+            ),
+            new OA\Response(response: 422, description: 'Validation failed'),
+            new OA\Response(response: 404, description: 'Podcast not found')
         ]
     )]
     public function update(UpdatePodcastRequest $request, Podcast $podcast, UpdatePodcastAction $action)
     {
         $data = $request->validated();
-
         $updated = $action->handle($podcast, $data);
-
         return response()->json([
             'message' => 'Podcast updated successfully.',
             'data' => $updated,

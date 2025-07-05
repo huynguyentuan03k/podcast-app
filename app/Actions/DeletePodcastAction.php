@@ -3,13 +3,13 @@
 namespace App\Actions;
 
 use App\Models\Podcast;
-use App\Services\FileUploadService;
+use App\Services\PocastUploadService;
 
 class DeletePodcastAction
 {
     public function handle(Podcast $podcast): bool
     {
-        FileUploadService::deleteCoverImage($podcast->slug);
+        PocastUploadService::deleteCoverImage($podcast->slug);
 
         return $podcast->delete();
     }
