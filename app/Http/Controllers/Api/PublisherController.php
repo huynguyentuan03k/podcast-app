@@ -169,4 +169,11 @@ class PublisherController extends Controller
             'data' => $updated,
         ], 200);
     }
+
+    public function show(Publisher $publisher){
+        return response()->json([
+            'message' => 'publisher show successfully',
+            'data' => new PublisherResource($publisher)
+        ]);
+    }
 }
