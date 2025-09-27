@@ -12,11 +12,9 @@ class CreateEpisodeAction
 {
     public function handle(array $data): Episode
     {
+        // ham isset kiem tra 1/ co khai bao (ton tai) va 2/ co bi null ko (tuc la ton tai ma ko co gia tri)
         if (isset($data['audio_path']) && $data['audio_path'] instanceof UploadedFile) {
             $data['audio_path'] = EpisodeUploadService::uploadAudio($data['audio_path'], $data['slug']);
-        }
-        if (isset($data['cover_image']) && $data['cover_image'] instanceof UploadedFile) {
-            $data['cover_image'] = EpisodeUploadService::uploadCoverImage($data['cover_image'], $data['slug']);
         }
 
         return Episode::create($data);
