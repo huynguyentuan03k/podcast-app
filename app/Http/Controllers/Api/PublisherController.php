@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\CreatePublisherAction;
+use App\Actions\DeletePublisherAction;
 use App\Actions\GetPublisherListAction;
 use App\Actions\UpdatePublisherAction;
 use App\Http\Controllers\Controller;
@@ -15,41 +16,7 @@ use PDO;
 
 class PublisherController extends Controller
 {
-    #[OA\Post(
-        path: '/api/publishers',
-        description: 'Create a new publisher',
-        requestBody: new OA\RequestBody(
-            required: true,
-            content: new OA\MediaType(
-                mediaType: 'application/json',
-                schema: new OA\Schema(
-                    required: ['name'],
-                    properties: [
-                        new OA\Property(property: 'name', type: 'string', example: 'OpenAI'),
-                        new OA\Property(property: 'address', type: 'string', example: 'San Francisco'),
-                        new OA\Property(property: 'email', type: 'string', example: 'info@openai.com'),
-                        new OA\Property(property: 'website', type: 'string', example: 'https://openai.com'),
-                        new OA\Property(property: 'phone', type: 'string', example: '123456789'),
-                        new OA\Property(property: 'established_year', type: 'integer', example: 2015),
-                    ]
-                )
-            )
-        ),
-        tags: ['Publisher'],
-        responses: [
-            new OA\Response(response: 201, description: 'Publisher created')
-        ]
-    )]
-    public function store(CreatePublisherRequest $request, CreatePublisherAction $action)
-    {
-        $record = $action->handle($request->validated());
-        return response()->json([
-            'message' => 'Publisher created successfully.',
-            'data' => $record,
-        ], 201);
-    }
-
-    #[OA\Get(
+     #[OA\Get(
         path: '/api/publishers',
         description: 'Get a filtered list of publishers',
         tags: ['Publisher'],
@@ -95,6 +62,89 @@ class PublisherController extends Controller
         $publisher = $action->handle($perPage);
         return PublisherResource::collection($publisher);
     }
+
+    #[OA\Get(
+        path: '/api/publishers/{publisher}',
+        summary: 'Get a single publisher',
+        description: 'Retrieve detailed information about a specific publisher by ID.',
+        tags: ['Publisher'],
+        parameters: [
+            new OA\Parameter(
+                name: 'publisher',
+                in: 'path',
+                required: true,
+                description: 'ID of the publisher to retrieve',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Publisher retrieved successfully',
+                content: new OA\JsonContent(
+                    example: [
+                        'message' => 'publisher show successfully',
+                        'data' => [
+                            'id' => 1,
+                            'name' => 'Example Publisher',
+                            'address' => '123 Main St, City',
+                            'email' => 'contact@example.com',
+                            'phone' => '+123456789',
+                            'website' => 'https://publisher.example.com',
+                            'established_year' => 1999,
+                            'created_at' => '2025-07-01T12:00:00.000000Z',
+                            'updated_at' => '2025-07-02T14:00:00.000000Z',
+                        ]
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Publisher not found'
+            )
+        ]
+    )]
+    public function show(Publisher $publisher){
+        return response()->json([
+            'message' => 'publisher show successfully',
+            'data' => new PublisherResource($publisher)
+        ]);
+    }
+
+    #[OA\Post(
+        path: '/api/publishers',
+        description: 'Create a new publisher',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'application/json',
+                schema: new OA\Schema(
+                    required: ['name'],
+                    properties: [
+                        new OA\Property(property: 'name', type: 'string', example: 'OpenAI'),
+                        new OA\Property(property: 'address', type: 'string', example: 'San Francisco'),
+                        new OA\Property(property: 'email', type: 'string', example: 'info@openai.com'),
+                        new OA\Property(property: 'website', type: 'string', example: 'https://openai.com'),
+                        new OA\Property(property: 'phone', type: 'string', example: '123456789'),
+                        new OA\Property(property: 'established_year', type: 'integer', example: 2015),
+                    ]
+                )
+            )
+        ),
+        tags: ['Publisher'],
+        responses: [
+            new OA\Response(response: 201, description: 'Publisher created')
+        ]
+    )]
+    public function store(CreatePublisherRequest $request, CreatePublisherAction $action)
+    {
+        $record = $action->handle($request->validated());
+        return response()->json([
+            'message' => 'Publisher created successfully.',
+            'data' => $record,
+        ], 201);
+    }
+
 
     #[OA\Put(
         path: '/api/publishers/{publisher}',
@@ -170,10 +220,44 @@ class PublisherController extends Controller
         ], 200);
     }
 
-    public function show(Publisher $publisher){
+   #[OA\Delete(
+        path: '/api/publishers/{publisher}',
+        summary: 'Delete a publisher',
+        description: 'Permanently delete a publisher by ID.',
+        tags: ['Publisher'],
+        parameters: [
+            new OA\Parameter(
+                name: 'publisher',
+                in: 'path',
+                required: true,
+                description: 'ID of the publisher to delete',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Publisher deleted successfully',
+                content: new OA\JsonContent(
+                    example: [
+                        'message' => 'publisher deleted successfully.'
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Publisher not found'
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error - Unable to delete publisher'
+            )
+        ]
+    )]
+    public function destroy(Publisher $publisher,DeletePublisherAction $action){
+        $result = $action->handle($publisher);
         return response()->json([
-            'message' => 'publisher show successfully',
-            'data' => new PublisherResource($publisher)
-        ]);
+            'message' => 'publisher deleted successfully.',
+        ],201);
     }
 }

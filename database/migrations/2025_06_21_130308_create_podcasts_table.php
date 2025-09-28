@@ -17,9 +17,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('slug')->unique();
 
-            // forergnId() create column name author_id and referent to id in talbe authors , if author id = 2 deleted to column author_id == null
+            // forergnId() create column name publisher_id and referent to id in talbe publishers , if publisher id = 2 deleted to column publisher_id == null
             $table->foreignId('publisher_id')->nullable()->constrained()->nullOnDelete();
-            
+
             $table->timestamps();
         });
     }

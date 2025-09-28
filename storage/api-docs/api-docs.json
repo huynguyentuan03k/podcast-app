@@ -644,6 +644,52 @@
             }
         },
         "/api/publishers/{publisher}": {
+            "get": {
+                "tags": [
+                    "Publisher"
+                ],
+                "summary": "Get a single publisher",
+                "description": "Retrieve detailed information about a specific publisher by ID.",
+                "operationId": "177ed2bad57518e8a3be7aa044441b8f",
+                "parameters": [
+                    {
+                        "name": "publisher",
+                        "in": "path",
+                        "description": "ID of the publisher to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Publisher retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "publisher show successfully",
+                                    "data": {
+                                        "id": 1,
+                                        "name": "Example Publisher",
+                                        "address": "123 Main St, City",
+                                        "email": "contact@example.com",
+                                        "phone": "+123456789",
+                                        "website": "https://publisher.example.com",
+                                        "established_year": 1999,
+                                        "created_at": "2025-07-01T12:00:00.000000Z",
+                                        "updated_at": "2025-07-02T14:00:00.000000Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Publisher not found"
+                    }
+                }
+            },
             "put": {
                 "tags": [
                     "Publisher"
@@ -731,6 +777,44 @@
                     },
                     "404": {
                         "description": "Publisher not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Publisher"
+                ],
+                "summary": "Delete a publisher",
+                "description": "Permanently delete a publisher by ID.",
+                "operationId": "33154d9972bad857c266f072d8edf351",
+                "parameters": [
+                    {
+                        "name": "publisher",
+                        "in": "path",
+                        "description": "ID of the publisher to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Publisher deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "publisher deleted successfully."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Publisher not found"
+                    },
+                    "500": {
+                        "description": "Server error - Unable to delete publisher"
                     }
                 }
             }
