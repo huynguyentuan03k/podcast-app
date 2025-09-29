@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\EpisodeController;
 use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\PublisherController;
@@ -26,3 +27,10 @@ Route::get('publishers/{publisher}', [PublisherController::class, 'show']);
 Route::post('publishers', [PublisherController::class, 'store']);
 Route::put('publishers/{publisher}', [PublisherController::class, 'update']);
 Route::delete('publishers/{publisher}', [PublisherController::class, 'destroy']);
+
+// categories
+Route::get('categories', [CategoryController::class, 'index']);
+Route::get('categories/{category}', [CategoryController::class, 'show']);
+Route::post('categories', [CategoryController::class, 'store']);
+Route::put('categories/{category}', [CategoryController::class, 'update']);
+Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
