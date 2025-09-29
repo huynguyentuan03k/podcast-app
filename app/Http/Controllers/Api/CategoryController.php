@@ -3,22 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\CreateCategoryAction;
-use App\Actions\CreatePublisherAction;
 use App\Actions\DeleteCategoryAction;
-use App\Actions\DeletePublisherAction;
 use App\Actions\GetCategoryListAction;
-use App\Actions\GetPublisherListAction;
 use App\Actions\UpdateCategoryAction;
-use App\Actions\UpdatePublisherAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCategoryRequest;
-use App\Http\Requests\CreatePublisherRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use App\Http\Requests\UpdatePublisherRequest;
 use App\Http\Resources\CategoryResource;
-use App\Http\Resources\PublisherResource;
 use App\Models\Category;
-use App\Models\Publisher;
 use OpenApi\Attributes as OA;
 
 
@@ -47,9 +39,9 @@ class CategoryController extends Controller
                         'data' => [
                             [
                                 'id' => 1,
-                                'name' => 'Example Publisher',
-                                'slug' => 'example-publisher',
-                                'description' => 'A publisher of great content',
+                                'name' => 'Example category',
+                                'slug' => 'example-category',
+                                'description' => 'A category of great content',
                                 'created_at' => '2025-07-01T12:00:00Z',
                                 'updated_at' => '2025-07-01T12:00:00Z',
                             ]

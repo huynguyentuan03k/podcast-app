@@ -91,9 +91,9 @@
                                     "data": [
                                         {
                                             "id": 1,
-                                            "name": "Example Publisher",
-                                            "slug": "example-publisher",
-                                            "description": "A publisher of great content",
+                                            "name": "Example category",
+                                            "slug": "example-category",
+                                            "description": "A category of great content",
                                             "created_at": "2025-07-01T12:00:00Z",
                                             "updated_at": "2025-07-01T12:00:00Z"
                                         }
@@ -251,21 +251,19 @@
                         "description": "Category not found"
                     }
                 }
-            }
-        },
-        "/api/categories/{publisher}": {
+            },
             "delete": {
                 "tags": [
                     "Category"
                 ],
-                "summary": "Delete a publisher",
-                "description": "Permanently delete a publisher by ID.",
-                "operationId": "d4c60ea724b69c4a6f217cbdba075383",
+                "summary": "Delete a category",
+                "description": "Permanently delete a category by ID.",
+                "operationId": "88c22abd8149aea4b3bdcb280a0fddf7",
                 "parameters": [
                     {
-                        "name": "publisher",
+                        "name": "category",
                         "in": "path",
-                        "description": "ID of the publisher to delete",
+                        "description": "ID of the category to delete",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -274,21 +272,21 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Publisher deleted successfully",
+                        "description": "Category deleted successfully",
                         "content": {
                             "application/json": {
                                 "schema": {},
                                 "example": {
-                                    "message": "publisher deleted successfully."
+                                    "message": "category deleted successfully."
                                 }
                             }
                         }
                     },
                     "404": {
-                        "description": "Publisher not found"
+                        "description": "Category not found"
                     },
                     "500": {
-                        "description": "Server error - Unable to delete publisher"
+                        "description": "Server error - Unable to delete category"
                     }
                 }
             }
