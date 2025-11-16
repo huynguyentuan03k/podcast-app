@@ -28,6 +28,7 @@ class CategoryController extends Controller
             new OA\Parameter(name: 'all', in: 'query', description: 'Search all fields', schema: new OA\Schema(type: 'string')),
             new OA\Parameter(name: 'sort', in: 'query', schema: new OA\Schema(type: 'string', example: '')),
             new OA\Parameter(name: 'per_page', in: 'query', schema: new OA\Schema(type: 'integer', example: 10)),
+            new OA\Parameter(name: 'page', in: 'query', schema: new OA\Schema(type: 'integer', example: 1)),
             new OA\Parameter(name: 'fields[categories]', in: 'query', schema: new OA\Schema(type: 'string', example: '')),
         ],
         responses: [
