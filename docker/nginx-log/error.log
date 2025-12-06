@@ -1,0 +1,311 @@
+2025/12/04 05:04:42 [notice] 16#16: using the "epoll" event method
+2025/12/04 05:04:42 [notice] 16#16: nginx/1.25.2
+2025/12/04 05:04:42 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 05:04:42 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 05:04:42 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 05:04:42 [notice] 16#16: start worker processes
+2025/12/04 05:04:42 [notice] 16#16: start worker process 17
+2025/12/04 05:04:42 [notice] 16#16: start worker process 18
+2025/12/04 05:04:42 [notice] 16#16: start worker process 19
+2025/12/04 05:04:42 [notice] 16#16: start worker process 20
+2025/12/04 05:04:42 [notice] 16#16: start worker process 21
+2025/12/04 05:04:42 [notice] 16#16: start worker process 22
+2025/12/04 05:04:42 [notice] 16#16: start worker process 23
+2025/12/04 05:04:42 [notice] 16#16: start worker process 24
+2025/12/04 05:04:42 [notice] 16#16: start worker process 25
+2025/12/04 05:04:42 [notice] 16#16: start worker process 26
+2025/12/04 05:04:42 [notice] 16#16: start worker process 27
+2025/12/04 05:04:42 [notice] 16#16: start worker process 28
+2025/12/04 05:04:59 [crit] 17#17: *1 connect() to unix:/run/php/php7.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php7.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:05:40 [crit] 17#17: *1 connect() to unix:/run/php/php7.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php7.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:09:07 [crit] 20#20: *5 connect() to unix:/run/php/php7.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php7.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:11:45 [notice] 16#16: using the "epoll" event method
+2025/12/04 05:11:45 [notice] 16#16: nginx/1.25.2
+2025/12/04 05:11:45 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 05:11:45 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 05:11:45 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 05:11:45 [notice] 16#16: start worker processes
+2025/12/04 05:11:45 [notice] 16#16: start worker process 17
+2025/12/04 05:11:45 [notice] 16#16: start worker process 18
+2025/12/04 05:11:45 [notice] 16#16: start worker process 19
+2025/12/04 05:11:45 [notice] 16#16: start worker process 20
+2025/12/04 05:11:45 [notice] 16#16: start worker process 21
+2025/12/04 05:11:45 [notice] 16#16: start worker process 22
+2025/12/04 05:11:45 [notice] 16#16: start worker process 23
+2025/12/04 05:11:45 [notice] 16#16: start worker process 24
+2025/12/04 05:11:45 [notice] 16#16: start worker process 25
+2025/12/04 05:11:45 [notice] 16#16: start worker process 26
+2025/12/04 05:11:45 [notice] 16#16: start worker process 27
+2025/12/04 05:11:45 [notice] 16#16: start worker process 28
+2025/12/04 05:12:04 [crit] 18#18: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:12:08 [crit] 18#18: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:12:10 [crit] 18#18: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:12:22 [crit] 18#18: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:15:11 [crit] 20#20: *8 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:15:13 [crit] 20#20: *8 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:17:47 [crit] 21#21: *11 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:17:47 [crit] 21#21: *11 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:17:48 [crit] 21#21: *11 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:17:48 [crit] 21#21: *11 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: miduner.local, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:18:48 [notice] 16#16: using the "epoll" event method
+2025/12/04 05:18:48 [notice] 16#16: nginx/1.25.2
+2025/12/04 05:18:48 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 05:18:48 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 05:18:48 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 05:18:48 [notice] 16#16: start worker processes
+2025/12/04 05:18:48 [notice] 16#16: start worker process 17
+2025/12/04 05:18:48 [notice] 16#16: start worker process 18
+2025/12/04 05:18:48 [notice] 16#16: start worker process 19
+2025/12/04 05:18:48 [notice] 16#16: start worker process 20
+2025/12/04 05:18:48 [notice] 16#16: start worker process 21
+2025/12/04 05:18:48 [notice] 16#16: start worker process 22
+2025/12/04 05:18:48 [notice] 16#16: start worker process 23
+2025/12/04 05:18:48 [notice] 16#16: start worker process 24
+2025/12/04 05:18:48 [notice] 16#16: start worker process 25
+2025/12/04 05:18:48 [notice] 16#16: start worker process 26
+2025/12/04 05:18:48 [notice] 16#16: start worker process 27
+2025/12/04 05:18:48 [notice] 16#16: start worker process 28
+2025/12/04 05:18:50 [crit] 17#17: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:18:51 [crit] 17#17: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:18:51 [crit] 17#17: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:18:51 [crit] 17#17: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:18:51 [crit] 17#17: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:18:51 [crit] 17#17: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:18:58 [crit] 17#17: *2 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:22:08 [crit] 20#20: *11 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:57:48 [crit] 21#21: *13 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:57:54 [crit] 21#21: *13 connect() to unix:/run/php/php8.2-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.2-fpm.sock:", host: "localhost:8088"
+2025/12/04 05:58:57 [notice] 16#16: using the "epoll" event method
+2025/12/04 05:58:57 [notice] 16#16: nginx/1.25.2
+2025/12/04 05:58:57 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 05:58:57 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 05:58:57 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 05:58:57 [notice] 16#16: start worker processes
+2025/12/04 05:58:57 [notice] 16#16: start worker process 17
+2025/12/04 05:58:57 [notice] 16#16: start worker process 18
+2025/12/04 05:58:57 [notice] 16#16: start worker process 19
+2025/12/04 05:58:57 [notice] 16#16: start worker process 20
+2025/12/04 05:58:57 [notice] 16#16: start worker process 21
+2025/12/04 05:58:57 [notice] 16#16: start worker process 22
+2025/12/04 05:58:57 [notice] 16#16: start worker process 23
+2025/12/04 05:58:57 [notice] 16#16: start worker process 24
+2025/12/04 05:58:57 [notice] 16#16: start worker process 25
+2025/12/04 05:58:57 [notice] 16#16: start worker process 26
+2025/12/04 05:58:57 [notice] 16#16: start worker process 27
+2025/12/04 05:58:57 [notice] 16#16: start worker process 28
+2025/12/04 05:59:04 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9001", host: "localhost:8088"
+2025/12/04 05:59:10 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9001", host: "localhost:8088"
+2025/12/04 05:59:14 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9001", host: "localhost:8088"
+2025/12/04 05:59:59 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9001", host: "localhost:8088"
+2025/12/04 06:00:32 [notice] 16#16: using the "epoll" event method
+2025/12/04 06:00:32 [notice] 16#16: nginx/1.25.2
+2025/12/04 06:00:32 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 06:00:32 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 06:00:32 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 06:00:32 [notice] 16#16: start worker processes
+2025/12/04 06:00:32 [notice] 16#16: start worker process 17
+2025/12/04 06:00:32 [notice] 16#16: start worker process 18
+2025/12/04 06:00:32 [notice] 16#16: start worker process 19
+2025/12/04 06:00:32 [notice] 16#16: start worker process 20
+2025/12/04 06:00:32 [notice] 16#16: start worker process 21
+2025/12/04 06:00:32 [notice] 16#16: start worker process 22
+2025/12/04 06:00:32 [notice] 16#16: start worker process 23
+2025/12/04 06:00:32 [notice] 16#16: start worker process 24
+2025/12/04 06:00:32 [notice] 16#16: start worker process 25
+2025/12/04 06:00:32 [notice] 16#16: start worker process 26
+2025/12/04 06:00:32 [notice] 16#16: start worker process 27
+2025/12/04 06:00:32 [notice] 16#16: start worker process 28
+2025/12/04 06:00:35 [error] 18#18: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 06:00:36 [error] 18#18: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 06:00:38 [error] 18#18: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 06:00:40 [error] 18#18: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 06:01:02 [error] 18#18: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 06:01:56 [notice] 16#16: using the "epoll" event method
+2025/12/04 06:01:56 [notice] 16#16: nginx/1.25.2
+2025/12/04 06:01:56 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 06:01:56 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 06:01:56 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 06:01:56 [notice] 16#16: start worker processes
+2025/12/04 06:01:56 [notice] 16#16: start worker process 17
+2025/12/04 06:01:56 [notice] 16#16: start worker process 18
+2025/12/04 06:01:56 [notice] 16#16: start worker process 19
+2025/12/04 06:01:56 [notice] 16#16: start worker process 20
+2025/12/04 06:01:56 [notice] 16#16: start worker process 21
+2025/12/04 06:01:56 [notice] 16#16: start worker process 22
+2025/12/04 06:01:56 [notice] 16#16: start worker process 23
+2025/12/04 06:01:56 [notice] 16#16: start worker process 24
+2025/12/04 06:01:56 [notice] 16#16: start worker process 25
+2025/12/04 06:01:56 [notice] 16#16: start worker process 26
+2025/12/04 06:01:56 [notice] 16#16: start worker process 27
+2025/12/04 06:01:56 [notice] 16#16: start worker process 28
+2025/12/04 06:02:03 [error] 18#18: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 14:48:11 [notice] 16#16: using the "epoll" event method
+2025/12/04 14:48:11 [notice] 16#16: nginx/1.25.2
+2025/12/04 14:48:11 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 14:48:11 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 14:48:11 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 14:48:11 [notice] 16#16: start worker processes
+2025/12/04 14:48:11 [notice] 16#16: start worker process 17
+2025/12/04 14:48:11 [notice] 16#16: start worker process 18
+2025/12/04 14:48:11 [notice] 16#16: start worker process 19
+2025/12/04 14:48:11 [notice] 16#16: start worker process 20
+2025/12/04 14:48:11 [notice] 16#16: start worker process 21
+2025/12/04 14:48:11 [notice] 16#16: start worker process 22
+2025/12/04 14:48:11 [notice] 16#16: start worker process 23
+2025/12/04 14:48:11 [notice] 16#16: start worker process 24
+2025/12/04 14:48:11 [notice] 16#16: start worker process 25
+2025/12/04 14:48:11 [notice] 16#16: start worker process 26
+2025/12/04 14:48:11 [notice] 16#16: start worker process 27
+2025/12/04 14:48:11 [notice] 16#16: start worker process 28
+2025/12/04 14:48:29 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 14:53:22 [notice] 16#16: using the "epoll" event method
+2025/12/04 14:53:22 [notice] 16#16: nginx/1.25.2
+2025/12/04 14:53:22 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 14:53:22 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 14:53:22 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 14:53:22 [notice] 16#16: start worker processes
+2025/12/04 14:53:22 [notice] 16#16: start worker process 17
+2025/12/04 14:53:22 [notice] 16#16: start worker process 18
+2025/12/04 14:53:22 [notice] 16#16: start worker process 19
+2025/12/04 14:53:22 [notice] 16#16: start worker process 20
+2025/12/04 14:53:22 [notice] 16#16: start worker process 21
+2025/12/04 14:53:22 [notice] 16#16: start worker process 22
+2025/12/04 14:53:22 [notice] 16#16: start worker process 23
+2025/12/04 14:53:22 [notice] 16#16: start worker process 24
+2025/12/04 14:53:22 [notice] 16#16: start worker process 25
+2025/12/04 14:53:22 [notice] 16#16: start worker process 26
+2025/12/04 14:53:22 [notice] 16#16: start worker process 27
+2025/12/04 14:53:22 [notice] 16#16: start worker process 28
+2025/12/04 14:53:24 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 14:53:31 [error] 18#18: *3 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 14:56:55 [notice] 16#16: using the "epoll" event method
+2025/12/04 14:56:55 [notice] 16#16: nginx/1.25.2
+2025/12/04 14:56:55 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 14:56:55 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 14:56:55 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 14:56:55 [notice] 16#16: start worker processes
+2025/12/04 14:56:55 [notice] 16#16: start worker process 17
+2025/12/04 14:56:55 [notice] 16#16: start worker process 18
+2025/12/04 14:56:55 [notice] 16#16: start worker process 19
+2025/12/04 14:56:55 [notice] 16#16: start worker process 20
+2025/12/04 14:56:55 [notice] 16#16: start worker process 21
+2025/12/04 14:56:55 [notice] 16#16: start worker process 22
+2025/12/04 14:56:55 [notice] 16#16: start worker process 23
+2025/12/04 14:56:55 [notice] 16#16: start worker process 24
+2025/12/04 14:56:55 [notice] 16#16: start worker process 25
+2025/12/04 14:56:55 [notice] 16#16: start worker process 26
+2025/12/04 14:56:55 [notice] 16#16: start worker process 27
+2025/12/04 14:56:55 [notice] 16#16: start worker process 28
+2025/12/04 14:57:07 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 14:57:15 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 14:58:06 [notice] 16#16: using the "epoll" event method
+2025/12/04 14:58:06 [notice] 16#16: nginx/1.25.2
+2025/12/04 14:58:06 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 14:58:06 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 14:58:06 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 14:58:06 [notice] 16#16: start worker processes
+2025/12/04 14:58:06 [notice] 16#16: start worker process 17
+2025/12/04 14:58:06 [notice] 16#16: start worker process 18
+2025/12/04 14:58:06 [notice] 16#16: start worker process 19
+2025/12/04 14:58:06 [notice] 16#16: start worker process 20
+2025/12/04 14:58:06 [notice] 16#16: start worker process 21
+2025/12/04 14:58:06 [notice] 16#16: start worker process 22
+2025/12/04 14:58:06 [notice] 16#16: start worker process 23
+2025/12/04 14:58:06 [notice] 16#16: start worker process 24
+2025/12/04 14:58:06 [notice] 16#16: start worker process 25
+2025/12/04 14:58:06 [notice] 16#16: start worker process 26
+2025/12/04 14:58:06 [notice] 16#16: start worker process 27
+2025/12/04 14:58:06 [notice] 16#16: start worker process 28
+2025/12/04 14:58:12 [error] 18#18: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 14:59:09 [notice] 16#16: using the "epoll" event method
+2025/12/04 14:59:09 [notice] 16#16: nginx/1.25.2
+2025/12/04 14:59:09 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 14:59:09 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 14:59:09 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 14:59:09 [notice] 16#16: start worker processes
+2025/12/04 14:59:09 [notice] 16#16: start worker process 17
+2025/12/04 14:59:09 [notice] 16#16: start worker process 18
+2025/12/04 14:59:09 [notice] 16#16: start worker process 19
+2025/12/04 14:59:09 [notice] 16#16: start worker process 20
+2025/12/04 14:59:09 [notice] 16#16: start worker process 21
+2025/12/04 14:59:09 [notice] 16#16: start worker process 22
+2025/12/04 14:59:09 [notice] 16#16: start worker process 23
+2025/12/04 14:59:09 [notice] 16#16: start worker process 24
+2025/12/04 14:59:09 [notice] 16#16: start worker process 25
+2025/12/04 14:59:09 [notice] 16#16: start worker process 26
+2025/12/04 14:59:09 [notice] 16#16: start worker process 27
+2025/12/04 14:59:09 [notice] 16#16: start worker process 28
+2025/12/04 14:59:16 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 15:00:20 [error] 17#17: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: localhost, request: "GET / HTTP/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "localhost:8088"
+2025/12/04 15:01:02 [notice] 16#16: using the "epoll" event method
+2025/12/04 15:01:02 [notice] 16#16: nginx/1.25.2
+2025/12/04 15:01:02 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 15:01:02 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 15:01:02 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 15:01:02 [notice] 16#16: start worker processes
+2025/12/04 15:01:02 [notice] 16#16: start worker process 17
+2025/12/04 15:01:02 [notice] 16#16: start worker process 18
+2025/12/04 15:01:02 [notice] 16#16: start worker process 19
+2025/12/04 15:01:02 [notice] 16#16: start worker process 20
+2025/12/04 15:01:02 [notice] 16#16: start worker process 21
+2025/12/04 15:01:02 [notice] 16#16: start worker process 22
+2025/12/04 15:01:02 [notice] 16#16: start worker process 23
+2025/12/04 15:01:02 [notice] 16#16: start worker process 24
+2025/12/04 15:01:02 [notice] 16#16: start worker process 25
+2025/12/04 15:01:02 [notice] 16#16: start worker process 26
+2025/12/04 15:01:02 [notice] 16#16: start worker process 27
+2025/12/04 15:01:02 [notice] 16#16: start worker process 28
+2025/12/04 15:04:43 [notice] 16#16: using the "epoll" event method
+2025/12/04 15:04:43 [notice] 16#16: nginx/1.25.2
+2025/12/04 15:04:43 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 15:04:43 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 15:04:43 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 15:04:43 [notice] 16#16: start worker processes
+2025/12/04 15:04:43 [notice] 16#16: start worker process 17
+2025/12/04 15:04:43 [notice] 16#16: start worker process 18
+2025/12/04 15:04:43 [notice] 16#16: start worker process 19
+2025/12/04 15:04:43 [notice] 16#16: start worker process 20
+2025/12/04 15:04:43 [notice] 16#16: start worker process 21
+2025/12/04 15:04:43 [notice] 16#16: start worker process 22
+2025/12/04 15:04:43 [notice] 16#16: start worker process 23
+2025/12/04 15:04:43 [notice] 16#16: start worker process 24
+2025/12/04 15:04:43 [notice] 16#16: start worker process 25
+2025/12/04 15:04:43 [notice] 16#16: start worker process 26
+2025/12/04 15:04:43 [notice] 16#16: start worker process 27
+2025/12/04 15:04:43 [notice] 16#16: start worker process 28
+2025/12/04 15:10:08 [notice] 16#16: using the "epoll" event method
+2025/12/04 15:10:08 [notice] 16#16: nginx/1.25.2
+2025/12/04 15:10:08 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/04 15:10:08 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/04 15:10:08 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/04 15:10:08 [notice] 16#16: start worker processes
+2025/12/04 15:10:08 [notice] 16#16: start worker process 17
+2025/12/04 15:10:08 [notice] 16#16: start worker process 18
+2025/12/04 15:10:08 [notice] 16#16: start worker process 19
+2025/12/04 15:10:08 [notice] 16#16: start worker process 20
+2025/12/04 15:10:08 [notice] 16#16: start worker process 21
+2025/12/04 15:10:08 [notice] 16#16: start worker process 22
+2025/12/04 15:10:08 [notice] 16#16: start worker process 23
+2025/12/04 15:10:08 [notice] 16#16: start worker process 24
+2025/12/04 15:10:08 [notice] 16#16: start worker process 25
+2025/12/04 15:10:08 [notice] 16#16: start worker process 26
+2025/12/04 15:10:08 [notice] 16#16: start worker process 27
+2025/12/04 15:10:08 [notice] 16#16: start worker process 28
+2025/12/06 03:16:58 [notice] 16#16: using the "epoll" event method
+2025/12/06 03:16:58 [notice] 16#16: nginx/1.25.2
+2025/12/06 03:16:58 [notice] 16#16: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2025/12/06 03:16:58 [notice] 16#16: OS: Linux 6.14.0-36-generic
+2025/12/06 03:16:58 [notice] 16#16: getrlimit(RLIMIT_NOFILE): 1024:524288
+2025/12/06 03:16:58 [notice] 16#16: start worker processes
+2025/12/06 03:16:58 [notice] 16#16: start worker process 17
+2025/12/06 03:16:58 [notice] 16#16: start worker process 18
+2025/12/06 03:16:58 [notice] 16#16: start worker process 19
+2025/12/06 03:16:58 [notice] 16#16: start worker process 20
+2025/12/06 03:16:58 [notice] 16#16: start worker process 21
+2025/12/06 03:16:58 [notice] 16#16: start worker process 22
+2025/12/06 03:16:58 [notice] 16#16: start worker process 23
+2025/12/06 03:16:58 [notice] 16#16: start worker process 24
+2025/12/06 03:16:58 [notice] 16#16: start worker process 25
+2025/12/06 03:16:58 [notice] 16#16: start worker process 26
+2025/12/06 03:16:58 [notice] 16#16: start worker process 27
+2025/12/06 03:16:58 [notice] 16#16: start worker process 28

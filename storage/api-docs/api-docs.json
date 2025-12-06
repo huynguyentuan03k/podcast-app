@@ -73,6 +73,14 @@
                         }
                     },
                     {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
                         "name": "fields[categories]",
                         "in": "query",
                         "schema": {
@@ -468,6 +476,128 @@
                 }
             }
         },
+        "/api/keyword-suggestions": {
+            "get": {
+                "tags": [
+                    "KeywordSuggestion"
+                ],
+                "summary": "Get all keyword suggestions",
+                "operationId": "c74dca1fe100e1e196209317c0d30969",
+                "responses": {
+                    "200": {
+                        "description": "List of keyword suggestions",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "data": [
+                                        "horror",
+                                        "thriller",
+                                        "romance"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "KeywordSuggestion"
+                ],
+                "summary": "Add a new keyword",
+                "operationId": "ec3aa9c6a28b4830ea88626b2695edbb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "keyword": {
+                                        "type": "string",
+                                        "example": "horror"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Keyword added successfully"
+                    }
+                }
+            }
+        },
+        "/api/keyword-suggestions/{index}": {
+            "put": {
+                "tags": [
+                    "KeywordSuggestion"
+                ],
+                "summary": "Edit a keyword by index",
+                "operationId": "c438029e1e8a39a36eb6f8b5c0f90fdf",
+                "parameters": [
+                    {
+                        "name": "index",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "keyword": {
+                                        "type": "string",
+                                        "example": "sci-fi"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Keyword updated successfully"
+                    },
+                    "404": {
+                        "description": "Keyword not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "KeywordSuggestion"
+                ],
+                "summary": "Delete a keyword by index",
+                "operationId": "e9e7b472fd92bc7a902b9711a673ca7f",
+                "parameters": [
+                    {
+                        "name": "index",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Keyword deleted successfully"
+                    },
+                    "404": {
+                        "description": "Keyword not found"
+                    }
+                }
+            }
+        },
         "/api/podcasts": {
             "get": {
                 "tags": [
@@ -643,7 +773,7 @@
                     }
                 }
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Podcast"
                 ],
@@ -665,7 +795,9 @@
                         "multipart/form-data": {
                             "schema": {
                                 "required": [
-                                    "title"
+                                    "title",
+                                    "slug",
+                                    "publisher_id"
                                 ],
                                 "properties": {
                                     "title": {
@@ -683,6 +815,10 @@
                                     "cover_image": {
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "publisher_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1348,6 +1484,10 @@
         {
             "name": "Episode",
             "description": "Episode"
+        },
+        {
+            "name": "KeywordSuggestion",
+            "description": "KeywordSuggestion"
         },
         {
             "name": "Podcast",
