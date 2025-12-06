@@ -12,11 +12,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 Route::get('podcasts', [PodcastController::class, 'index']);
 Route::get('podcasts/{podcast}', [PodcastController::class, 'show']);
 Route::post('podcasts', [PodcastController::class, 'store']);
-Route::put('podcasts/{podcast}', [PodcastController::class, 'update']);
+Route::post('podcasts/{podcast}', [PodcastController::class, 'update']);
 Route::delete('podcasts/{podcast}', [PodcastController::class, 'destroy']);
 
 Route::get('episodes', [EpisodeController::class, 'index']);

@@ -118,7 +118,9 @@ class PodcastController extends Controller
         return new PodcastResource($podcast);
     }
 
-    #[OA\Put(
+    #[OA\Post(
+        // upload file note : multipart/form-data not , application/json
+        // when upload file method PUT not active => change to post
         path: '/api/podcasts/{podcast}',
         description: 'Update a podcast',
         operationId: 'updatePodcast',
@@ -136,12 +138,13 @@ class PodcastController extends Controller
             content: new OA\MediaType(
                 mediaType: 'multipart/form-data',
                 schema: new OA\Schema(
-                    required: ['title'],
+                    required: ['title','slug','publisher_id'],
                     properties: [
                         new OA\Property(property: 'title', type: 'string', example: 'Kane and Abel'),
                         new OA\Property(property: 'description', type: 'string', example: 'Some description'),
                         new OA\Property(property: 'slug', type: 'string', example: 'kane-and-abel'),
                         new OA\Property(property: 'cover_image', type: 'string', format: 'binary'),
+                        new OA\Property(property: "publisher_id", type: "integer", example: 1),
                     ]
                 )
             )

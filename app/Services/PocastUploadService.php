@@ -7,17 +7,19 @@ use Illuminate\Support\Facades\Storage;
 
 class PocastUploadService
 {
-    public static function uploadCoverImage(UploadedFile $file, string $slug): string
+    public static function uploadCoverImage(UploadedFile $file, string $title): string
     {
-        $folder = "podcasts/{$slug}";
-        $filename = $file->getClientOriginalName();
-        $path = $file->storeAs($folder, $filename, 'public');
-        return $file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension();
+        $filename = "{$title}.{$extension}";
+
+        $path = $file->storeAs("podcasts",$filename,"public");
+
+        return $filename;
     }
 
     public static function getCoverImageUrl(string $slug, string $filename): string
     {
-        return Storage::url("podcasts/{$slug}/{$filename}");
+        return Storage::url("podcasts/{$filename}");
     }
 
     public static function moveCoverImage(string $oldSlug, string $newSlug): void
@@ -34,5 +36,23 @@ class PocastUploadService
     {
         $folder = "podcasts/{$slug}";
         Storage::disk('public')->deleteDirectory($folder);
+    }
+
+    public static function renameCoverImage(string $oldTitle, string $newTitle): string
+    {
+        $disk = Storage::disk('public');
+
+        // find the old file follow name
+        $files = $disk->files('podcasts');
+
+        foreach($files as $file){
+            if(str_contains($file,$oldTitle)){
+                $extension = pathinfo($file, PATHINFO_EXTENSION);
+                $newName = "podcasts/{$newTitle}.{$extension}";
+                $disk->move($file,$newName);
+                return "{$newTitle}.{$extension}";
+            }
+        }
+        return '';
     }
 }
