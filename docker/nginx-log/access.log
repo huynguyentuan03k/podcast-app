@@ -161,3 +161,5 @@
 172.23.0.1 - - [07/Dec/2025:04:47:49 +0000] "GET /build/assets/index-D6Phd4Ip.js HTTP/1.1" 200 91 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"
 172.23.0.1 - - [07/Dec/2025:04:47:49 +0000] "GET / HTTP/1.1" 200 9947 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"
 172.23.0.1 - - [07/Dec/2025:04:48:16 +0000] "GET /settings/profile HTTP/1.1" 200 10244 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"
+172.23.0.1 - - [07/Dec/2025:12:58:28 +0000] "GET / HTTP/1.1" 200 9955 "-" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"
+172.23.0.1 - - [07/Dec/2025:12:58:30 +0000] "GET /register HTTP/1.1" 200 2317 "http://localhost:8088/" "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:145.0) Gecko/20100101 Firefox/145.0"
