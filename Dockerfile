@@ -8,6 +8,10 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     && docker-php-ext-install pdo pdo_pgsql pdo_mysql
 
+# Install Node.js 20
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
@@ -23,6 +27,10 @@ RUN composer install --no-dev --no-scripts --no-autoloader
 COPY . .
 
 RUN composer dump-autoload --optimize
+
+# Build frontend
+RUN npm ci
+RUN npm run build
 
 RUN cp .env.example .env || true
 
