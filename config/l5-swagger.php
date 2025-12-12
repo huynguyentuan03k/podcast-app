@@ -46,7 +46,13 @@ return [
                 'annotations' => [
                     base_path('app'),
                 ],
-            ],
+
+
+                /**
+                 * force http to https on home server
+                 */
+                'schemes' => ['https'],
+                ],
         ],
     ],
     'defaults' => [
@@ -99,6 +105,11 @@ return [
              * `scanOptions.exclude` overwrites this
              */
             'excludes' => [],
+
+            /**
+             * force http to https on home server
+             */
+            'schemes' => ['https'],
         ],
 
         'scanOptions' => [
