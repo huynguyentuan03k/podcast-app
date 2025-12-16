@@ -53,6 +53,13 @@ return [
                  */
                 'schemes' => ['https'],
                 ],
+            'servers' => [
+                [
+                    'url' => 'https://huynguyen-nginx.io.vn',
+                    'description' => 'Production',
+                ]
+                ],
+            'schemes' => ['https'], # just https
         ],
     ],
     'defaults' => [
