@@ -22,7 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-    URL::forceScheme('https');
-    URL::forceRootUrl('https://huynguyen-nginx.io.vn');
+        if($this->app->environment('production')){
+            URL::forceScheme('https');
+            URL::forceRootUrl('https://huynguyen-nginx.io.vn');
+        }
     }
 }
