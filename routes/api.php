@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\EpisodeController;
 use App\Http\Controllers\Api\PodcastController;
@@ -42,9 +43,9 @@ Route::post('tags', [TagController::class, 'store']);
 Route::put('tags/{tag}', [TagController::class, 'update']);
 Route::delete('tags/{tag}', [TagController::class, 'destroy']);
 
-// categories
-Route::get('authors', [CategoryController::class, 'index']);
-Route::get('authors/{author}', [CategoryController::class, 'show']);
-Route::post('authors', [CategoryController::class, 'store']);
-Route::put('authors/{author}', [CategoryController::class, 'update']);
-Route::delete('authors/{author}', [CategoryController::class, 'destroy']);
+// authors
+Route::get('authors', [AuthorController::class, 'index']);
+Route::get('authors/{author}', [AuthorController::class, 'show']);
+Route::post('authors', [AuthorController::class, 'store']);
+Route::put('authors/{author}', [AuthorController::class, 'update']);
+Route::delete('authors/{author}', [AuthorController::class, 'destroy']);

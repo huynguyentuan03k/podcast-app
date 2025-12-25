@@ -115,6 +115,145 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Author"
+                ],
+                "description": "Create a new author",
+                "operationId": "ff9d12ef46fc5034a0d4adf9d10b6de3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "j.k.rowling"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "j.k.rowling"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Author created"
+                    }
+                }
+            }
+        },
+        "/api/authors/{author}": {
+            "get": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Get a single author",
+                "description": "Retrieve detailed information about a specific author by ID.",
+                "operationId": "78b25f598924d1fa15e002e5ae0fb23b",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "ID of the author to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Author retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "author show successfully",
+                                    "data": {
+                                        "id": 1,
+                                        "name": "Example Author",
+                                        "description": "123 Main St, City"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Update a author",
+                "description": "Update the information of an existing author by ID.",
+                "operationId": "ec6a0e866f734a82a5034fc1f6a75a5f",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "ID of the author to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated author Name"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Author updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Author updated successfully.",
+                                    "data": {
+                                        "id": 1,
+                                        "name": "Updated Author Name",
+                                        "description": "123 Main St, City"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "404": {
+                        "description": "Category not found"
+                    }
+                }
             }
         },
         "/api/categories": {
