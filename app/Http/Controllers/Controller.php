@@ -8,8 +8,8 @@ namespace App\Http\Controllers;
  *     version="1.0"
  * )
  * @OA\Server(
- *     url="https://huynguyen-nginx.io.vn",
- *     description="Production Server"
+ *     url=L5_SWAGGER_CONST_HOST,
+ *     description="localhost Server"
  * )
  */
 abstract class Controller
