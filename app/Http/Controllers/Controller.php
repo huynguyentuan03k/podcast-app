@@ -9,7 +9,7 @@ namespace App\Http\Controllers;
  * )
  * @OA\Server(
  *     url=L5_SWAGGER_CONST_HOST,
- *     description="localhost Server"
+ *     description=L5_SWAGGER_CONST_HOST_DESCRIPTION
  * )
  */
 abstract class Controller
