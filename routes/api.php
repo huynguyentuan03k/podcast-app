@@ -41,3 +41,10 @@ Route::get('tags/{tag}', [TagController::class, 'show']);
 Route::post('tags', [TagController::class, 'store']);
 Route::put('tags/{tag}', [TagController::class, 'update']);
 Route::delete('tags/{tag}', [TagController::class, 'destroy']);
+
+// categories
+Route::get('authors', [CategoryController::class, 'index']);
+Route::get('authors/{author}', [CategoryController::class, 'show']);
+Route::post('authors', [CategoryController::class, 'store']);
+Route::put('authors/{author}', [CategoryController::class, 'update']);
+Route::delete('authors/{author}', [CategoryController::class, 'destroy']);
