@@ -238,7 +238,7 @@ class AuthorController extends Controller
     public function destroy(Author $author,DeleteAuthorAction $action){
         $result = $action->handle($author);
         return response()->json([
-            'message' => 'category deleted successfully..',
+            'message' => 'category deleted successfully...',
         ],201);
     }
 }
