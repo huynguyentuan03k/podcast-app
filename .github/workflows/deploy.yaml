@@ -1,0 +1,33 @@
+name: Build & Deploy Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login Docker Hub
+        run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t podcast-app:latest .
+
+      - name: Push image to Docker Hub
+        run: |
+          docker tag podcast-app:latest tuanhuy16903/podcast-app:latest
+          docker push tuanhuy16903/podcast-app:latest
+
+      - name: Deploy on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker pull tuanhuy16903/podcast-app:latest
+            docker compose up -d
