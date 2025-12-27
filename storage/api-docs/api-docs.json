@@ -125,7 +125,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "name"
@@ -138,6 +138,23 @@
                                     "description": {
                                         "type": "string",
                                         "example": "j.k.rowling"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "about j.k.rowling"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "example": "website.com"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "email.com"
+                                    },
+                                    "avatar": {
+                                        "description": "Cover image to upload (.jpg, .png",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -193,13 +210,13 @@
                     }
                 }
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Author"
                 ],
                 "summary": "Update a author",
                 "description": "Update the information of an existing author by ID.",
-                "operationId": "ec6a0e866f734a82a5034fc1f6a75a5f",
+                "operationId": "f638d5a11a64ddf2e5e75388c919b4b5",
                 "parameters": [
                     {
                         "name": "author",
@@ -214,7 +231,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "name"
@@ -223,6 +240,23 @@
                                     "name": {
                                         "type": "string",
                                         "example": "Updated author Name"
+                                    },
+                                    "avatar": {
+                                        "description": "just file extension .png, .jpg",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "about j.k.rowling"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "example": "website.com"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "email.com"
                                     }
                                 },
                                 "type": "object"
@@ -241,7 +275,10 @@
                                     "data": {
                                         "id": 1,
                                         "name": "Updated Author Name",
-                                        "description": "123 Main St, City"
+                                        "bio": "123 Main St, City",
+                                        "avatar": "paf.png",
+                                        "website": "www.pain.com",
+                                        "email": "pain@gmail.com"
                                     }
                                 }
                             }
@@ -252,6 +289,46 @@
                     },
                     "404": {
                         "description": "Category not found"
+                    }
+                }
+            }
+        },
+        "/api/authors/{authors}": {
+            "delete": {
+                "tags": [
+                    "Author"
+                ],
+                "summary": "Delete a author",
+                "description": "Permanently delete a author by ID.",
+                "operationId": "0d87e2685867e6492d9535c0d8b0a541",
+                "parameters": [
+                    {
+                        "name": "author",
+                        "in": "path",
+                        "description": "ID of the author to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Author deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "Author deleted successfully."
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Author not found"
+                    },
+                    "500": {
+                        "description": "Server error - Unable to delete Author"
                     }
                 }
             }

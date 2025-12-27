@@ -111,12 +111,16 @@ class AuthorController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\MediaType(
-                mediaType: 'application/json',
+                mediaType: 'multipart/form-data',
                 schema: new OA\Schema(
                     required: ['name'],
                     properties: [
                         new OA\Property(property: 'name', type: 'string', example: 'j.k.rowling'),
                         new OA\Property(property: 'description', type: 'string', example: 'j.k.rowling'),
+                        new OA\Property(property: 'bio', type: 'string', example: 'about j.k.rowling'),
+                        new OA\Property(property: 'website', type: 'string', example: 'website.com'),
+                        new OA\Property(property: 'email', type: 'string', example: 'email.com'),
+                        new OA\property(property: 'avatar', type: 'string', format: 'binary', description: 'Cover image to upload (.jpg, .png'),
                     ]
                 )
             )
@@ -137,7 +141,7 @@ class AuthorController extends Controller
     }
 
 
-        #[OA\Put(
+        #[OA\Post(
         path: '/api/authors/{author}',
         summary: 'Update a author',
         description: 'Update the information of an existing author by ID.',
@@ -154,12 +158,15 @@ class AuthorController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\MediaType(
-                mediaType: 'application/json',
+                mediaType: 'multipart/form-data',
                 schema: new OA\Schema(
                     required: ['name'],
                     properties: [
                         new OA\Property(property: 'name', type: 'string', example: 'Updated author Name'),
-                        // new OA\Property(property: 'description', type: 'string', example: '123 Main St, City'),
+                        new OA\Property(property: 'avatar', type: 'string', format: 'binary',description:'just file extension .png, .jpg'),
+                        new OA\Property(property: 'bio', type: 'string', example: 'about j.k.rowling'),
+                        new OA\Property(property: 'website', type: 'string', example: 'website.com'),
+                        new OA\Property(property: 'email', type: 'string', example: 'email.com'),
                     ]
                 )
             )
@@ -174,7 +181,10 @@ class AuthorController extends Controller
                         'data' => [
                             'id' => 1,
                             'name' => 'Updated Author Name',
-                            'description' => '123 Main St, City',
+                            'bio' => '123 Main St, City',
+                            'avatar' => 'paf.png',
+                            'website' => 'www.pain.com',
+                            'email' => 'pain@gmail.com'
                         ]
                     ]
                 )

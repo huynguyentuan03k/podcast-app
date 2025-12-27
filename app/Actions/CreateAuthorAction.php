@@ -3,11 +3,15 @@
 namespace App\Actions;
 
 use App\Models\Author;
+use App\Services\AuthorUploadService;
 
 class CreateAuthorAction
 {
     public function handle(array $data): Author
     {
+        $str = AuthorUploadService::store($data['avatar']);
+        $data['avatar'] = $str;
+
         return Author::create($data);
     }
 }

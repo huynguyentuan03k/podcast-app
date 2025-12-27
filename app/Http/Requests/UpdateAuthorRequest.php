@@ -15,6 +15,10 @@ class UpdateAuthorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'bio' => ['string'],
+            'avatar' => ['file','mimes:jpg,jpeg,png','max:2048'],
+            'email' => ['string','max:255'],
+            'website' => ['string','max:255'],
         ];
     }
 }

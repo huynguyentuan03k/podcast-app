@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class EpisodeUploadService
 {
-        public static function uploadAudio(UploadedFile $file, string $slug): string
+    public static function uploadAudio(UploadedFile $file, string $slug): string
     {
         $folder = "episodes/audio/{$slug}";
         $filename = $file->getClientOriginalName();
