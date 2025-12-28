@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\File;
 
 class UpdateAuthorRequest extends FormRequest
 {
@@ -15,10 +16,10 @@ class UpdateAuthorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'bio' => ['string'],
-            'avatar' => ['file','mimes:jpg,jpeg,png,webpp','max:2048'],
-            'email' => ['string','max:255'],
-            'website' => ['string','max:255'],
+            'bio' => ['nullable','string'],
+            'avatar' => ['nullable','file'],
+            'email' => ['nullable','string','max:255'],
+            'website' => ['nullable','string','max:255'],
         ];
     }
 }

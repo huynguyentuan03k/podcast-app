@@ -9,11 +9,11 @@ class UpdateAuthorAction
 {
     public function handle(array $data,Author $author): Author
     {
+
         if(!empty($data['avatar'])){
             $author->avatar = AuthorUploadService::update($data['avatar'], $author->avatar);
         }
 
-        $author = Author::find($author->id);
         $author->name = $data['name'];
         $author->bio = $data['bio'];
         $author->website = $data['website'];
@@ -21,6 +21,6 @@ class UpdateAuthorAction
 
         $author->save();
 
-        return $author;
+        return $author->fresh();
     }
 }

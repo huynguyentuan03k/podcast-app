@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\File;
 
 class CreateAuthorRequest extends FormRequest
 {
@@ -15,10 +16,10 @@ class CreateAuthorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'bio' => ['string','max:255'],
-            'website' => ['string','max:255'],
-            'avatar' => ['max:1024'],
-            'email' => ['string','max:255'],
+            'bio' => ['nullable','string','max:255'],
+            'website' => ['nullable','string','max:255'],
+            'avatar' => ['nullable','file' ],
+            'email' => ['nullable','string','max:255'],
         ];
     }
 }
