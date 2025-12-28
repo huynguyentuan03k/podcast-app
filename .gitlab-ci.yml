@@ -1,0 +1,40 @@
+stages:
+  - test
+  - build
+  - deploy
+
+
+test_job:
+  stage: test
+  script:
+    - echo "🧪 Bắt đầu test..."
+    - echo "📦 Project: $CI_PROJECT_NAME"
+    - echo "🌿 Branch: $CI_COMMIT_BRANCH"
+    - echo "👤 Author: $CI_COMMIT_AUTHOR"
+    - echo "💬 Commit message: $CI_COMMIT_MESSAGE"
+    - echo "✅ Test hoàn thành!"
+
+
+build_job:
+  stage: build
+  script:
+    - echo "🔨 Bắt đầu build..."
+    - echo "📝 Commit SHA: $CI_COMMIT_SHORT_SHA"
+    - sleep 2
+    - echo "✅ Build thành công!"
+  only:
+    - main
+
+
+deploy_job:
+  stage: deploy
+  script:
+    - echo "🚀 Bắt đầu deploy..."
+    - echo "🌍 Environment: Production"
+    - echo "⏰ Deploy time: $(date)"
+    - sleep 3
+    - echo "🎉 Deploy thành công!"
+    - echo "🔗 URL: http://localhost:8000"
+  only:
+    - main
+  when: manual 
