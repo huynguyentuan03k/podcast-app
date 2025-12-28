@@ -20,6 +20,7 @@ class AuthorResource extends JsonResource
             'bio' => $this->bio,
             'email' => $this->email,
             'avatar' => $this->avatar,
+            'avatar_url' => $this->avatar_url,
             'website' => $this->website,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

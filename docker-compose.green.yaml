@@ -5,10 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: laravel-allinone
+    container_name: laravel-allinone-green
     image: demoage
     ports:
-      - "8088:80"
+      - "8089:80"
     volumes:
       - ./docker/nginx-log:/var/log/nginx
     networks:
