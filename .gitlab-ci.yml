@@ -3,7 +3,6 @@ stages:
   - build
   - deploy
 
-
 test_job:
   stage: test
   script:
@@ -12,8 +11,8 @@ test_job:
     - echo "🌿 Branch: $CI_COMMIT_BRANCH"
     - echo "👤 Author: $CI_COMMIT_AUTHOR"
     - echo "💬 Commit message: $CI_COMMIT_MESSAGE"
+    - echo "💬 Commit message: $CI_COMMIT_MESSAGE"
     - echo "✅ Test hoàn thành!"
-
 
 build_job:
   stage: build
@@ -24,7 +23,6 @@ build_job:
     - echo "✅ Build thành công!"
   only:
     - main
-
 
 deploy_job:
   stage: deploy
@@ -37,4 +35,4 @@ deploy_job:
     - echo "🔗 URL: http://localhost:8000"
   only:
     - main
-  when: manual 
+  when: manual
