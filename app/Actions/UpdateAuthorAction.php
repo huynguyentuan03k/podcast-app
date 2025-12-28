@@ -9,9 +9,12 @@ class UpdateAuthorAction
 {
     public function handle(array $data,Author $author): Author
     {
+        if(!empty($data['avatar'])){
+            $author->avatar = AuthorUploadService::update($data['avatar'], $author->avatar);
+        }
+
         $author = Author::find($author->id);
         $author->name = $data['name'];
-        $author->avatar = AuthorUploadService::update($data['avatar'], $author->avatar);
         $author->bio = $data['bio'];
         $author->website = $data['website'];
         $author->email = $data['email'];
