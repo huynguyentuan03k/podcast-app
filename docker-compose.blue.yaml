@@ -2,15 +2,15 @@ version: '3.9'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: laravel-allinone-blue
-    image: demoage
+    container_name: laravel-blue
+    image: api-podcast-prod:latest
+    restart: always
     ports:
       - "8088:80"
     volumes:
       - ./docker/nginx-log:/var/log/nginx
+      - /home/huy/podcast-app/.env:/var/www/.env
+      - /home/huy/podcast-app/storage:/var/www/storage
     networks:
       - laravel_net
 
