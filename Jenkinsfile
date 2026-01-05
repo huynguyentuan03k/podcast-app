@@ -6,5 +6,15 @@ pipeline {
                 sh 'ls -al'
             }
         }
+        stage("where i am here ?"){
+            steps{
+                sh 'pwd'
+            }
+        }
+        stage("log everything!!!"){
+            steps{
+                sh "echo 'hello world' "
+            }
+        }
     }
 }
