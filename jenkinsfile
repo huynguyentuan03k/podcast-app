@@ -1,21 +1,11 @@
 pipeline {
-    agent any
-
-    triggers {
-        githubPush()
+  agent any
+  stages {
+    stage('Test GitHub Token') {
+      steps {
+        git url: 'https://github.com/huynguyentuan03k/podcast-app.git',
+            credentialsId: 'github-token'
+      }
     }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'echo "Build from GitHub successful"'
-            }
-        }
-    }
+  }
 }
