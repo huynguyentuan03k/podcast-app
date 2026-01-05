@@ -1,0 +1,15 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Test') {
+            steps {
+                sh '''
+                  echo "Jenkins is running!"
+                  uname -a
+                  docker --version
+                '''
+            }
+        }
+    }
+}
