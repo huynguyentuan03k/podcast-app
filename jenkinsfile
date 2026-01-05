@@ -1,14 +1,20 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     stages {
-        stage('Test') {
+        stage('Checkout') {
             steps {
-                sh '''
-                  echo "Jenkins is running!"
-                  uname -a
-                  docker --version
-                '''
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'echo "Build from GitHub successful"'
             }
         }
     }
