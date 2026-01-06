@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  blue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: laravel-blue
+    restart: always
+    ports:
+      - "8088:80"
+    volumes:
+      - ./docker/nginx-log:/var/log/nginx
+      - /home/huy/podcast-app/.env:/var/www/.env
+      - /home/huy/podcast-app/storage:/var/www/storage
+    networks:
+      - laravel_net
+  green:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: laravel-green
+    restart: always
+    ports:
+      - "8081:80"
+    volumes:
+      - ./docker/nginx-log:/var/log/nginx
+      - /home/huy/podcast-app/.env:/var/www/.env
+      - /home/huy/podcast-app/storage:/var/www/storage
+
+networks:
+  laravel_net:
+    external: true
