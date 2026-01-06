@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
 
-                    def output = sh(script: "python3 determine_target.py", returnStdout: true).trim()
+                    def output = sh(script: "python3 deploy-zero-downtime.py", returnStdout: true).trim()
 
                     output.split("\n").each { line ->
                         def parts = line.split("=")
