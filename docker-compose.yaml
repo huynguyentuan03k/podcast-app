@@ -9,7 +9,7 @@ services:
     container_name: laravel-blue
     restart: always
     ports:
-      - "8088:80"
+      - "8082:80"
     volumes:
       - ./docker/nginx-log:/var/log/nginx
       - /home/huy/podcast-app/.env:/var/www/.env
