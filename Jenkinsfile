@@ -9,7 +9,7 @@ pipeline {
         stage('Determine Target with Python') {
             steps {
                 script {
-                    // Chạy python và in kết quả ra log web
+
                     def result = sh(script: "python3 deploy-zero-downtime.py", returnStdout: true).trim()
 
                     echo "--- Output from Python Script ---"
@@ -29,6 +29,12 @@ pipeline {
         stage('Display Result') {
             steps {
                 echo "Mục tiêu hiện tại là: ${env.TARGET}"
+            }
+        }
+
+        stage('build docker and up docker'){
+            steps{
+                sh "sudo docker compose up -d --build ${env.TARGET}"
             }
         }
     }
