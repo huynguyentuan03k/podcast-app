@@ -1,10 +1,4 @@
 pipeline {
-    agent any
-
-    environment {
-        MAP_PATH = "/home/huy/nginx/conf.d/active_backend.map"
-    }
-
     stage('Determine Target with Python') {
         steps {
             script {
