@@ -34,7 +34,7 @@ pipeline {
 
         stage('build docker and up docker'){
             steps{
-                sh "sudo docker compose up -d --build ${env.TARGET}"
+                sh "docker compose up -d --build ${env.TARGET}"
             }
         }
     }
