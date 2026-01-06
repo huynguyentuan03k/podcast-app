@@ -34,7 +34,13 @@ pipeline {
 
         stage('build docker and up docker'){
             steps{
-                sh "docker compose up -d --build ${env.TARGET}"
+                sh "docker-compose up -d --build ${env.TARGET}"
+            }
+        }
+
+        stage('switch traffic and clearup'){
+            steps{
+                sh "sleep 10"
             }
         }
     }
