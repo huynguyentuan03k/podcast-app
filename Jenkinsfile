@@ -15,13 +15,6 @@ pipeline {
                     echo "--- Output from Python Script ---"
                     echo result
                     echo "---------------------------------"
-
-                    result.split("\n").each { line ->
-                        if (line.contains("=")) {
-                            def parts = line.split("=")
-                            env."${parts[0]}" = parts[1]
-                        }
-                    }
                 }
             }
         }

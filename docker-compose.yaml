@@ -23,6 +23,8 @@ services:
 
     container_name: laravel-green
     restart: always
+    networks:
+      - laravel_net
     ports:
       - "8081:80"
     volumes:
