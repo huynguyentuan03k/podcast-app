@@ -1,5 +1,4 @@
 import os
-import sys
 
 MAP_PATH = "/etc/nginx/conf.d/active_backend.map"
 
