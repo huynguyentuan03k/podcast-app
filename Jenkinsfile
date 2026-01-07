@@ -84,16 +84,17 @@ pipeline {
 
                     echo "--- [THÀNH CÔNG] Đã chuyển traffic sang bản mới! ---"
 
+
                     echo "--- Đang tắt bản cũ: ${env.OLD} ---"
                     sh "docker stop laravel-${env.OLD} || true"
                 }
             }
         }
 
+    }
         post {
             failure {
                 echo "Pipeline thất bại. Vui lòng kiểm tra lại log của container ${env.TARGET}."
             }
         }
-    }
 }
