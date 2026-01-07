@@ -49,8 +49,6 @@ pipeline {
                         script: """
                             count=0
                             while [ \$count -lt 10 ]; do
-                                # Kiểm tra xem container có phản hồi HTTP 200 không
-                                # Thay 'http://localhost/' bằng endpoint thực tế của bạn nếu cần (vd: /api/health)
                                 if docker exec ${containerName} curl -s -f http://localhost/ > /dev/null; then
                                     echo "--- [OK] Bản mới đã sẵn sàng! ---"
                                     exit 0
@@ -77,13 +75,12 @@ pipeline {
                 script {
                     echo "--- Đang chuyển Traffic sang ${env.TARGET} ---"
 
-
                     sh "echo 'default laravel-${env.TARGET};' > ${env.MAP_PATH}"
 
+                    sh "docker exec nginx nginx -t"
                     sh "docker exec nginx nginx -s reload"
 
-                    echo "--- [THÀNH CÔNG] Đã chuyển traffic sang bản mới! ---"
-
+                    echo "--- [THÀNH CÔNG] Đã chuyển traffic sang ${env.TARGET}! ---"
 
                     echo "--- Đang tắt bản cũ: ${env.OLD} ---"
                     sh "docker stop laravel-${env.OLD} || true"
