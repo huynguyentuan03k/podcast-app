@@ -32,7 +32,7 @@ def main():
 
     except Exception as e:
         log(f"LỖI: {str(e)}")
-        
+
         print("TARGET=blue")
         print("OLD=green")
 
