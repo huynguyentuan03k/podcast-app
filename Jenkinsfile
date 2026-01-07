@@ -32,9 +32,10 @@ pipeline {
             }
         }
 
-        stage('build docker and up docker'){
+        stage('build docker and up docker , no cache'){
             steps{
-                sh "docker-compose up -d --build ${env.TARGET}"
+                sh "docker-compose build --no-cache ${env.TARGET}"
+                sh "docker-compose up -d ${env.TARGET}"
             }
         }
 
