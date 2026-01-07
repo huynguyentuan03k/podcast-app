@@ -7,7 +7,7 @@ def log(message):
     print(f"[PYTHON-LOG] {message}")
 
 def main():
-    log("Đang bắt đầu kiểm tra cấu hình Nginx...")
+    log("Đang bắt đầu kiểm tra cấu hình Nginx....")
 
     try:
         if os.path.exists(MAP_PATH):
