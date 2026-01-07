@@ -38,9 +38,37 @@ pipeline {
             }
         }
 
-        stage('switch traffic and clearup'){
-            steps{
-                sh "sleep 10"
+        stage('Health Check') {
+            steps {
+                script {
+                    echo "--- Đang kiểm tra sức khỏe bản mới: ${env.TARGET} ---"
+
+                    def containerName = "laravel-${env.TARGET}"
+
+                    def status = sh(
+                        script: """
+                            count=0
+                            while [ \$count -lt 10 ]; do
+                                # Kiểm tra xem container có phản hồi HTTP 200 không
+                                # Thay 'http://localhost/' bằng endpoint thực tế của bạn nếu cần (vd: /api/health)
+                                if docker exec ${containerName} curl -s -f http://localhost/ > /dev/null; then
+                                    echo "--- [OK] Bản mới đã sẵn sàng! ---"
+                                    exit 0
+                                fi
+                                echo "App chưa sẵn sàng, đang thử lại lần \$((count+1))..."
+                                sleep 3
+                                count=\$((count+1))
+                            done
+                            exit 1
+                        """,
+                        returnStatus: true
+                    )
+
+                    if (status != 0) {
+
+                        error "--- [LỖI] Bản mới ${env.TARGET} không khởi động được. Giữ nguyên bản cũ để bảo vệ hệ thống! ---"
+                    }
+                }
             }
         }
     }
