@@ -4,15 +4,22 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PocastUploadService
 {
-    public static function uploadCoverImage(UploadedFile $file, string $title): string
+    public static function store(UploadedFile $file, string $title): string
     {
-        $extension = $file->getClientOriginalExtension();
-        $filename = "{$title}.{$extension}";
+        $folder = "podcasts/";
 
-        $path = $file->storeAs("podcasts",$filename,"public");
+        // orginanal da bao gom luon extension roi
+        $originalNameFile = $file->getClientOriginalName();
+        $uuid = Str::uuid();
+        $timestamp = now()->timestamp;
+
+        $filename = "{$uuid}_{$timestamp}_{$originalNameFile}";
+
+        $file->storeAs("podcasts",$filename,"public");
 
         return $filename;
     }

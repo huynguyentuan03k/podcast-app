@@ -96,7 +96,10 @@ class PodcastController extends Controller
     )]
     public function store(CreatePodcastRequest $request, CreatePodcastAction $action)
     {
-        $record = $action->handle($request->validated());
+
+        $data = $request->validated();
+        $record = $action->handle($data);
+
         return response()->json([
             'message' => 'podcast created successfully. ',
         ], 201);
