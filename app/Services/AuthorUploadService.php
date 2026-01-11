@@ -70,7 +70,6 @@ class AuthorUploadService
     }
 
 
-
     /**
      * Summary of exists
      * @param string $filename
@@ -91,5 +90,5 @@ class AuthorUploadService
     {
         return Storage::disk('public')->files('authors');
     }
-    
+
 }

@@ -21,7 +21,7 @@ class Author extends Model
      * Summary of getAvatarUrlAttribute
      * @return string|null
      * ham asset() se tu dong dung APP_URL , nen khong can quan tam den local hay production , localhost -> APP_URL:port/storage/authors/...
-     * $appends = ['avatar_url] laf de tao ra 1 field khi api tra ra , nho phai sua resource author
+     * $appends = ['avatar_url] laf de tao ra 1 field ten la "avatar_url" khi api tra ra , nho phai sua resource author
      */
     public function getAvatarUrlAttribute(){
         return $this->avatar ? asset('storage/authors/'. $this->avatar) : null;

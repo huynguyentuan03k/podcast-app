@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Podcast extends Model
 {
+    protected $appends = ['cover_url'];
     protected $fillable = [
         'title',
         'slug',
@@ -37,4 +38,9 @@ class Podcast extends Model
     {
         return $this->belongsTo(Publisher::class);
     }
+
+    public function getCoverUrlAttribute(){
+        return $this->cover_image ? asset('/storage/podcasts/'.$this->cover_image) : null;
+    }
+
 }
