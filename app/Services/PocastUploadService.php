@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class PocastUploadService
 {
-    public static function store(UploadedFile $file, string $title): string
+    public static function store(UploadedFile $file): string
     {
         $folder = "podcasts/";
 
@@ -22,6 +22,36 @@ class PocastUploadService
         $file->storeAs("podcasts",$filename,"public");
 
         return $filename;
+    }
+    /**
+     * Summary of update
+     * @param UploadedFile $file
+     * @param mixed $oldFilename
+     * @return string
+     */
+    public static function update(UploadedFile $file, ?string $oldFilename = null):string{
+
+        if($oldFilename){
+            self::delete($oldFilename);
+        }
+
+        return self::store($file);
+
+    }
+        /**
+     * Summary of delete
+     * @param string $filename
+     * @return bool
+     */
+    public static function delete(string $filename):bool
+    {
+        $path = "podcasts/$filename";
+
+        if(Storage::disk('public')->exists($path)){
+            return Storage::disk('public')->delete($path);
+        }
+
+        return false;
     }
 
     public static function getCoverImageUrl(string $slug, string $filename): string

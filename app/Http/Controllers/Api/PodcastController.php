@@ -44,7 +44,7 @@ class PodcastController extends Controller
                                 'title' => 'Sample Podcast',
                                 'slug' => 'sample-podcast',
                                 'description' => 'This is a podcast',
-                                'publisher_id' => 2,
+                                'publisher' => 2,
                             ]
                         ],
                         'meta' => [
@@ -118,6 +118,7 @@ class PodcastController extends Controller
     )]
     public function show(Podcast $podcast)
     {
+        $podcast->load('publisher');
         return new PodcastResource($podcast);
     }
 

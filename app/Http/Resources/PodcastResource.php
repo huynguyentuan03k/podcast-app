@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Publisher;
 use App\Services\PocastUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,7 +21,7 @@ class PodcastResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'description' => $this->description,
-            'publisher_id' => $this->publisher_id,
+            'publisher' => new PublisherResource($this->whenLoaded('publisher')),
             'cover_image' => $this->cover_image
                 ? PocastUploadService::getCoverImageUrl($this->slug, $this->cover_image)
                 : null,

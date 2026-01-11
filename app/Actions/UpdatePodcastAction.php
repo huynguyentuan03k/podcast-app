@@ -10,8 +10,8 @@ class UpdatePodcastAction
 {
     public function handle(Podcast $podcast, array $data): Podcast
     {
-        if ($data['title'] !== $podcast->title && $data['cover_image'] instanceof UploadedFile) {
-            $data['cover_image'] = PocastUploadService::renameCoverImage($podcast->title,$data['title']);
+        if(isset($data['cover_image']) && $data['cover_image'] instanceof UploadedFile){
+            $data['cover_image'] = PocastUploadService::update($data['cover_image'],$podcast->cover_image);
         }
 
         $podcast->update($data);
