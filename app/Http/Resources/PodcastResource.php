@@ -21,6 +21,7 @@ class PodcastResource extends JsonResource
             'description' => $this->description,
             'publisher' => new PublisherResource($this->whenLoaded('publisher')),
             'categories' =>  CategoryResource::collection($this->whenLoaded('categories')),
+            'authors' => AuthorResource::collection($this->whenLoaded('authors')),
             'cover_image' => $this->cover_image,
             'cover_url' => $this->cover_url,
             'created_at' => $this->created_at,
