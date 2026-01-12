@@ -13,7 +13,7 @@ class GetPodcastListAction
 {
     public function handle(?int $perPage): LengthAwarePaginator|Collection
     {
-        $query = QueryBuilder::for(Podcast::query()->with('publisher'))
+        $query = QueryBuilder::for(Podcast::query()->with(['publisher','categories']))
             ->allowedFilters([
                 AllowedFilter::exact('id'),
                 AllowedFilter::exact('publisher_id'),

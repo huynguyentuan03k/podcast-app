@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Podcast;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +20,7 @@ class PodcastResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'publisher' => new PublisherResource($this->whenLoaded('publisher')),
+            'categories' =>  CategoryResource::collection($this->whenLoaded('categories')),
             'cover_image' => $this->cover_image,
             'cover_url' => $this->cover_url,
             'created_at' => $this->created_at,

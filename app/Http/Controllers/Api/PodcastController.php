@@ -118,7 +118,7 @@ class PodcastController extends Controller
     )]
     public function show(Podcast $podcast)
     {
-        $podcast->load('publisher');
+        $podcast->load(['publisher','categories']);
         return new PodcastResource($podcast);
     }
 
