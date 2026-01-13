@@ -96,7 +96,6 @@ class PodcastController extends Controller
     )]
     public function store(CreatePodcastRequest $request, CreatePodcastAction $action)
     {
-
         $data = $request->validated();
         $record = $action->handle($data);
 
@@ -179,6 +178,7 @@ class PodcastController extends Controller
     )]
     public function update(UpdatePodcastRequest $request, Podcast $podcast, UpdatePodcastAction $action)
     {
+
         $data = $request->validated();
         $updated = $action->handle($podcast, $data);
         return response()->json([

@@ -18,7 +18,7 @@ class CreateAuthorRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'bio' => ['nullable','string','max:255'],
             'website' => ['nullable','string','max:255'],
-            'avatar' => ['nullable','file' ],
+            'avatar' => ['nullable','file'],
             'email' => ['nullable','string','max:255'],
         ];
     }

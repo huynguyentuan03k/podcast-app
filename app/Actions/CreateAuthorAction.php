@@ -9,8 +9,10 @@ class CreateAuthorAction
 {
     public function handle(array $data): Author
     {
-        $str = AuthorUploadService::store($data['avatar']);
-        $data['avatar'] = $str;
+        if(isset($data['avatar'])){
+            $str = AuthorUploadService::store($data['avatar']);
+            $data['avatar'] = $str;
+        }
 
         return Author::create($data);
     }
