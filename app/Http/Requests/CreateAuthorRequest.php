@@ -16,7 +16,7 @@ class CreateAuthorRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'bio' => ['nullable','string','max:255'],
+            'bio' => ['nullable','string'],
             'website' => ['nullable','string','max:255'],
             'avatar' => ['nullable','file'],
             'email' => ['nullable','string','max:255'],
