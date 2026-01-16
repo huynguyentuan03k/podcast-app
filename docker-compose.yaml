@@ -12,9 +12,8 @@ services:
       - "8082:80"
     volumes:
       - ./docker/nginx-log:/var/log/nginx
-      - ./:/var/www
+      - /home/huy/podcast-app/.env:/var/www/.env
       - /home/huy/podcast-app/storage:/var/www/storage
-      - ./docker/php-fpm/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - laravel_net
   green:
@@ -30,9 +29,8 @@ services:
       - "8081:80"
     volumes:
       - ./docker/nginx-log:/var/log/nginx
-      - ./:/var/www
+      - /home/huy/podcast-app/.env:/var/www/.env
       - /home/huy/podcast-app/storage:/var/www/storage
-      - ./docker/php-fpm/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
 networks:
   laravel_net:
