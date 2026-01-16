@@ -14,6 +14,7 @@ services:
       - ./docker/nginx-log:/var/log/nginx
       - /home/huy/podcast-app/.env:/var/www/.env
       - /home/huy/podcast-app/storage:/var/www/storage
+      - /home/huy/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - laravel_net
   green:
@@ -31,6 +32,7 @@ services:
       - ./docker/nginx-log:/var/log/nginx
       - /home/huy/podcast-app/.env:/var/www/.env
       - /home/huy/podcast-app/storage:/var/www/storage
+      - /home/huy/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
 networks:
   laravel_net:
