@@ -43,6 +43,7 @@ Thumbs.db
 # Optional backup
 .env.backup
 .env.production
+.env
 
 # Laravel Telescope (nếu dùng)
 storage/telescope
