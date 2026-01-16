@@ -22,6 +22,7 @@ class EpisodeResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'publisher_id' => $this->publisher_id,
+            'audio_url' => $this->audio_url,
             'cover_image' => $this->cover_image ? EpisodeUploadService::getCoverImageUrl($this->slug, $this->cover_image) : 'default',
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
