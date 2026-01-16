@@ -4,15 +4,24 @@ namespace App\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class EpisodeUploadService
 {
-    public static function uploadAudio(UploadedFile $file, string $slug): string
+    public static function store(UploadedFile $file,string $titlePodcast): string
     {
-        $folder = "episodes/audio/{$slug}";
-        $filename = $file->getClientOriginalName();
-        $path = $file->storeAs($folder,$filename,'public');
-        return $file->getClientOriginalName();
+        $folder = "episodes/{$titlePodcast}";
+        // getClientOriginalName co form the nay : haiphan.mp3
+        $originalNameFile = $file->getClientOriginalName();
+
+        $timestamp = now()->timestamp;
+        $uuid = Str::uuid();
+
+        $filename = "{$timestamp}_{$uuid}_{$originalNameFile}";
+
+        $file->storeAs($folder,$filename,'public');
+
+        return $filename;
     }
     public static function uploadCoverImage(UploadedFile $file, string $slug): string
     {

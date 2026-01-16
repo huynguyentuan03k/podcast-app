@@ -765,10 +765,6 @@
                                         "type": "string",
                                         "format": "binary"
                                     },
-                                    "duration": {
-                                        "type": "integer",
-                                        "example": 195
-                                    },
                                     "podcast_id": {
                                         "type": "integer",
                                         "example": 7

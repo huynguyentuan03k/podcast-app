@@ -93,7 +93,6 @@ class EpisodeController extends Controller
                             format: 'binary',
                             description: 'Cover image to upload (.jpg, .png, etc)'
                         ),
-                        new OA\Property(property: 'duration', type: 'integer', example: 195),
                         new OA\Property(property: 'podcast_id', type: 'integer', example: 7),
                     ]
                 )
