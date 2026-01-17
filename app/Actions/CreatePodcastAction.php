@@ -22,8 +22,7 @@ class CreatePodcastAction
             $podcast->categories()->sync($data['category_ids']);
             $podcast->authors()->sync($data['author_ids']);
 
-            return Podcast::create($data);
-
+            return $podcast;
         });
 
     }
