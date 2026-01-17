@@ -25,6 +25,11 @@ class GetPodcastListAction
             ->defaultSort('-created_at')
             ->allowedSorts(['id', 'title', 'created_at']);
 
-        return $query->paginate($perPage ?? 10);
+        if($perPage){
+            return $query->paginate($perPage );
+        }
+
+        return $query->get();
+
     }
 }
