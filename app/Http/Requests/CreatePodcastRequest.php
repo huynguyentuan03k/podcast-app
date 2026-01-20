@@ -15,6 +15,7 @@ class CreatePodcastRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255', 'unique:podcasts,title'],
+            'content' => ['nullable','string'],
             'slug' => ['required', 'string', 'max:255', 'unique:podcasts,slug'],
             'description' => ['nullable', 'string'],
             'publisher_id' => ['nullable', 'integer'],

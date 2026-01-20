@@ -75,7 +75,8 @@ class PodcastController extends Controller
                 schema: new OA\Schema(
                     required: ['title'],
                     properties: [
-                        new OA\Property(property: 'title', type: 'string', example: 'Kane and Abel'),
+                        new OA\Property(property: 'title', type: 'string', example: 'kane and abel'),
+                        new OA\Property(property: 'content', type: 'text', example: '<p style="text-align: center;"><span style="color: #ba372a;">frieren.io.vn</span></p>'),
                         new OA\Property(property: 'description', type: 'string', example: '"Kane and Abel" can refer to two distinct narratives: a biblical story and a novel by Jeffrey Archer.'),
                         new OA\Property(property: 'slug', type: 'string', example: 'kane-and-abel'),
                         new OA\Property(property: 'publisher_id', type: 'integer', example: 1),
@@ -162,6 +163,7 @@ class PodcastController extends Controller
                         new OA\Property(property: 'data', type: 'object', properties: [
                             new OA\Property(property: 'id', type: 'integer', example: 1),
                             new OA\Property(property: 'title', type: 'string', example: 'Kane and Abel'),
+                            new OA\Property(property: 'content', type: 'text', example: '<p style="text-align: center;"><span style="color: #ba372a;">frieren.io.vn</span></p>'),
                             new OA\Property(property: 'description', type: 'string', example: 'A captivating story'),
                             new OA\Property(property: 'slug', type: 'string', example: 'kane-and-abel'),
                             new OA\Property(property: 'cover_image', type: 'string', example: 'https://example.com/cover.jpg'),
@@ -178,7 +180,6 @@ class PodcastController extends Controller
     )]
     public function update(UpdatePodcastRequest $request, Podcast $podcast, UpdatePodcastAction $action)
     {
-
         $data = $request->validated();
         $updated = $action->handle($podcast, $data);
         return response()->json([

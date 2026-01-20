@@ -1035,7 +1035,11 @@
                                 "properties": {
                                     "title": {
                                         "type": "string",
-                                        "example": "Kane and Abel"
+                                        "example": "kane and abel"
+                                    },
+                                    "content": {
+                                        "type": "text",
+                                        "example": "<p style=\"text-align: center;\"><span style=\"color: #ba372a;\">frieren.io.vn</span></p>"
                                     },
                                     "description": {
                                         "type": "string",

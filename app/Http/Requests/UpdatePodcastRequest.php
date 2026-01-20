@@ -30,6 +30,7 @@ class UpdatePodcastRequest extends FormRequest
             'publisher_id' => ['required', 'integer', 'exists:publishers,id'],
             'description' => ['nullable', 'string'],
             'cover_image' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'content' => ['nullable','string'],
         ];
     }
 }
