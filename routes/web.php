@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -30,7 +31,15 @@ Route::get('/phpinfo', function () {
 Route::get('/test-sentry', function () {
     throw new Exception('Test sentry error');
 });
+Route::get('/test-log', function () {
+    Log::info('This is an info message');
+    Log::warning('User {id} failed to login.', ['id' => 1]);
+    Log::error('This is an error message');
 
+    Log::channel('sentry_logs')->error('This will only go to Sentry');
+
+    return 'Logged!';
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
