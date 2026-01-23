@@ -27,6 +27,11 @@ Route::get('/phpinfo', function () {
    phpinfo();
 });
 
+Route::get('/test-sentry', function () {
+    throw new Exception('Test sentry error');
+});
+
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
