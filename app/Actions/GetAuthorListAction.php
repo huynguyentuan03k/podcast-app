@@ -19,6 +19,11 @@ class GetAuthorListAction
             'description',
         ]);
 
-        return $query->paginate($perPage ?? 10);
+        if($perPage){
+            return $query->paginate($perPage );
+        }
+
+        return $query->get();
+
     }
 }
