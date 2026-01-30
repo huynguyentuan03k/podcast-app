@@ -21,7 +21,9 @@ Route::delete('podcasts/{podcast}', [PodcastController::class, 'destroy']);
 
 Route::get('episodes', [EpisodeController::class, 'index']);
 Route::post('episodes', [EpisodeController::class, 'store']);
-// Route::post('/episodes/presign-audio', [EpisodeUploadController::class, 'generatePresignedUrl']);
+Route::get('episodes/{episode}', [EpisodeController::class, 'show']);
+Route::put('episodes', [EpisodeController::class, 'update']);
+Route::delete('episodes/{episode}', [EpisodeController::class, 'destroy']);
 
 Route::get('publishers', [PublisherController::class, 'index']);
 Route::get('publishers/{publisher}', [PublisherController::class, 'show']);

@@ -7,7 +7,10 @@ use App\Actions\GetEpisodeListAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateEpisodeRequest;
 use App\Http\Resources\EpisodeResource;
+use App\Models\Episode;
+use App\Models\Podcast;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 
 class EpisodeController extends Controller
@@ -127,9 +130,11 @@ class EpisodeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Episode $episode)
     {
-        //
+        $episode->load(['podcast']);
+
+        return new EpisodeResource($episode);
     }
 
     /**
