@@ -18,8 +18,8 @@ public function rules(): array
     return [
         'title' => ['required', 'string', 'unique:episodes,title'],
         'description' => ['nullable', 'string'],
-        'audio_path' => ['nullable',
-         File::types(['audio/mp3','audio/wav','audio/mpeg'])->max(120 * 1024)
+        'audio_path' => ['nullable','string','url',
+        'file' => ['nullable','mimes:mp3,wav,mpeg','max:122880']
         ],
         'slug' => ['required', 'string'],
         'cover_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],

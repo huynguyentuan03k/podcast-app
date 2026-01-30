@@ -22,8 +22,13 @@ class GetPodcastListAction
                 'description',
                 AllowedFilter::custom('all', new PodcastListSearchAllFilter()),
             ])
-            ->defaultSort('-created_at')
-            ->allowedSorts(['id', 'title', 'created_at']);
+
+            // ->defaultSort('-created_at') , GET /posts?sort=-title,created_at
+            ->allowedSorts(['id','created_at','title','description'])
+
+            // mặc định cho id giảm dần
+            // ->defaultSort('-id')
+            ;
 
         if($perPage){
             return $query->paginate($perPage );

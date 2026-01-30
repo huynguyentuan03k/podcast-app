@@ -18,8 +18,8 @@ class CreateEpisodeAction
                 $podcast = Podcast::where('id',$data['podcast_id'])->first();
 
                 // ham isset kiem tra
-                // 1/ co khai bao (ton tai) tuc la cot podcast_id co gia tri
-                // 2/ co bi null ko (tuc la ton tai ma ko co gia tri)
+                // 1/ co khai bao (ton tai) tuc la kiểm tra xem có cột tên là podcast_id ko , check null
+                // 2/ co bi chekc empty ko (tuc la ton tai ma ko co gia tri)
                 if (isset($data['audio_path']) && $data['audio_path'] instanceof UploadedFile) {
                     $data['audio_path'] = EpisodeUploadService::store($data['audio_path'],$podcast->title);
                 }
