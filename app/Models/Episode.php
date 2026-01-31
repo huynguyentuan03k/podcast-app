@@ -16,7 +16,8 @@ class Episode extends Model
         'audio_path',
         'duration',
         'published_at',
-        'cover_image'
+        'cover_image',
+        'slug',
     ];
 
     public function podcast(): BelongsTo
@@ -31,7 +32,7 @@ class Episode extends Model
 
 
     // trong laraval phai dat la : accessor tuc la getAudioUrlAttribute
-    // lam nhu vay trong resource moi dung dc nhu nay : audio_url => $this->audio_url
+// lam nhu vay trong resource moi dung dc nhu nay : audio_url => $this->audio_url
     public function getAudioUrlAttribute(){
         return $this->audio_file ?? asset("storage/episodes/{$this->podcast->title}/{$this->audio_path}");
     }
