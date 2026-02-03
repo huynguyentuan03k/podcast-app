@@ -22,7 +22,7 @@ Route::delete('podcasts/{podcast}', [PodcastController::class, 'destroy']);
 Route::get('episodes', [EpisodeController::class, 'index']);
 Route::post('episodes', [EpisodeController::class, 'store']);
 Route::get('episodes/{episode}', [EpisodeController::class, 'show']);
-Route::put('episodes', [EpisodeController::class, 'update']);
+Route::put('episodes/{episode}', [EpisodeController::class, 'update']);
 Route::delete('episodes/{episode}', [EpisodeController::class, 'destroy']);
 
 Route::get('publishers', [PublisherController::class, 'index']);

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\CreateEpisodeAction;
 use App\Actions\GetEpisodeListAction;
+use App\Actions\UpdateEpisodeAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateEpisodeRequest;
+use App\Http\Requests\UpdateEpisodeRequest;
+use App\Http\Requests\UpdatePodcastRequest;
 use App\Http\Resources\EpisodeResource;
 use App\Models\Episode;
 use App\Models\Podcast;
@@ -140,9 +143,13 @@ class EpisodeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateEpisodeRequest $request, Episode $episode,UpdateEpisodeAction $action)
     {
-        //
+        $data = $request->validated();
+        $action->handle($data,$episode);
+        return response()->json([
+            'message' => 'updated episode successfully'
+        ],200);
     }
 
     /**

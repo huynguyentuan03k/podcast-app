@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Episode;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateEpisodeRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class UpdateEpisodeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,8 +23,16 @@ class UpdateEpisodeRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+         return [
+        'title' => ['required', 'string'],
+        'description' => ['nullable', 'string'],
+        'audio_path' => [
+        'nullable','string','url',
+        'file' => ['nullable','mimes:mp3,wav,mpeg','max:122880']
+        ],
+        'slug' => ['required', 'string'],
+        'cover_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+        'podcast_id' => ['required', 'integer', 'exists:podcasts,id'],
+    ];
     }
 }

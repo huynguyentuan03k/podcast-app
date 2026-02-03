@@ -1164,6 +1164,10 @@
                                                     "type": "string",
                                                     "example": "Kane and Abel"
                                                 },
+                                                "content": {
+                                                    "type": "text",
+                                                    "example": "<p style=\"text-align: center;\"><span style=\"color: #ba372a;\">frieren.io.vn</span></p>"
+                                                },
                                                 "description": {
                                                     "type": "string",
                                                     "example": "A captivating story"
