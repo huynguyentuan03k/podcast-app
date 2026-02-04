@@ -157,6 +157,6 @@ class EpisodeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
     }
 }

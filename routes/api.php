@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\EpisodeController;
 use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\PublisherController;
 use App\Http\Controllers\Api\TagController;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,3 +52,11 @@ Route::get('authors/{author}', [AuthorController::class, 'show']);
 Route::post('authors', [AuthorController::class, 'store']);
 Route::post('authors/{author}', [AuthorController::class, 'update']);
 Route::delete('authors/{author}', [AuthorController::class, 'destroy']);
+
+// test với guard web
+
+Route::post('/login', function(Request $request){
+        $data = $request->validate(['email' => ['required','email'],'password' => ['required']]);
+
+
+});
