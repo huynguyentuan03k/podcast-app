@@ -12,7 +12,8 @@ class UpdateEpisodeAction
     // thực hiện logic trong transaction và return ngoài transaction
 
     DB::transaction(function() use ($data, $episode){
-        $episode->update($data);
+    
+    $episode->update($data);
     });
 
     return $episode;

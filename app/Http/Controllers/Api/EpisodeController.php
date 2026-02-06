@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\CreateEpisodeAction;
+use App\Actions\DeleteEpisodeAction;
 use App\Actions\GetEpisodeListAction;
 use App\Actions\UpdateEpisodeAction;
 use App\Http\Controllers\Controller;
@@ -152,11 +153,45 @@ class EpisodeController extends Controller
         ],200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+ #[OA\Delete(
+        path: '/api/episodes/{episode}',
+        summary: 'Delete a episode',
+        description: 'Permanently delete a episode by ID.',
+        tags: ['Episode'],
+        parameters: [
+            new OA\Parameter(
+                name: 'episode',
+                in: 'path',
+                required: true,
+                description: 'ID of the episode to delete',
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Episode deleted successfully',
+                content: new OA\JsonContent(
+                    example: [
+                        'message' => 'episode deleted successfully.'
+                    ]
+                )
+            ),
+            new OA\Response(
+                response: 404,
+                description: 'Episode not found'
+            ),
+            new OA\Response(
+                response: 500,
+                description: 'Server error - Unable to delete episode'
+            )
+        ]
+    )]
+    public function destroy(Episode $episode, DeleteEpisodeAction $action)
     {
-
+        $result = $action->handle($episode);
+        return response()->json([
+            'message' => 'episode deleted successfully',
+        ],201);
     }
 }
