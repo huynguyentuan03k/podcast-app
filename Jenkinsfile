@@ -45,8 +45,8 @@ pipeline {
                 // lưu ý là file là kind secret-file khi tạo file secret
                 withCredentials([file(credentialsId: 'file-env-podcast', variable: 'ENV_FILE')]) {
                     sh '''
-                    echo $ENV_FILE
-                    pwd $ENV_FILE
+                    cat .env
+                    echo " env file path $ENV_FILE "
                     '''
                 }
             }
