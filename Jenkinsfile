@@ -3,9 +3,23 @@ pipeline {
 
     environment {
         MAP_PATH = "/etc/nginx/conf.d/active_backend.map"
+
     }
 
     stages {
+
+        // LƯU Ý ĐÂY LÀ CÚ PHÁP CỦA NGÔN NGỮ GROOVY
+
+        stage('check user in jenkins'){
+            steps{
+                sh '''
+                whoami
+                id
+                pwd
+                '''
+            }
+        }
+
         stage('Determine Target with Python') {
             steps {
                 script {

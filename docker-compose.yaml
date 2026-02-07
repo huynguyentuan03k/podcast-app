@@ -16,6 +16,9 @@ services:
       - /home/huy/podcast-app/storage:/var/www/storage
     networks:
       - laravel_net
+    env_file:
+      - .env
+
   green:
     build:
       context: .
@@ -31,6 +34,9 @@ services:
       - ./docker/nginx-log:/var/log/nginx
       - /home/huy/podcast-app/.env:/var/www/.env
       - /home/huy/podcast-app/storage:/var/www/storage
+    env_file:
+      - .env
+
 
 networks:
   laravel_net:
