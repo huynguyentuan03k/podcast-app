@@ -43,7 +43,7 @@ pipeline {
         stage('Load file .env of jenkins') {
             steps {
                 // lưu ý là file là kind secret-file khi tạo file secret
-                withCredentials([file(credentialsId: 'file-env-podcast', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'file-env-product-api-podcast', variable: 'ENV_FILE')]) {
                     sh '''
                     echo "ENV file path: $ENV_FILE"
                     cp "$ENV_FILE" .env
