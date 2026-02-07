@@ -27,7 +27,7 @@ class GetPodcastListAction
             ->allowedSorts(['id','created_at','title','description'])
 
             // mặc định cho id giảm dần
-            // ->defaultSort('-id')
+            ->defaultSort('-id')
             ;
 
         if($perPage){
