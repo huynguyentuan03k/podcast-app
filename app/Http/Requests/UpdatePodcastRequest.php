@@ -31,6 +31,12 @@ class UpdatePodcastRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'cover_image' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'content' => ['nullable','string'],
+            // mảng author_ids có thể nullable
+            'author_ids' => ['nullable','array'],
+            'category_ids' => ['nullable','array'],
+            // các phần tử trong author_ids đều phải ['integer','exists:authors,id']
+            'author_ids*.' => ['integer','exists:authors,id'],
+            'category_ids*.' => ['integer','exists:categories,id'],
         ];
     }
 }
