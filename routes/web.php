@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -28,17 +28,15 @@ Route::get('/phpinfo', function () {
    phpinfo();
 });
 
+
+Route::get('/test/{age}', function () {
+    return 'oke';
+})->middleware('check.age');
+
+
+
 Route::get('/test-sentry', function () {
     throw new Exception('Test sentry error');
-});
-Route::get('/test-log', function () {
-    Log::info('This is an info message');
-    Log::warning('User {id} failed to login.', ['id' => 1]);
-    Log::error('This is an error message');
-
-    Log::channel('sentry_logs')->error('This will only go to Sentry');
-
-    return 'Logged!';
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

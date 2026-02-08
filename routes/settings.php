@@ -19,3 +19,4 @@ Route::middleware('auth')->group(function () {
         return Inertia::render('settings/appearance');
     })->name('appearance');
 });
+

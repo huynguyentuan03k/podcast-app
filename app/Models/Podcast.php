@@ -16,7 +16,8 @@ class Podcast extends Model
         'description',
         'publisher_id',
         'cover_image',
-        'content'
+        'content',
+        
     ];
 
     public function episodes(): HasMany

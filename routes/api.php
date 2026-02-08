@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\EpisodeController;
 use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\PublisherController;
 use App\Http\Controllers\Api\TagController;
-use Illuminate\Container\Attributes\Auth;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,10 +54,15 @@ Route::post('authors', [AuthorController::class, 'store']);
 Route::post('authors/{author}', [AuthorController::class, 'update']);
 Route::delete('authors/{author}', [AuthorController::class, 'destroy']);
 
-// test với guard web
+// users
+Route::get('users', [UserController::class, 'index']);
+Route::get('users/{user}', [UserController::class, 'show']);
+Route::post('users', [UserController::class, 'store']);
+Route::post('users/{user}', [UserController::class, 'update']);
+Route::delete('users/{user}', [UserController::class, 'destroy']);
 
-Route::post('/login', function(Request $request){
-        $data = $request->validate(['email' => ['required','email'],'password' => ['required']]);
+// sanctum
 
+Route::post('/login',[AuthController::class,'login']);
 
-});
+Route::post('/register',[AuthController::class,'register']);

@@ -30,6 +30,7 @@ class UpdateEpisodeRequest extends FormRequest
         'nullable','string','url',
         'file' => ['nullable','mimes:mp3,wav,mpeg','max:122880']
         ],
+        'duratuion' => ['nullable','integer'],
         'slug' => ['required', 'string'],
         'cover_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         'podcast_id' => ['required', 'integer', 'exists:podcasts,id'],
