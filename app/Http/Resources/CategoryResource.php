@@ -11,7 +11,8 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            //https://spatie.be/docs/laravel-translatable/v6/basic-usage/getting-and-settings-translations
+            'name' => $this->getTranslations('name'),
             'description' => $this->description,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
