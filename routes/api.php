@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\CategoryController;
@@ -62,7 +63,10 @@ Route::post('users/{user}', [UserController::class, 'update']);
 Route::delete('users/{user}', [UserController::class, 'destroy']);
 
 // sanctum
-
 Route::post('/login',[AuthController::class,'login']);
-
 Route::post('/register',[AuthController::class,'register']);
+
+// activity
+
+Route::get('/activities',[ActivityController::class,'index']);
+Route::get('/activities/{activity}',[ActivityController::class,'show']);

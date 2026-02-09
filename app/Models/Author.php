@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Author extends Model
 {
+    use LogsActivity;
     protected $appends = ['avatar_url'];
     protected $fillable = [
         'name',
@@ -30,5 +33,11 @@ class Author extends Model
     public function podcasts(): BelongsToMany
     {
         return $this->belongsToMany(Podcast::class);
+    }
+
+    // phải implement class abstract của ActityLog
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll()->useAttributeRawValues(['name']);
     }
 }

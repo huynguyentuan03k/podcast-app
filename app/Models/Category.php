@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Translatable\HasTranslations;
 
 class Category extends Model
 {
-    use HasTranslations;
+    use HasTranslations, LogsActivity;
     protected $fillable = [
         'name',
         'description'
@@ -19,5 +21,13 @@ class Category extends Model
     public function podcasts(): BelongsToMany
     {
         return $this->belongsToMany(Podcast::class);
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logAll()
+        // parameter là tên cột translation
+        ->useAttributeRawValues(['name']);
     }
 }
