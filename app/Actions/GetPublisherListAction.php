@@ -18,8 +18,9 @@ class GetPublisherListAction
                 'title',
                 'slug',
                 'description',
-
-            ]);
+            ])
+            ->defaultSort('-id')
+            ;
         if($perPage){
             return $query->paginate($perPage);
         }
