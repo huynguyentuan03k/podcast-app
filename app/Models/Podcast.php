@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Podcast extends Model
 {
+    use LogsActivity;
     protected $appends = ['cover_url'];
     protected $fillable = [
         'title',
@@ -17,7 +20,7 @@ class Podcast extends Model
         'publisher_id',
         'cover_image',
         'content',
-        
+
     ];
 
     public function episodes(): HasMany
@@ -43,6 +46,11 @@ class Podcast extends Model
 
     public function getCoverUrlAttribute(){
         return $this->cover_image ? asset('/storage/podcasts/'.$this->cover_image) : null;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logAll();
     }
 
 }

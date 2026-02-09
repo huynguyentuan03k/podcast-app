@@ -27,7 +27,7 @@ class Category extends Model
     {
         return LogOptions::defaults()
         ->logAll()
-        // parameter là tên cột translation
-        ->useAttributeRawValues(['name']);
+        ->useAttributeRawValues(['name'])
+        ;
     }
 }

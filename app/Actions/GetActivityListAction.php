@@ -16,7 +16,9 @@ class GetActivityListAction
             ->allowedFilters([
                 AllowedFilter::exact('id'),
                 'log_name'
-            ]);
+            ])
+            ->defaultSort('-id')
+            ;
 
         if($perPage){
             return $query->paginate($perPage );

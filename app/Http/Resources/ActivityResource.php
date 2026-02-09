@@ -13,6 +13,7 @@ class ActivityResource extends JsonResource
             'id' => $this->id,
             'event' => $this->event,
             'log_name' => $this->log_name,
+            'subject_type' => $this->subject_type,
             'properties' => $this->properties,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
