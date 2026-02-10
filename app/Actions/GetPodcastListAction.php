@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Filters\PodcastListSearchAllFilter;
-use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class GetPodcastListAction
 {
-    public function handle(?int $perPage): CursorPaginator|Collection
+    public function handle(?int $perPage): LengthAwarePaginator|Collection
     {
         $query = QueryBuilder::for(Podcast::query()->with(['publisher','categories','authors','episodes']))
             ->allowedFilters([
@@ -33,7 +32,7 @@ class GetPodcastListAction
             ;
 
         if($perPage){
-            return $query->cursorPaginate($perPage );
+            return $query->paginate($perPage );
         }
 
         return $query->get();
