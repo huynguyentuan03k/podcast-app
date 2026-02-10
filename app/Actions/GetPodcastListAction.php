@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Filters\PodcastListSearchAllFilter;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class GetPodcastListAction
 {
-    public function handle(?int $perPage): LengthAwarePaginator|Collection
+    public function handle(?int $perPage): CursorPaginator|Collection
     {
         $query = QueryBuilder::for(Podcast::query()->with(['publisher','categories','authors','episodes']))
             ->allowedFilters([
@@ -27,11 +28,12 @@ class GetPodcastListAction
             ->allowedSorts(['id','created_at','title','description'])
 
             // mặc định cho id giảm dần
+            // order by id desc
             ->defaultSort('-id')
             ;
 
         if($perPage){
-            return $query->paginate($perPage );
+            return $query->cursorPaginate($perPage );
         }
 
         return $query->get();
