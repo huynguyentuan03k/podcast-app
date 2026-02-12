@@ -25,7 +25,7 @@ class GetPodcastListAction
             ])
 
             // ->defaultSort('-created_at') , GET /posts?sort=-title,created_at
-            ->allowedSorts(['id','created_at','title','description'])
+            ->allowedSorts(['id','episodes_count'])
 
             // mặc định cho id giảm dần
             // order by id desc
