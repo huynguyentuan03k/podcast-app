@@ -15,6 +15,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/php.ini
+
 RUN rm -f /etc/nginx/sites-enabled/default
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
