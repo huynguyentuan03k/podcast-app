@@ -6,6 +6,8 @@
 
 <img src="./does/images/portal-home.png" width="1000"/>
 
+👉 https://frieren.io.vn/portal/aboutme
+
 <br/>
 
 ![Laravel](https://img.shields.io/badge/Laravel-11-red?style=for-the-badge&logo=laravel)
@@ -113,6 +115,8 @@ The backend API includes Swagger/OpenAPI documentation.
 <img src="./does/images/swagger-backend.png" width="1000"/>
 </div>
 
+👉 https://huynguyen-nginx.io.vn/api/documentation
+
 Features:
 
 - REST API
@@ -209,6 +213,8 @@ This project uses a self-hosted CI/CD pipeline powered by Jenkins.
 <div align="center">
 <img src="./does/images/jenkins.png" width="1000"/>
 </div>
+
+👉 https://jenkins.huynguyen-nginx.io.vn/
 
 ## 🚀 Features
 
