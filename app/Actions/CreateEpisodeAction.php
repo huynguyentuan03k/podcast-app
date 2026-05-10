@@ -8,7 +8,6 @@ use App\Services\EpisodeUploadService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class CreateEpisodeAction
 {

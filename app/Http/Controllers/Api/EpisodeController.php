@@ -12,9 +12,6 @@ use App\Http\Requests\UpdateEpisodeRequest;
 use App\Http\Requests\UpdatePodcastRequest;
 use App\Http\Resources\EpisodeResource;
 use App\Models\Episode;
-use App\Models\Podcast;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use OpenApi\Attributes as OA;
 
 class EpisodeController extends Controller
