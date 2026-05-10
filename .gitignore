@@ -50,3 +50,6 @@ storage/telescope
 
 # Redis dump file
 dump.rdb
+
+# dedug
+storage/debugbar/*

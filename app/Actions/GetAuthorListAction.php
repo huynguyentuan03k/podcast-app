@@ -17,7 +17,8 @@ class GetAuthorListAction
             AllowedFilter::exact('id'),
             'title',
             'description',
-        ]);
+        ])
+        ->defaultSort('-id');
 
         if($perPage){
             return $query->paginate($perPage );
