@@ -151,24 +151,6 @@ Features:
 | Swagger    | API Documentation |
 | Docker     | Containerization  |
 
----
-
-# ☁️ Infrastructure
-
-The entire backend system is self-hosted at home.
-
-```text
-Client
-   ↓
-Cloudflare Proxy
-   ↓
-Home Server
-   ↓
-Laravel API
-   ↓
-PostgreSQL
-```
-
 # ☁️ Infrastructure & Home Networking
 
 Thay vì sử dụng các dịch vụ VPS đám mây, toàn bộ hệ thống Backend và Database của dự án được vận hành trên **hệ thống server vật lý (Bare-metal)** đặt tại nhà.
@@ -176,7 +158,7 @@ Thay vì sử dụng các dịch vụ VPS đám mây, toàn bộ hệ thống Ba
 ## 🏗️ Hardware Stack
 
 - **Workstation:** Dell OptiPlex Micro Series (Compact & Energy Efficient).
-- **OS:** Ubuntu 24.04 LTS (Noble Numbat).
+- **OS:** Ubuntu 26.04 LTS (Noble Numbat).
 - **Networking:** Kết nối qua Switch Gigabit và dây LAN Cat6 để đảm bảo độ trễ thấp nhất.
 
 ## 🌐 Hybrid Deployment Architecture
@@ -204,7 +186,6 @@ Thay vì sử dụng các dịch vụ VPS đám mây, toàn bộ hệ thống Ba
 <div align="center">
 <img src="./does/images/home-server.png" width="1000"/>
 </div>
----
 
 # 🔄 CI/CD Pipeline
 
@@ -216,35 +197,36 @@ This project uses a self-hosted CI/CD pipeline powered by Jenkins.
 
 👉 https://jenkins.huynguyen-nginx.io.vn/
 
-## 🚀 Features
-
-✅ Auto deployment
-✅ Build pipeline
-✅ GitHub integration
-✅ GitLab integration
-✅ Deployment automation
-✅ Commit tracking
-
----
-
 # 📊 Monitoring & Tools
 
-<div align="center">
+Dự án tích hợp các công cụ giám sát để đảm bảo hệ thống vận hành ổn định và phát hiện lỗi kịp thời.
 
-| Tool       | Usage             |
-| ---------- | ----------------- |
-| Jenkins    | CI/CD             |
-| Swagger    | API Docs          |
-| Grafana    | Monitoring        |
-| GitHub     | Source Control    |
-| GitLab     | Mirror Repository |
-| Dokku      | Deployment        |
-| Cloudflare | Proxy & Security  |
+<div align="center">
+<img src="./does/images/sentry-dashboard.png" width="1000"/>
+</div>
+
+| Tool       | Usage            | Layer           |
+| ---------- | ---------------- | --------------- |
+| **Sentry** | Error Tracking   | Application     |
+| Jenkins    | CI/CD            | Self-hosted     |
+| Swagger    | API Docs         | Backend         |
+| Grafana    | Monitoring       | Infrastructure  |
+| GitHub     | Source Control   | Cloud           |
+| Nginx      | Reverse Proxy    | Physical Server |
+| Cloudflare | Proxy & Security | DNS Layer       |
+
+### 🛡️ Error Tracking with Sentry
+
+tôi sử dụng **Sentry** để theo dõi lỗi trong thời gian thực trên cả Frontend và Backend.
+
+- **Real-time Alerting:** Thông báo ngay lập tức khi có lỗi xảy ra.
+- **Exception Tracking:** Theo dõi chi tiết các lỗi Laravel (Eloquent, Query, v.v.).
+- **Performance:** Đo lường thời gian phản hồi của API.
 
 <div> I have now disabled Grafana and InfluxDB to prevent the hardware from overheating and to keep the server running smoothly.  </div>
 </div>
 
----
+👉 [![Sentry Dashboard](https://img.shields.io/badge/Sentry-View_Project-362D59?style=for-the-badge&logo=sentry)](https://no-vwr.sentry.io/projects/api-podcast/)
 
 # 🎯 Project Goals
 
