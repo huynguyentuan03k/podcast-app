@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('episodes', function (Blueprint $table) {
-            $table->text('audio_path')->change();
+            $table->text('audio_path')->nullable()->change();
         });
     }
 
