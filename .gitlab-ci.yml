@@ -4,30 +4,18 @@ stages:
 deploy_to_dokku:
   stage: deploy
   tags:
-    - hp70602-runner # Giữ nguyên runner trên máy của bạn
+    - hp70602-runner
   before_script:
-    # 1. Khởi động trình quản lý mã khóa SSH tạm thời trong phiên chạy
     - eval $(ssh-agent -s)
-
-    # 2. Nạp Private Key từ biến GitLab Variables vào hệ thống để có quyền SSH sang Dokku
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-
-    # 3. Tạo thư mục .ssh và quét IP máy chủ Dokku để nhận diện thiết bị (tránh hỏi yes/no)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - ssh-keyscan -H $DELL_SERVER_IP >> ~/.ssh/known_hosts
   script:
-    echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
-
-    # 4. Kiểm tra và dọn dẹp remote cũ nếu có để tránh xung đột cấu hình Git
+    - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
     - git remote remove dokku || true
-
-    # 5. Khai báo địa chỉ đích truyền code (User luôn là dokku, app là podcast-api)
     - git remote add dokku dokku@$DELL_SERVER_IP:podcast-api
-
-    # 6. Đẩy ép buộc code lên nhánh master của Dokku để kích hoạt cơ chế tự động hóa
     - git push dokku HEAD:refs/heads/master --force
-
-    echo "--- DEPLOY THÀNH CÔNG! DOKKU ĐANG XỬ LÝ KHỞI CHẠY NGẦM ---"
+    - echo "--- DEPLOY THÀNH CÔNG! DOKKU ĐANG XỬ LÝ KHỞI CHẠY NGẦM ---"
   only:
-    - main # Chỉ chạy khi push hoặc merge vào nhánh main
+    - main
