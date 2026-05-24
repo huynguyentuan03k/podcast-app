@@ -1,96 +1,33 @@
 stages:
-  - info
-  - prepare
-  - build
   - deploy
-  - healthcheck
-  - switch
 
-variables:
-  MAP_PATH: "/etc/nginx/conf.d/active_backend.map"
-  DOCKER_COMPOSE_FILE: "docker-compose.yml"
-
-# Template để tái sử dụng script
-.docker_login: &docker_login
-  before_script:
-    - docker info
-
-# 1. Kiểm tra môi trường Runner
-check_environment:
-  stage: info
-  tags:
-    - hp70602-runner
-  script:
-    - whoami
-    - id
-    - pwd
-    - docker compose version
-
-# 2. Xác định Target (Blue hay Green)
-determine_target:
-  stage: prepare
-  tags:
-    - hp70602-runner
-  script:
-    - python3 deploy-zero-downtime.py > deploy.env
-    - cat deploy.env
-  artifacts:
-    reports:
-      dotenv: deploy.env # Chuyển biến TARGET và OLD sang các stage sau
-
-# 3. Build Docker Image
-build_app:
-  stage: build
-  tags:
-    - hp70602-runner
-  needs: ["determine_target"]
-  script:
-    # Lấy file .env từ GitLab CI/CD Variables (thay vì file secret của Jenkins)
-    - echo "$PROD_ENV_FILE" > .env
-    - docker compose build --no-cache $TARGET
-
-# 4. Deploy bản mới (Blue/Green)
-deploy_app:
+deploy_to_dokku:
   stage: deploy
   tags:
-    - hp70602-runner
-  needs: ["determine_target", "build_app"]
-  script:
-    - docker compose up -d $TARGET
+    - hp70602-runner # Giữ nguyên runner trên máy của bạn
+  before_script:
+    # 1. Khởi động trình quản lý mã khóa SSH tạm thời trong phiên chạy
+    - eval $(ssh-agent -s)
 
-# 5. Kiểm tra sức khỏe (Health Check)
-verify_deployment:
-  stage: healthcheck
-  tags:
-    - hp70602-runner
-  needs: ["determine_target", "deploy_app"]
-  script:
-    - echo "--- Đang kiểm tra sức khỏe bản mới laravel-$TARGET ---"
-    - |
-      count=0
-      while [ $count -lt 10 ]; do
-        if docker exec laravel-$TARGET curl -s -f http://localhost/ > /dev/null; then
-          echo "--- [OK] Bản mới đã sẵn sàng! ---"
-          exit 0
-        fi
-        echo "App chưa sẵn sàng, đang thử lại lần $((count+1))..."
-        sleep 5
-        count=$((count+1))
-      done
-      exit 1
-  allow_failure: false
+    # 2. Nạp Private Key từ biến GitLab Variables vào hệ thống để có quyền SSH sang Dokku
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
 
-# 6. Chuyển Traffic & Tắt bản cũ
-switch_traffic:
-  stage: switch
-  tags:
-    - hp70602-runner
-  needs: ["determine_target", "verify_deployment"]
+    # 3. Tạo thư mục .ssh và quét IP máy chủ Dokku để nhận diện thiết bị (tránh hỏi yes/no)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H $DELL_SERVER_IP >> ~/.ssh/known_hosts
   script:
-    - echo "--- Chuyển Traffic sang $TARGET ---"
-    - echo "default laravel-$TARGET;" > $MAP_PATH
-    - docker exec nginx nginx -t
-    - docker exec nginx nginx -s reload
-    - echo "--- Tắt bản cũ laravel-$OLD ---"
-    - docker stop laravel-$OLD || true
-  when: manual # Chế độ Enterprise thường cần bấm nút xác nhận cuối cùng để chuyển traffic
+    echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
+
+    # 4. Kiểm tra và dọn dẹp remote cũ nếu có để tránh xung đột cấu hình Git
+    - git remote remove dokku || true
+
+    # 5. Khai báo địa chỉ đích truyền code (User luôn là dokku, app là podcast-api)
+    - git remote add dokku dokku@$DELL_SERVER_IP:podcast-api
+
+    # 6. Đẩy ép buộc code lên nhánh master của Dokku để kích hoạt cơ chế tự động hóa
+    - git push dokku HEAD:refs/heads/master --force
+
+    echo "--- DEPLOY THÀNH CÔNG! DOKKU ĐANG XỬ LÝ KHỞI CHẠY NGẦM ---"
+  only:
+    - main # Chỉ chạy khi push hoặc merge vào nhánh main
