@@ -6,23 +6,22 @@ deploy_to_dokku:
   tags:
     - hp70602-runner
   before_script:
-    # 1. Cài đặt các gói SSH cần thiết
+    # 1. Cài đặt gói SSH
     - apk update && apk add git openssh-client
-    
-    # 2. Tạo thư mục .ssh bảo mật
+
+    # 2. Tạo thư mục cấu hình bảo mật
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    
-    # 3. Ghi trực tiếp Private Key vào file id_rsa thay vì dùng lệnh echo qua pipe
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    # Phân quyền nghiêm ngặt (chỉ chủ sở hữu được đọc) - Bắt buộc đối với SSH Key
+
+    # 3. Ghi Key vào file (Sử dụng dấu ngoặc kép và -e để nhận diện xuống dòng)
+    - echo -e "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    
-    # 4. Khởi động ssh-agent và nạp file key vào
+
+    # 4. Kích hoạt Agent và add key vào hệ thống
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
-    
-    # 5. Quét nhận diện máy chủ Dokku để bỏ qua bước hỏi xác nhận yes/no
+
+    # 5. Quét nhận diện máy chủ Dokku
     - ssh-keyscan -H $DELL_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
