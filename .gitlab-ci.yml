@@ -1,3 +1,6 @@
+variables:
+  GIT_DEPTH: "0" # ĐÂY LÀ DÒNG THÊM VÀO ĐỂ SỬA LỖI SHALLOW UPDATE
+
 stages:
   - deploy
 
@@ -6,28 +9,17 @@ deploy_to_dokku:
   tags:
     - hp70602-runner
   before_script:
-    # 1. Cài đặt các gói SSH cần thiết
     - apk update && apk add git openssh-client
-
-    # 2. Tạo thư mục cấu hình ssh bảo mật
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-
-    # 3. Ghi chuỗi text thô vào file id_rsa
     - printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-
-    # 4. Khởi động ssh-agent và nạp key (Đã chạy thành công)
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
-
-    # 5. Điền trực tiếp IP máy Dell của bạn để quét nhận diện thiết bị
-    # Bạn hãy thay "192.168.1.X" bằng IP thực tế của máy hp70601 nhé
     - ssh-keyscan -H 192.168.1.21 >> ~/.ssh/known_hosts
   script:
     - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
     - git remote remove dokku || true
-    # Thay "192.168.1.X" bằng IP thực tế của máy hp70601 ở dòng dưới luôn
     - git remote add dokku dokku@192.168.1.21:podcast-api
     - git push dokku HEAD:refs/heads/master --force
     - echo "--- DEPLOY THÀNH CÔNG! DOKKU ĐANG XỬ LÝ KHỞI CHẠY NGẦM ---"
