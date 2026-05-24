@@ -24,18 +24,21 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /var/www
 
-# FIX CHÍ MẠNG: Tạo sẵn một thư mục rỗng trong container để khớp với khai báo path trong composer.json
+# FIX CHÍ MẠNG 1: Tạo sẵn một thư mục rỗng trong container để khớp với khai báo path trong composer.json
 RUN mkdir -p /var/core
 
 COPY composer.json composer.lock ./
+
+# FIX CHÍ MẠNG 2: Copy file .env.example thành .env TRƯỚC khi chạy composer để tránh lỗi khởi tạo class Laravel
+COPY .env.example .env
 
 # Khởi chạy cài đặt Composer mà bỏ qua phần scripts kiểm tra package cục bộ chưa có
 RUN composer install --no-dev --no-scripts --no-autoloader
 
 COPY . .
 
-# Thay vì dump-autoload ép buộc, ta tạo symlink hoặc dump không tối ưu hóa nếu thiếu CORE bám cứng
-RUN composer dump-autoload --optimize
+# SỬA LẠI ĐÂY: Thêm cờ --no-scripts để chặn tiến trình tự động kích hoạt artisan lệnh package:discover lúc build
+RUN composer dump-autoload --optimize --no-scripts
 
 # Build frontend
 RUN npm ci
