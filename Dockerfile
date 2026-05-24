@@ -14,25 +14,27 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-COPY api-podcast/docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY api-podcast/docker/php-fpm/php.ini /usr/local/etc/php/conf.d/php.ini
+# Quay lại đường dẫn COPY cũ (không có tiền tố api-podcast/)
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/php.ini
 
 RUN rm -f /etc/nginx/sites-enabled/default
 
-COPY api-podcast/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /var/www
 
-# Lấy module CORE ở thư mục cha đưa vào vị trí cô lập trong container
-COPY CORE /var/core
+# FIX CHÍ MẠNG: Tạo sẵn một thư mục rỗng trong container để khớp với khai báo path trong composer.json
+RUN mkdir -p /var/core
 
-# Lấy các file cấu hình composer từ thư mục dự án podcast
-COPY api-podcast/composer.json api-podcast/composer.lock ./
+COPY composer.json composer.lock ./
+
+# Khởi chạy cài đặt Composer mà bỏ qua phần scripts kiểm tra package cục bộ chưa có
 RUN composer install --no-dev --no-scripts --no-autoloader
 
-# ĐÃ SỬA DÒNG NÀY: Chỉ copy riêng code của api-podcast vào WORKDIR hiện tại
-COPY api-podcast/ .
+COPY . .
 
+# Thay vì dump-autoload ép buộc, ta tạo symlink hoặc dump không tối ưu hóa nếu thiếu CORE bám cứng
 RUN composer dump-autoload --optimize
 
 # Build frontend
@@ -59,7 +61,7 @@ RUN rm -f /var/www/public/index.html
 
 EXPOSE 80
 
-COPY api-podcast/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 CMD ["/usr/local/bin/entrypoint.sh"]

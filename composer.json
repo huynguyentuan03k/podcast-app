@@ -78,7 +78,10 @@
     "repositories": [
         {
             "type": "path",
-            "url": "/var/core"
+            "url": "/var/core",
+            "options": {
+                "symlink": false
+            }
         }
     ],
     "extra": {

@@ -3,8 +3,8 @@ version: '3.9'
 services:
   blue:
     build:
-      context: ..
-      dockerfile: api-podcast/Dockerfile
+      context: .
+      dockerfile: Dockerfile
 
     container_name: laravel-blue
     restart: unless-stopped
@@ -21,8 +21,8 @@ services:
 
   green:
     build:
-      context: ..
-      dockerfile: api-podcast/Dockerfile
+      context: .
+      dockerfile: Dockerfile
 
     container_name: laravel-green
     restart: unless-stopped
