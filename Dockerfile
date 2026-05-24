@@ -37,7 +37,7 @@ RUN composer install --no-dev --no-scripts --no-autoloader
 
 COPY . .
 
-# SỬA LẠI ĐÂY: Thêm cờ --no-scripts để chặn tiến trình tự động kích hoạt artisan lệnh package:discover lúc build
+# Thêm cờ --no-scripts để chặn tiến trình tự động kích hoạt artisan lệnh package:discover lúc build
 RUN composer dump-autoload --optimize --no-scripts
 
 # Build frontend
