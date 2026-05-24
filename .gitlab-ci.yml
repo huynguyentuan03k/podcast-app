@@ -9,18 +9,19 @@ deploy_to_dokku:
     # 1. Cài đặt các gói SSH cần thiết
     - apk update && apk add git openssh-client
 
-    # 2. Khởi động trình quản lý mã khóa ssh-agent
-    - eval $(ssh-agent -s)
-
-    # 3. Phân quyền trực tiếp cho file Key do GitLab cấp (Bắt buộc phải là 600)
-    - chmod 600 "$SSH_PRIVATE_KEY"
-
-    # 4. Nạp trực tiếp file key vào Agent (Không dùng lệnh echo nữa)
-    - ssh-add "$SSH_PRIVATE_KEY"
-
-    # 5. Tạo thư mục cấu hình ssh và quét IP nhận diện máy chủ Dokku
+    # 2. Tạo thư mục cấu hình ssh bảo mật
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+
+    # 3. Sao chép file biến của GitLab thành file id_rsa thực tế để xử lý an toàn
+    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+
+    # 4. Khởi động ssh-agent và nạp key
+    - eval $(ssh-agent -s)
+    - ssh-add ~/.ssh/id_rsa
+
+    # 5. Nhận diện máy chủ Dokku
     - ssh-keyscan -H $DELL_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
