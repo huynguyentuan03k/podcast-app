@@ -13,8 +13,8 @@ deploy_to_dokku:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
 
-    # 3. Sao chép file biến của GitLab thành file id_rsa thực tế để xử lý an toàn
-    - cp "$SSH_PRIVATE_KEY" ~/.ssh/id_rsa
+    # 3. Đọc file từ GitLab, lọc sạch mọi ký tự xuống dòng lỗi (\r) và ghi chuẩn vào id_rsa
+    - cat "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
 
     # 4. Khởi động ssh-agent và nạp key
