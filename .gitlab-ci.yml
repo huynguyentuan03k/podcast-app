@@ -13,16 +13,25 @@ deploy_to_dokku:
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
 
-    # 3. Đọc file từ GitLab, lọc sạch mọi ký tự xuống dòng lỗi (\r) và ghi chuẩn vào id_rsa
-    - cat "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    # 3. Đọc biến và ghi vào file id_rsa
+    - echo "$SSH_PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
 
-    # 4. Khởi động ssh-agent và nạp key
+    # 4. 🛠️ LỆNH DEBUG 1: In nội dung file key lên log để kiểm tra cấu trúc
+    - echo "--- ĐANG KIỂM TRA ĐỊNH DẠNG FILE ID_RSA NGAY TRÊN RUNNER ---"
+    - cat ~/.ssh/id_rsa
+    - echo "--- KẾT THÚC KIỂM TRA FILE ID_RSA ---"
+
+    # 5. Khởi động ssh-agent và nạp key
     - eval $(ssh-agent -s)
     - ssh-add ~/.ssh/id_rsa
 
-    # 5. Nhận diện máy chủ Dokku
+    # 6. Nhận diện máy chủ Dokku (hp70601)
     - ssh-keyscan -H $DELL_SERVER_IP >> ~/.ssh/known_hosts
+
+    # 7. 🛠️ LỆNH DEBUG 2: Thử kết nối SSH kiểm tra bằng quyền kết nối chi tiết (Verbose)
+    - echo "--- KIỂM TRA KẾT NỐI SSH SANG MÁY DELL ---"
+    - ssh -v -T dokku@$DELL_SERVER_IP || true
   script:
     - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
     - git remote remove dokku || true
