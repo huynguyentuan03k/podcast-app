@@ -37,6 +37,8 @@ RUN composer install --no-dev --no-scripts --no-autoloader
 
 COPY . .
 
+RUN rm -f bootstrap/cache/*.php
+
 # Thêm cờ --no-scripts để chặn tiến trình tự động kích hoạt artisan lệnh package:discover lúc build
 RUN composer dump-autoload --optimize --no-scripts
 
