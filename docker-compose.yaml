@@ -12,8 +12,8 @@ services:
       - "8082:80"
     volumes:
       - ./docker/nginx-log:/var/log/nginx
-      - /home/huy/podcast-app/.env:/var/www/.env
-      - /home/huy/podcast-app/storage:/var/www/storage
+      - /home/huy/podcast-api/.env:/var/www/.env
+      - /home/huy/podcast-api/storage:/var/www/storage
     networks:
       - laravel_net
     env_file:
@@ -32,8 +32,8 @@ services:
       - "8081:80"
     volumes:
       - ./docker/nginx-log:/var/log/nginx
-      - /home/huy/podcast-app/.env:/var/www/.env
-      - /home/huy/podcast-app/storage:/var/www/storage
+      - /home/huy/podcast-api/.env:/var/www/.env
+      - /home/huy/podcast-api/storage:/var/www/storage
     env_file:
       - .env
 
