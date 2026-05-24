@@ -122,11 +122,14 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+    /*
+    |--------------------------------------------------------------------------
+    | Autoloaded Service Providers
+    |--------------------------------------------------------------------------
+    | Để trống mảng này ở Laravel 12 để hệ thống tự kích hoạt chế độ Auto-discovery.
+    |--------------------------------------------------------------------------
+    */
     'providers' => [
-        /*
-        * Laravel Framework Service Providers...
-        */
-        Illuminate\Auth\AuthServiceProvider::class,
-        // ... các provider khác
+        // Để trống hoàn toàn ở đây
     ],
 ];
