@@ -11,7 +11,7 @@ php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 
-php artisan l5-swagger:generate
+php artisan l5-swagger:generate || true
 
 php artisan storage:link || true
 # truong hop storage da co roi
