@@ -76,13 +76,10 @@
         ]
     },
     "repositories": [
-    {
-        "type": "path",
-        "url": "../core",
-        "options": {
-            "symlink": true
+        {
+            "type": "path",
+            "url": "/var/core"
         }
-    }
     ],
     "extra": {
         "laravel": {

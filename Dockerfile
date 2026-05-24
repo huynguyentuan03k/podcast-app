@@ -14,19 +14,24 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY api-podcast/docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY api-podcast/docker/php-fpm/php.ini /usr/local/etc/php/conf.d/php.ini
 
 RUN rm -f /etc/nginx/sites-enabled/default
 
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY api-podcast/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /var/www
 
-COPY composer.json composer.lock ./
+# Lấy module CORE ở thư mục cha đưa vào vị trí cô lập trong container
+COPY CORE /var/core
+
+# Lấy các file cấu hình composer từ thư mục dự án podcast
+COPY api-podcast/composer.json api-podcast/composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader
 
-COPY . .
+# ĐÃ SỬA DÒNG NÀY: Chỉ copy riêng code của api-podcast vào WORKDIR hiện tại
+COPY api-podcast/ .
 
 RUN composer dump-autoload --optimize
 
@@ -54,7 +59,7 @@ RUN rm -f /var/www/public/index.html
 
 EXPOSE 80
 
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY api-podcast/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 CMD ["/usr/local/bin/entrypoint.sh"]
