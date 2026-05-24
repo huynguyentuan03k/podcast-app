@@ -6,13 +6,23 @@ deploy_to_dokku:
   tags:
     - hp70602-runner
   before_script:
-    # ĐÂY LÀ DÒNG BỊ THIẾU: Cài đặt SSH client vào container Alpine trước khi gọi lệnh SSH
+    # 1. Cài đặt các gói SSH cần thiết
     - apk update && apk add git openssh-client
-
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    
+    # 2. Tạo thư mục .ssh bảo mật
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    
+    # 3. Ghi trực tiếp Private Key vào file id_rsa thay vì dùng lệnh echo qua pipe
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    # Phân quyền nghiêm ngặt (chỉ chủ sở hữu được đọc) - Bắt buộc đối với SSH Key
+    - chmod 600 ~/.ssh/id_rsa
+    
+    # 4. Khởi động ssh-agent và nạp file key vào
+    - eval $(ssh-agent -s)
+    - ssh-add ~/.ssh/id_rsa
+    
+    # 5. Quét nhận diện máy chủ Dokku để bỏ qua bước hỏi xác nhận yes/no
     - ssh-keyscan -H $DELL_SERVER_IP >> ~/.ssh/known_hosts
   script:
     - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
