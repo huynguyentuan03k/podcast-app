@@ -1,5 +1,6 @@
 FROM php:8.3-fpm
 
+# Cài đặt các extension hệ thống cần thiết
 RUN apt-get update && apt-get install -y \
     nginx \
     libpq-dev \
@@ -8,66 +9,52 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     && docker-php-ext-install pdo pdo_pgsql pdo_mysql
 
-# Install Node.js 20
+# Cài đặt Node.js 20 để biên dịch asset frontend
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
+# Kéo Composer từ Image chính thức
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
+# Nạp cấu hình dịch vụ
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY docker/php-fpm/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN rm -f /etc/nginx/sites-enabled/default
 
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
 WORKDIR /var/www
 
-# =========================================================================
-# FIX CHÍ MẠNG 1: Copy thư mục code nguồn của module frieren/core vào container
-# (Hãy đảm bảo thư mục "frieren-core" này nằm trong thư mục git bạn đẩy lên)
-# =========================================================================
-COPY frieren-core /var/core
-
+# TỐI ƯU CACHE: Copy file dependencies trước
 COPY composer.json composer.lock ./
 
-# Khởi chạy cài đặt các package (Bỏ cờ --no-scripts để composer tự tạo package-discover)
+# Chỉ cài package, không chạy script ở bước này để tối ưu cache layer [cite: 90]
 RUN composer install --no-dev --no-autoloader --no-scripts
 
+# Copy toàn bộ mã nguồn còn lại vào Container [cite: 91]
 COPY . .
 
+# Xóa các file cache cũ đi kèm theo code
 RUN rm -f bootstrap/cache/*.php
 
-# Cho phép dump-autoload chạy bình thường để Laravel ghi nhận Auto-discovery của module core
+# Chạy tối ưu autoload sinh classmap [cite: 91]
 RUN composer dump-autoload --optimize
 
-# Build frontend
-RUN npm ci
-RUN npm run build
+# Biên dịch frontend
+RUN npm ci && npm run build
 
-# =========================================================================
-# FIX CHÍ MẠNG 2: XÓA BỎ LỆNH COPY .env.example đè ở cuối.
-# Dokku sẽ tự động mount file .env xịn qua biến cấu hình của nó khi chạy ứng dụng.
-# =========================================================================
-
+# Khởi tạo SQLite phòng hờ (Mặc định khuyên dùng pgsql từ xa trên .22) [cite: 92, 94]
 RUN touch /var/www/database/database.sqlite
 
-RUN chown -R www-data:www-data \
-    /var/www/storage \
-    /var/www/bootstrap/cache \
-    /var/www/database
-
-RUN chmod -R 775 \
-    /var/www/storage \
-    /var/www/bootstrap/cache \
-    /var/www/database
-
-RUN chmod 664 /var/www/database/database.sqlite
+# Phân quyền sở hữu ban đầu cho hệ thống
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/database
 
 RUN rm -f /var/www/public/index.html
 
 EXPOSE 80
 
+# Cấu hình Entrypoint điều hướng khởi động
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
