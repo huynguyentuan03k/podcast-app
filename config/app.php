@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\ServiceProvider;
+
 return [
 
     /*
@@ -129,7 +131,5 @@ return [
     | Để trống mảng này ở Laravel 12 để hệ thống tự kích hoạt chế độ Auto-discovery.
     |--------------------------------------------------------------------------
     */
-    'providers' => [
-        // Để trống hoàn toàn ở đây
-    ],
+    'providers' => ServiceProvider::defaultProviders()->toArray()
 ];

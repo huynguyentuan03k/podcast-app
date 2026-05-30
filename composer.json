@@ -19,8 +19,7 @@
         "spatie/laravel-activitylog": "^4.11",
         "spatie/laravel-query-builder": "^6.3",
         "spatie/laravel-translatable": "^6.12",
-        "tightenco/ziggy": "^2.4",
-        "frieren/core": "dev-main"
+        "tightenco/ziggy": "^2.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.0",
@@ -75,15 +74,6 @@
             "@php artisan test"
         ]
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "/var/core",
-            "options": {
-                "symlink": false
-            }
-        }
-    ],
     "extra": {
         "laravel": {
             "dont-discover": []
