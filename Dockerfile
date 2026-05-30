@@ -1,4 +1,5 @@
-FROM php:8.4-fpm-alpine
+# Sử dụng bản chuẩn Debian để chạy được lệnh apt-get mượt mà nhất
+FROM php:8.3-fpm
 
 # Cài đặt các extension hệ thống cần thiết
 RUN apt-get update && apt-get install -y \
@@ -25,26 +26,31 @@ RUN rm -f /etc/nginx/sites-enabled/default
 
 WORKDIR /var/www
 
-# TỐI ƯU CACHE: Copy file dependencies trước
+# ==========================================
+# TỐI ƯU CACHE LAYER 1: Cài đặt PHP Packages
+# ==========================================
 COPY composer.json composer.lock ./
-
-# Chỉ cài package, không chạy script ở bước này để tối ưu cache layer [cite: 90]
 RUN composer install --no-dev --no-autoloader --no-scripts
 
-# Copy toàn bộ mã nguồn còn lại vào Container [cite: 91]
+# ==========================================
+# TỐI ƯU CACHE LAYER 2: Cài đặt & Build NodeJS FrontEnd
+# ==========================================
+COPY package.json package-lock.json* vite.config.js* ./
+RUN if [ -f package.json ]; then npm ci && npm run build; fi
+
+# ==========================================
+# HOÀN THIỆN: Copy toàn bộ mã nguồn còn lại
+# ==========================================
 COPY . .
 
 # Xóa các file cache cũ đi kèm theo code
 RUN rm -f bootstrap/cache/*.php
 
-# Chạy tối ưu autoload sinh classmap [cite: 91]
+# Chạy tối ưu autoload sinh classmap
 RUN composer dump-autoload --optimize
 
-# Biên dịch frontend
-RUN npm ci && npm run build
-
-# Khởi tạo SQLite phòng hờ (Mặc định khuyên dùng pgsql từ xa trên .22) [cite: 92, 94]
-RUN touch /var/www/database/database.sqlite
+# Khởi tạo SQLite phòng hờ
+RUN mkdir -p /var/www/database && touch /var/www/database/database.sqlite
 
 # Phân quyền sở hữu ban đầu cho hệ thống
 RUN chown -R www-data:www-data /var/www \
