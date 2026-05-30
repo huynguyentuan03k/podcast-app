@@ -1,5 +1,5 @@
 # Sử dụng bản chuẩn Debian để chạy được lệnh apt-get mượt mà nhất
-FROM php:8.3-fpm
+FROM php:8.4-fpm
 
 # Cài đặt các extension hệ thống cần thiết
 RUN apt-get update && apt-get install -y \
