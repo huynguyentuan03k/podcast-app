@@ -1,8 +1,9 @@
 {
+  "name": "podcast-api",
+  "builder": {
+    "selected": "dockerfile"
+  },
   "scripts": {
-    "dokku": {
-      "predeploy": "php artisan config:clear && php artisan cache:clear && php artisan route:clear",
-      "postdeploy": "php artisan config:cache && php artisan route:cache"
-    }
+    "predeploy": "php artisan optimize:clear"
   }
 }
