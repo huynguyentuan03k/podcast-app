@@ -46,7 +46,19 @@ return [
                 'annotations' => [
                     base_path('app'),
                 ],
+                /*
+                * Absolute path to location where parsed annotations will be stored
+                */
+                'docs' => storage_path('api-docs'),
 
+                /*
+                * Absolute path to directory where to export views
+                */
+                'views' => base_path('resources/views/vendor/l5-swagger'),
+
+                'base' => env('L5_SWAGGER_BASE_PATH', null),
+
+                'excludes' => [],
 
                 /**
                  * force http to https on home server

@@ -1,8 +1,18 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "My API",
-        "version": "1.0"
+        "title": "API Documentation",
+        "description": "Podcast API Documentation",
+        "contact": {
+            "name": "company",
+            "url": "https://example.test",
+            "email": "admin@example.test"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
     },
     "servers": [
         {
@@ -1937,20 +1947,6 @@
                 }
             }
         },
-        "/api/test": {
-            "get": {
-                "tags": [
-                    "Swagger Test"
-                ],
-                "summary": "Test Swagger endpoint",
-                "operationId": "2ff39654476701c93f7db85d3032c5a9",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    }
-                }
-            }
-        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -2187,10 +2183,6 @@
         {
             "name": "Tag",
             "description": "Tag"
-        },
-        {
-            "name": "Swagger Test",
-            "description": "Swagger Test"
         },
         {
             "name": "User",
