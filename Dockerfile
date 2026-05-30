@@ -33,20 +33,26 @@ COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-autoloader --no-scripts
 
 # ==========================================
-# TỐI ƯU CACHE LAYER 2: Cài đặt & Build NodeJS FrontEnd
+# TỐI ƯU CACHE LAYER 2: Cài đặt NodeJS (Chỉ cài, chưa build)
 # ==========================================
-COPY package.json package-lock.json* vite.config.js* ./
-RUN if [ -f package.json ]; then npm ci && npm run build; fi
+COPY package.json package-lock.json* ./
+RUN if [ -f package.json ]; then npm ci; fi
 
 # ==========================================
-# HOÀN THIỆN: Copy toàn bộ mã nguồn còn lại
+# HOÀN THIỆN: Copy toàn bộ mã nguồn còn lại vào Container
 # ==========================================
 COPY . .
 
-# Xóa các file cache cũ đi kèm theo code
+# ==========================================
+# BIÊN DỊCH FRONTEND VÀ AUTOLOAD (Khi đã đầy đủ code)
+# ==========================================
+# 1. Chạy build Vite tại đây để bảo đảm có đầy đủ file trong thư mục resources/
+RUN if [ -f package.json ]; then npm run build; fi
+
+# 2. Xóa các file cache cũ đi kèm theo code
 RUN rm -f bootstrap/cache/*.php
 
-# Chạy tối ưu autoload sinh classmap
+# 3. Chạy tối ưu autoload sinh classmap cho PHP
 RUN composer dump-autoload --optimize
 
 # Khởi tạo SQLite phòng hờ
