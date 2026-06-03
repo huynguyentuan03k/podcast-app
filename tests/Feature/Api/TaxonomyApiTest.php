@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Author;
-use App\Models\Category;
 use App\Models\Publisher;
 use App\Models\Tag;
 use Illuminate\Http\UploadedFile;
@@ -28,22 +27,25 @@ test('publishers api works', function () {
 });
 
 test('categories api works', function () {
-    $category = Category::create([
-        'name' => ['en' => 'Technology'],
+    $create = $this->postJson('/api/categories', [
+        'name' => [
+            'en' => 'Technology',
+            'vi' => 'Cong nghe',
+        ],
         'description' => 'Tech category',
     ]);
 
+    $create->assertCreated();
+    $categoryId = $create->json('data.id');
+
     $this->getJson('/api/categories')->assertOk();
-    $this->getJson("/api/categories/{$category->id}")->assertOk();
-    $this->postJson('/api/categories', [
-        'name' => ['en' => 'Business'],
-        'description' => 'Business category',
-    ])->assertCreated();
-    $this->putJson("/api/categories/{$category->id}", [
+    $this->getJson("/api/categories/{$categoryId}")->assertOk();
+    $this->putJson("/api/categories/{$categoryId}", [
         'name' => ['en' => 'Technology Updated'],
+        'vi' => 'Cong nghe cap nhat',
         'description' => 'Updated description',
     ])->assertOk();
-    $this->deleteJson("/api/categories/{$category->id}")->assertOk();
+    $this->deleteJson("/api/categories/{$categoryId}")->assertOk();
 });
 
 test('tags api works', function () {
