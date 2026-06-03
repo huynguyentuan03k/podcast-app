@@ -1,13 +1,125 @@
 variables:
-  GIT_DEPTH: '0' # ĐÂY LÀ DÒNG THÊM VÀO ĐỂ SỬA LỖI SHALLOW UPDATE
+  GIT_DEPTH: '0'
+  APP_ENV: testing
+  CACHE_DRIVER: array
+  DB_CONNECTION: sqlite
+  DB_DATABASE: database/database.sqlite
+  QUEUE_CONNECTION: sync
+  SESSION_DRIVER: array
 
 stages:
+  - prepare
+  - lint
+  - test
   - deploy
+
+default:
+  interruptible: true
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/
+    - node_modules/
+
+prepare_php:
+  stage: prepare
+  image: php:8.3-cli
+  tags:
+    - hp70602-runner
+  before_script:
+    - apt-get update
+    - apt-get install -y git unzip libzip-dev libxml2-dev sqlite3
+    - docker-php-ext-install pdo_sqlite zip
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - rm composer-setup.php
+  script:
+    - composer install --no-interaction --prefer-dist --no-progress
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+prepare_js:
+  stage: prepare
+  image: node:22-alpine
+  tags:
+    - hp70602-runner
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+lint_php:
+  stage: lint
+  image: php:8.3-cli
+  tags:
+    - hp70602-runner
+  needs:
+    - prepare_php
+  before_script:
+    - apt-get update
+    - apt-get install -y git unzip libzip-dev libxml2-dev sqlite3
+    - docker-php-ext-install pdo_sqlite zip
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - rm composer-setup.php
+  script:
+    - vendor/bin/pint --test
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+lint_js:
+  stage: lint
+  image: node:22-alpine
+  tags:
+    - hp70602-runner
+  needs:
+    - prepare_js
+  script:
+    - npm run lint
+    - npm run format:check
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+test_api:
+  stage: test
+  image: php:8.3-cli
+  tags:
+    - hp70602-runner
+  needs:
+    - prepare_php
+  before_script:
+    - apt-get update
+    - apt-get install -y git unzip libzip-dev libxml2-dev sqlite3
+    - docker-php-ext-install pdo_sqlite zip
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - rm composer-setup.php
+    - touch database/database.sqlite
+    - cp .env.example .env
+    - php artisan key:generate
+  script:
+    - composer test
+  rules:
+    - if: $CI_COMMIT_BRANCH
 
 deploy_to_dokku:
   stage: deploy
+  image: alpine:latest
   tags:
     - hp70602-runner
+  needs:
+    - lint_php
+    - lint_js
+    - test_api
   before_script:
     - apk update && apk add git openssh-client
     - mkdir -p ~/.ssh
@@ -23,5 +135,5 @@ deploy_to_dokku:
     - git remote add dokku dokku@192.168.1.21:podcast-api
     - git push dokku HEAD:main --force
     - echo "--- DEPLOY THÀNH CÔNG! DOKKU ĐANG XỬ LÝ KHỞI CHẠY NGẦM ---"
-  only:
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
