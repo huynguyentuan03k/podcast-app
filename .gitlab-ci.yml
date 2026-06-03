@@ -1,5 +1,5 @@
 variables:
-  GIT_DEPTH: "0" # ĐÂY LÀ DÒNG THÊM VÀO ĐỂ SỬA LỖI SHALLOW UPDATE
+  GIT_DEPTH: '0' # ĐÂY LÀ DÒNG THÊM VÀO ĐỂ SỬA LỖI SHALLOW UPDATE
 
 stages:
   - deploy
@@ -21,7 +21,7 @@ deploy_to_dokku:
     - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
     - git remote remove dokku || true
     - git remote add dokku dokku@192.168.1.21:podcast-api
-    - git push dokku HEAD:refs/heads/master --force
+    - git push dokku HEAD:main --force
     - echo "--- DEPLOY THÀNH CÔNG! DOKKU ĐANG XỬ LÝ KHỞI CHẠY NGẦM ---"
   only:
     - main
