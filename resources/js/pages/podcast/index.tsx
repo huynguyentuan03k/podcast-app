@@ -101,7 +101,7 @@ const columns: ColumnDef<Podcast>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
+    cell: () => (
       <div className="flex gap-2">
         <Button variant="outline" size="sm">
           <Eye className="w-4 h-4" />
@@ -115,7 +115,7 @@ const columns: ColumnDef<Podcast>[] = [
 ];
 
 export default function PodcastPage() {
-  const [data, setData] = useState<Podcast[]>(mockData);
+  const [data] = useState<Podcast[]>(mockData);
   const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({

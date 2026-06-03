@@ -72,7 +72,7 @@ lint_php:
     - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
     - rm composer-setup.php
   script:
-    - vendor/bin/pint --test
+    - vendor/bin/pint --test --dirty
   rules:
     - if: $CI_COMMIT_BRANCH
 
