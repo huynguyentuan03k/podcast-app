@@ -1,8 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { Plus } from 'lucide-react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Episodes',
@@ -12,16 +12,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function EpisodePage() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <div className="p-6 space-y-4">
+            <div className="space-y-4 p-6">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Episodes</h1>
                     <Button>
-                        <Plus className="w-4 h-4 mr-2" />
+                        <Plus className="mr-2 h-4 w-4" />
                         Add Episode
                     </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {[1, 2, 3].map((episode) => (
                         <Card key={episode}>
                             <CardContent className="p-4">
