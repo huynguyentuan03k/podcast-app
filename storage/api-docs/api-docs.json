@@ -17,7 +17,7 @@
     "servers": [
         {
             "url": "http://localhost:8000",
-            "description": "localhost environment"
+            "description": "Local Server"
         }
     ],
     "paths": {
@@ -915,6 +915,104 @@
             }
         },
         "/api/episodes/{episode}": {
+            "get": {
+                "tags": [
+                    "Episode"
+                ],
+                "summary": "Get a single episode",
+                "operationId": "7871cc1ad73f950d652d053f827e9225",
+                "parameters": [
+                    {
+                        "name": "episode",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Episode retrieved successfully"
+                    },
+                    "404": {
+                        "description": "Episode not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Episode"
+                ],
+                "summary": "Update an episode",
+                "operationId": "6867389f0632a674bf401639a6280c79",
+                "parameters": [
+                    {
+                        "name": "episode",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "slug",
+                                    "podcast_id"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Episode 1 updated"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "episode-1-updated"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is episode 1 updated"
+                                    },
+                                    "audio_path": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "cover_image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "duration": {
+                                        "type": "string",
+                                        "example": "00:03:15"
+                                    },
+                                    "podcast_id": {
+                                        "type": "integer",
+                                        "example": 7
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Episode updated successfully"
+                    },
+                    "404": {
+                        "description": "Episode not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
             "delete": {
                 "tags": [
                     "Episode"
@@ -1970,23 +2068,8 @@
                         }
                     },
                     {
-                        "name": "slug",
+                        "name": "email",
                         "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "description",
-                        "in": "query",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "all",
-                        "in": "query",
-                        "description": "Search all fields",
                         "schema": {
                             "type": "string"
                         }
@@ -1996,7 +2079,7 @@
                         "in": "query",
                         "schema": {
                             "type": "string",
-                            "example": ""
+                            "example": "-created_at"
                         }
                     },
                     {
@@ -2014,14 +2097,6 @@
                             "type": "integer",
                             "example": 1
                         }
-                    },
-                    {
-                        "name": "fields[users]",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "example": ""
-                        }
                     }
                 ],
                 "responses": {
@@ -2035,8 +2110,8 @@
                                         {
                                             "id": 1,
                                             "name": "Example User",
-                                            "email_verified_at": "null",
-                                            "email": "tuanhuy16903@gmail.com",
+                                            "email": "user@example.com",
+                                            "email_verified_at": null,
                                             "created_at": "2026-02-06 02:22:00",
                                             "updated_at": "2026-02-06 02:22:00"
                                         }
@@ -2061,36 +2136,30 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "name"
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
                                 ],
                                 "properties": {
                                     "name": {
                                         "type": "string",
-                                        "example": "j.k.rowling"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "j.k.rowling"
-                                    },
-                                    "bio": {
-                                        "type": "string",
-                                        "example": "about j.k.rowling"
-                                    },
-                                    "website": {
-                                        "type": "string",
-                                        "example": "website.com"
+                                        "example": "Example User"
                                     },
                                     "email": {
                                         "type": "string",
-                                        "example": "email.com"
+                                        "example": "user@example.com"
                                     },
-                                    "avatar": {
-                                        "description": "Cover image to upload (.jpg, .png",
+                                    "password": {
                                         "type": "string",
-                                        "format": "binary"
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
                                     }
                                 },
                                 "type": "object"
@@ -2100,7 +2169,10 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "user created"
+                        "description": "User created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -2131,18 +2203,103 @@
                             "application/json": {
                                 "schema": {},
                                 "example": {
-                                    "message": "user show successfully",
+                                    "message": "User retrieved successfully",
                                     "data": {
                                         "id": 1,
                                         "name": "Example User",
-                                        "email_verified_at": "null",
-                                        "email": "tuanhuy16903@gmail.com",
+                                        "email": "user@example.com",
+                                        "email_verified_at": null,
                                         "created_at": "2026-02-06 02:22:00",
                                         "updated_at": "2026-02-06 02:22:00"
                                     }
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update a user",
+                "operationId": "f1f65c5e73cb0b10fdd850447b672c28",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Updated User"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "updated@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "newpassword123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "newpassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete a user",
+                "operationId": "cf641f0b739211ff3a1c21b1ef310591",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully"
                     },
                     "404": {
                         "description": "User not found"

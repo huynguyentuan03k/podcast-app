@@ -3,20 +3,24 @@
 namespace App\Actions;
 
 use App\Models\Episode;
+use App\Models\Podcast;
+use App\Services\EpisodeUploadService;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 
 class UpdateEpisodeAction
 {
-    public function handle(array $data,Episode $episode): Episode
- {
-    // thực hiện logic trong transaction và return ngoài transaction
+    public function handle(array $data, Episode $episode): Episode
+    {
+        DB::transaction(function () use ($data, $episode) {
+            if (isset($data['audio_path']) && $data['audio_path'] instanceof UploadedFile) {
+                $podcast = Podcast::where('id', $data['podcast_id'])->first();
+                $data['audio_path'] = EpisodeUploadService::store($data['audio_path'], $podcast->title);
+            }
 
-    DB::transaction(function() use ($data, $episode){
-    
-    $episode->update($data);
-    });
+            $episode->update($data);
+        });
 
-    return $episode;
-
- }
+        return $episode->fresh();
+    }
 }

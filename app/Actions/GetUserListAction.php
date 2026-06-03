@@ -15,8 +15,8 @@ class GetUserListAction
         $query = QueryBuilder::for(User::query())
         ->allowedFilters([
             AllowedFilter::exact('id'),
-            'title',
-            'description',
+            'name',
+            'email',
         ]);
 
         if($perPage){

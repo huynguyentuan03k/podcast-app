@@ -27,12 +27,12 @@ class CreateEpisodeAction
                 }
                 Episode::create(Arr::except($data,['episodes']));
 
-            foreach($data['episodes'] as $item){
-                if(isset($item->podcast_id)){
-                    $podcast = Podcast::where('id',$item->podcast_id)->first();
+            foreach (($data['episodes'] ?? []) as $item) {
+                if (isset($item['podcast_id'])) {
+                    $podcast = Podcast::where('id', $item['podcast_id'])->first();
 
                     if (isset($item['audio_path']) && $item['audio_path'] instanceof UploadedFile) {
-                        $item['audio_path'] = EpisodeUploadService::store($item['audio_path'],$podcast->title);
+                        $item['audio_path'] = EpisodeUploadService::store($item['audio_path'], $podcast->title);
                     }
                 }
 
@@ -43,7 +43,7 @@ class CreateEpisodeAction
 
         });
 
-        return false;
+        return true;
 
     }
 }

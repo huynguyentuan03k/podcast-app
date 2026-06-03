@@ -70,6 +70,33 @@ class EpisodeController extends Controller
         return EpisodeResource::collection($episode);
     }
 
+    #[OA\Get(
+        path: '/api/episodes/{episode}',
+        summary: 'Get a single episode',
+        tags: ['Episode'],
+        parameters: [
+            new OA\Parameter(
+                name: 'episode',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Episode retrieved successfully'
+            ),
+            new OA\Response(response: 404, description: 'Episode not found'),
+        ]
+    )]
+    public function show(Episode $episode)
+    {
+        $episode->load(['podcast']);
+
+        return new EpisodeResource($episode);
+    }
+
     #[OA\Post(
         path: '/api/episodes',
         description: 'Create a new episode with audio file upload',
@@ -120,37 +147,61 @@ class EpisodeController extends Controller
     )]
     public function store(CreateEpisodeRequest $request, CreateEpisodeAction $action)
     {
-
         $data = $request->validated();
-        $episode = $action->handle($data);
+        $action->handle($data);
+
         return response()->json([
-            'message' => 'created episode successfully'
+            'message' => 'created episode successfully',
+        ], 201);
+    }
+
+    #[OA\Put(
+        path: '/api/episodes/{episode}',
+        summary: 'Update an episode',
+        tags: ['Episode'],
+        parameters: [
+            new OA\Parameter(
+                name: 'episode',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    required: ['title', 'slug', 'podcast_id'],
+                    properties: [
+                        new OA\Property(property: 'title', type: 'string', example: 'Episode 1 updated'),
+                        new OA\Property(property: 'slug', type: 'string', example: 'episode-1-updated'),
+                        new OA\Property(property: 'description', type: 'string', example: 'This is episode 1 updated'),
+                        new OA\Property(property: 'audio_path', type: 'string', format: 'binary'),
+                        new OA\Property(property: 'cover_image', type: 'string', format: 'binary'),
+                        new OA\Property(property: 'duration', type: 'string', example: '00:03:15'),
+                        new OA\Property(property: 'podcast_id', type: 'integer', example: 7),
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Episode updated successfully'),
+            new OA\Response(response: 404, description: 'Episode not found'),
+            new OA\Response(response: 422, description: 'Validation error'),
+        ]
+    )]
+    public function update(UpdateEpisodeRequest $request, Episode $episode, UpdateEpisodeAction $action)
+    {
+        $data = $request->validated();
+        $action->handle($data, $episode);
+
+        return response()->json([
+            'message' => 'updated episode successfully',
         ], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Episode $episode)
-    {
-        $episode->load(['podcast']);
-
-        return new EpisodeResource($episode);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateEpisodeRequest $request, Episode $episode,UpdateEpisodeAction $action)
-    {
-        $data = $request->validated();
-        $action->handle($data,$episode);
-        return response()->json([
-            'message' => 'updated episode successfully'
-        ],200);
-    }
-
- #[OA\Delete(
+    #[OA\Delete(
         path: '/api/episodes/{episode}',
         summary: 'Delete a episode',
         description: 'Permanently delete a episode by ID.',
@@ -186,9 +237,10 @@ class EpisodeController extends Controller
     )]
     public function destroy(Episode $episode, DeleteEpisodeAction $action)
     {
-        $result = $action->handle($episode);
+        $action->handle($episode);
+
         return response()->json([
             'message' => 'episode deleted successfully',
-        ],201);
+        ], 200);
     }
 }
