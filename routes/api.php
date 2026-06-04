@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\AdminMeController;
+use App\Http\Controllers\Api\AdminAuthController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserMeController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\EpisodeController;
@@ -9,12 +12,14 @@ use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\PublisherController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware('auth:sanctum')->get('/user', function () {
+    return request()->user();
+});
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum', 'abilities:user'])->group(function () {
+    Route::get('auth/me', UserMeController::class);
 });
 Route::get('podcasts', [PodcastController::class, 'index']);
 Route::get('podcasts/{podcast}', [PodcastController::class, 'show']);
@@ -62,9 +67,19 @@ Route::post('users', [UserController::class, 'store']);
 Route::put('users/{user}', [UserController::class, 'update']);
 Route::delete('users/{user}', [UserController::class, 'destroy']);
 
-// sanctum
-Route::post('/login',[AuthController::class,'login']);
-Route::post('/register',[AuthController::class,'register']);
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+Route::prefix('admin/auth')->group(function () {
+    Route::post('/login', [AdminAuthController::class, 'login']);
+    Route::post('/register', [AdminAuthController::class, 'register']);
+    Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+        Route::post('/logout', [AdminAuthController::class, 'logout']);
+        Route::get('/me', AdminMeController::class);
+    });
+});
 
 // activity
 

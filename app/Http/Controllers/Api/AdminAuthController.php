@@ -3,27 +3,26 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\LoginApiRequest;
-use App\Http\Requests\Api\RegisterApiRequest;
-use App\Models\User;
+use App\Http\Requests\Api\AdminLoginApiRequest;
+use Frieren\Core\Http\Requests\StoreAdminUserRequest;
+use Frieren\Core\Models\AdminUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use OpenApi\Attributes as OA;
 
-// full api sanctum
-class AuthController extends Controller
+class AdminAuthController extends Controller
 {
     #[OA\Post(
-        path: '/api/auth/login',
-        description: 'Login for web/mobile clients',
-        tags: ['Auth'],
+        path: '/api/admin/auth/login',
+        description: 'Login for admin client',
+        tags: ['Admin Auth'],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
                 required: ['email', 'password'],
                 properties: [
-                    new OA\Property(property: 'email', type: 'string', example: 'user@example.com'),
+                    new OA\Property(property: 'email', type: 'string', example: 'admin@example.com'),
                     new OA\Property(property: 'password', type: 'string', example: 'password123'),
                 ]
             )
@@ -36,11 +35,12 @@ class AuthController extends Controller
                     example: [
                         'message' => 'login successfully',
                         'token' => '1|plain-text-token',
-                        'client' => 'web-mobile',
+                        'client' => 'admin',
                         'user' => [
                             'id' => 1,
-                            'name' => 'Example User',
-                            'email' => 'user@example.com',
+                            'username' => 'root',
+                            'email' => 'admin@example.com',
+                            'status' => 'active',
                         ],
                     ]
                 )
@@ -49,39 +49,39 @@ class AuthController extends Controller
             new OA\Response(response: 422, description: 'Validation error'),
         ]
     )]
-    public function login(LoginApiRequest $request): JsonResponse
+    public function login(AdminLoginApiRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $admin = AdminUser::where('email', $data['email'])->first();
 
-        $user = User::where('email', $data['email'])->first();
-
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
+        if (! $admin || ! Hash::check($data['password'], $admin->password)) {
             return response()->json(['message' => 'login failed'], 401);
         }
 
-        $token = $user->createToken('web-mobile-token', ['user'])->plainTextToken;
+        $token = $admin->createToken('admin-token', ['admin'])->plainTextToken;
 
         return response()->json([
             'message' => 'login successfully',
-            "token" => $token,
-            'client' => 'web-mobile',
-            'user' => $user,
+            'token' => $token,
+            'client' => 'admin',
+            'user' => $admin,
         ]);
     }
 
     #[OA\Post(
-        path: '/api/auth/register',
-        description: 'Register and return token for web/mobile clients',
-        tags: ['Auth'],
+        path: '/api/admin/auth/register',
+        description: 'Register admin and return token',
+        tags: ['Admin Auth'],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['name', 'email', 'password', 'password_confirmation'],
+                required: ['username', 'email', 'password', 'password_confirmation'],
                 properties: [
-                    new OA\Property(property: 'name', type: 'string', example: 'Example User'),
-                    new OA\Property(property: 'email', type: 'string', example: 'user@example.com'),
+                    new OA\Property(property: 'username', type: 'string', example: 'root'),
+                    new OA\Property(property: 'email', type: 'string', example: 'admin@example.com'),
                     new OA\Property(property: 'password', type: 'string', example: 'password123'),
                     new OA\Property(property: 'password_confirmation', type: 'string', example: 'password123'),
+                    new OA\Property(property: 'status', type: 'string', example: 'active'),
                 ]
             )
         ),
@@ -93,11 +93,12 @@ class AuthController extends Controller
                     example: [
                         'message' => 'register successfully',
                         'token' => '1|plain-text-token',
-                        'client' => 'web-mobile',
+                        'client' => 'admin',
                         'user' => [
                             'id' => 1,
-                            'name' => 'Example User',
-                            'email' => 'user@example.com',
+                            'username' => 'root',
+                            'email' => 'admin@example.com',
+                            'status' => 'active',
                         ],
                     ]
                 )
@@ -105,42 +106,56 @@ class AuthController extends Controller
             new OA\Response(response: 422, description: 'Validation error'),
         ]
     )]
-    public function register(RegisterApiRequest $request): JsonResponse
+    public function register(StoreAdminUserRequest $request): JsonResponse
     {
         $data = $request->validated();
 
-        $user = DB::transaction(function () use ($data) {
+        $admin = DB::transaction(function () use ($data) {
             $data['password'] = Hash::make($data['password']);
+            $data['status'] = $data['status'] ?? 'active';
 
-            return User::create($data);
+            return AdminUser::create($data);
         });
 
-        $token = $user->createToken('web-mobile-token', ['user'])->plainTextToken;
+        $token = $admin->createToken('admin-token', ['admin'])->plainTextToken;
 
         return response()->json([
             'message' => 'register successfully',
             'token' => $token,
-            'client' => 'web-mobile',
-            'user' => $user,
+            'client' => 'admin',
+            'user' => $admin,
         ], 201);
     }
 
-    #[OA\Get(
-        path: '/api/auth/me',
-        description: 'Get current authenticated web/mobile user',
-        tags: ['Auth'],
+    #[OA\Post(
+        path: '/api/admin/auth/logout',
+        description: 'Logout authenticated admin',
+        tags: ['Admin Auth'],
         responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Current user retrieved successfully',
-            ),
+            new OA\Response(response: 200, description: 'Logout successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ]
+    )]
+    public function logout(): JsonResponse
+    {
+        request()->user()?->currentAccessToken()?->delete();
+
+        return response()->json(['message' => 'logout successfully']);
+    }
+
+    #[OA\Get(
+        path: '/api/admin/auth/me',
+        description: 'Get current authenticated admin',
+        tags: ['Admin Auth'],
+        responses: [
+            new OA\Response(response: 200, description: 'Current admin retrieved successfully'),
             new OA\Response(response: 401, description: 'Unauthenticated'),
         ]
     )]
     public function me(): JsonResponse
     {
         return response()->json([
-            'message' => 'Current user retrieved successfully.',
+            'message' => 'Current admin retrieved successfully.',
             'data' => request()->user(),
         ]);
     }

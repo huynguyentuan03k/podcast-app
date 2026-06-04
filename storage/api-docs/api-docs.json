@@ -126,6 +126,313 @@
                 }
             }
         },
+        "/api/admin/auth/login": {
+            "post": {
+                "tags": [
+                    "Admin Auth"
+                ],
+                "description": "Login for admin client",
+                "operationId": "271d64f928d709492cc0b583ae72edef",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "login successfully",
+                                    "token": "1|plain-text-token",
+                                    "client": "admin",
+                                    "user": {
+                                        "id": 1,
+                                        "username": "root",
+                                        "email": "admin@example.com",
+                                        "status": "active"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/admin/auth/register": {
+            "post": {
+                "tags": [
+                    "Admin Auth"
+                ],
+                "description": "Register admin and return token",
+                "operationId": "89ea036c4bebeb925e1ecd2ca27ebe47",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "root"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Register successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "register successfully",
+                                    "token": "1|plain-text-token",
+                                    "client": "admin",
+                                    "user": {
+                                        "id": 1,
+                                        "username": "root",
+                                        "email": "admin@example.com",
+                                        "status": "active"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/admin/auth/logout": {
+            "post": {
+                "tags": [
+                    "Admin Auth"
+                ],
+                "description": "Logout authenticated admin",
+                "operationId": "6b231db9d19efebbfde4120bd2c24a0d",
+                "responses": {
+                    "200": {
+                        "description": "Logout successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            }
+        },
+        "/api/admin/auth/me": {
+            "get": {
+                "tags": [
+                    "Admin Auth"
+                ],
+                "description": "Get current authenticated admin",
+                "operationId": "d509076423316ad492ed908cae4e7c1e",
+                "responses": {
+                    "200": {
+                        "description": "Current admin retrieved successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Login for web/mobile clients",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "login successfully",
+                                    "token": "1|plain-text-token",
+                                    "client": "web-mobile",
+                                    "user": {
+                                        "id": 1,
+                                        "name": "Example User",
+                                        "email": "user@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Register and return token for web/mobile clients",
+                "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Example User"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Register successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "message": "register successfully",
+                                    "token": "1|plain-text-token",
+                                    "client": "web-mobile",
+                                    "user": {
+                                        "id": 1,
+                                        "name": "Example User",
+                                        "email": "user@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Get current authenticated web/mobile user",
+                "operationId": "b5de204f5e452ef51327c691aa99e77c",
+                "responses": {
+                    "200": {
+                        "description": "Current user retrieved successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            }
+        },
         "/api/authors": {
             "get": {
                 "tags": [
@@ -2308,6 +2615,14 @@
             "description": "Activity"
         },
         {
+            "name": "Admin Auth",
+            "description": "Admin Auth"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
             "name": "Author",
             "description": "Author"
         },
@@ -2338,6 +2653,21 @@
         {
             "name": "User",
             "description": "User"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Use Bearer <token> from mobile or admin login"
+            }
+        }
+    },
+    "security": [
+        {
+            "sanctum": []
         }
     ]
 }
