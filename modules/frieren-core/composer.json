@@ -1,0 +1,23 @@
+{
+    "name": "frieren/frieren-core",
+    "version": "1.0.0",
+    "description": "Core admin module for Frieren.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Frieren\\Core\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Frieren\\Core\\FrierenCoreServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0"
+    }
+}

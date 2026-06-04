@@ -16,6 +16,7 @@
         "laravel/horizon": "^5.47",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1",
+        "frieren/frieren-core": "^1.0",
         "sentry/sentry-laravel": "^4.20",
         "spatie/laravel-activitylog": "^4.11",
         "spatie/laravel-query-builder": "^6.3",
@@ -45,6 +46,15 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "modules/frieren-core",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

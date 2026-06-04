@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36b730f85397fffe35f69ac62daea6ab",
+    "content-hash": "f28ef1902e834d4a471aeecb3142b3a6",
     "packages": [
         {
             "name": "brick/math",
@@ -587,6 +587,40 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "frieren/frieren-core",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/frieren-core",
+                "reference": "478af0ce6408d74c0cee172c7aa5bca7e3f99129"
+            },
+            "require": {
+                "laravel/framework": "^12.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Frieren\\Core\\FrierenCoreServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frieren\\Core\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Core admin module for Frieren.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "fruitcake/php-cors",
