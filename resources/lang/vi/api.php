@@ -5,6 +5,8 @@ return [
     'login_failed' => 'đăng nhập thất bại',
     'register_successfully' => 'đăng ký thành công',
     'logout_successfully' => 'đăng xuất thành công',
+    'password_reset_link_sent_successfully' => 'Đã gửi liên kết đặt lại mật khẩu thành công.',
+    'password_reset_successfully' => 'Đặt lại mật khẩu thành công.',
     'current_user_retrieved_successfully' => 'Lấy người dùng hiện tại thành công.',
     'current_admin_retrieved_successfully' => 'Lấy quản trị viên hiện tại thành công.',
     'user_retrieved_successfully' => 'Lấy người dùng thành công.',

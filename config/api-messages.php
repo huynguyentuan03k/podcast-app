@@ -6,6 +6,8 @@ return [
         'login_failed' => 'login failed',
         'register_successfully' => 'register successfully',
         'logout_successfully' => 'logout successfully',
+        'password_reset_link_sent_successfully' => 'Password reset link sent successfully.',
+        'password_reset_successfully' => 'Password reset successfully.',
         'current_user_retrieved_successfully' => 'Current user retrieved successfully.',
         'current_admin_retrieved_successfully' => 'Current admin retrieved successfully.',
 

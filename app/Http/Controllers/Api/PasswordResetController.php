@@ -36,7 +36,7 @@ class PasswordResetController extends Controller
         Password::broker('users')->sendResetLink($request->validated());
 
         return response()->json([
-            'message' => __('Password reset link sent successfully.'),
+            'message' => __('api.password_reset_link_sent_successfully'),
         ]);
     }
 
@@ -75,7 +75,7 @@ class PasswordResetController extends Controller
 
         if ($status === Password::PASSWORD_RESET) {
             return response()->json([
-                'message' => __('Password reset successfully.'),
+                'message' => __('api.password_reset_successfully'),
             ]);
         }
 

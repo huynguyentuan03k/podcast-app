@@ -5,6 +5,8 @@ return [
     'login_failed' => 'ログインに失敗しました',
     'register_successfully' => '登録に成功しました',
     'logout_successfully' => 'ログアウトに成功しました',
+    'password_reset_link_sent_successfully' => 'パスワード再設定リンクを送信しました。',
+    'password_reset_successfully' => 'パスワードを再設定しました。',
     'current_user_retrieved_successfully' => '現在のユーザーを取得しました。',
     'current_admin_retrieved_successfully' => '現在の管理者を取得しました。',
     'user_retrieved_successfully' => 'ユーザーを取得しました。',
