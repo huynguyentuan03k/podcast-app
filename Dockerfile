@@ -30,6 +30,7 @@ WORKDIR /var/www
 # TỐI ƯU CACHE LAYER 1: Cài đặt PHP Packages
 # ==========================================
 COPY composer.json composer.lock ./
+COPY modules/frieren-core ./modules/frieren-core
 RUN composer install --no-dev --no-autoloader --no-scripts
 
 # ==========================================
