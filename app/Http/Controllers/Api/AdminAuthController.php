@@ -143,20 +143,4 @@ class AdminAuthController extends Controller
         return response()->json(['message' => 'logout successfully']);
     }
 
-    #[OA\Get(
-        path: '/api/admin/auth/me',
-        description: 'Get current authenticated admin',
-        tags: ['Admin Auth'],
-        responses: [
-            new OA\Response(response: 200, description: 'Current admin retrieved successfully'),
-            new OA\Response(response: 401, description: 'Unauthenticated'),
-        ]
-    )]
-    public function me(): JsonResponse
-    {
-        return response()->json([
-            'message' => 'Current admin retrieved successfully.',
-            'data' => request()->user(),
-        ]);
-    }
 }

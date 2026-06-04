@@ -125,26 +125,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    #[OA\Get(
-        path: '/api/auth/me',
-        description: 'Get current authenticated web/mobile user',
-        tags: ['Auth'],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Current user retrieved successfully',
-            ),
-            new OA\Response(response: 401, description: 'Unauthenticated'),
-        ]
-    )]
-    public function me(): JsonResponse
-    {
-        return response()->json([
-            'message' => 'Current user retrieved successfully.',
-            'data' => request()->user(),
-        ]);
-    }
-
     #[OA\Post(
         path: '/api/auth/logout',
         description: 'Logout authenticated web/mobile user',
