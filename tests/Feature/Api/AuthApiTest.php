@@ -5,7 +5,7 @@ use App\Models\User;
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 test('api register returns token and user payload', function () {
-    $response = $this->postJson('/api/register', [
+    $response = $this->postJson('/api/auth/register', [
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password123',
@@ -25,7 +25,7 @@ test('api login returns token for valid credentials', function () {
         'password' => bcrypt('password123'),
     ]);
 
-    $response = $this->postJson('/api/login', [
+    $response = $this->postJson('/api/auth/login', [
         'email' => $user->email,
         'password' => 'password123',
     ]);

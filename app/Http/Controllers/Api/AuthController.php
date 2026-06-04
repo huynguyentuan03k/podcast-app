@@ -144,4 +144,20 @@ class AuthController extends Controller
             'data' => request()->user(),
         ]);
     }
+
+    #[OA\Post(
+        path: '/api/auth/logout',
+        description: 'Logout authenticated web/mobile user',
+        tags: ['Auth'],
+        responses: [
+            new OA\Response(response: 200, description: 'Logout successfully'),
+            new OA\Response(response: 401, description: 'Unauthenticated'),
+        ]
+    )]
+    public function logout(): JsonResponse
+    {
+        request()->user()?->currentAccessToken()?->delete();
+
+        return response()->json(['message' => 'logout successfully']);
+    }
 }
