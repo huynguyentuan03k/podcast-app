@@ -27,6 +27,11 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->api(append: [
+            \App\Http\Middleware\SetApiLocale::class,
+            \App\Http\Middleware\TranslateApiResponse::class,
+        ]);
+
         // khai báo cho middleware cụ thể của 1 router nào đó
         $middleware->alias([
             'check.age' => Demomiddlewareage::class,

@@ -39,6 +39,28 @@ test('user auth flow supports login me and logout', function () {
         ->assertUnauthorized();
 });
 
+test('api messages are translated to vietnamese and japanese', function () {
+    $user = User::factory()->create([
+        'password' => Hash::make('password123'),
+    ]);
+
+    $vi = $this->postJson('/api/auth/login?lang=vi', [
+        'email' => $user->email,
+        'password' => 'password123',
+    ]);
+
+    $vi->assertOk()
+        ->assertJsonPath('message', 'đăng nhập thành công');
+
+    $ja = $this->postJson('/api/auth/login?lang=ja', [
+        'email' => $user->email,
+        'password' => 'password123',
+    ]);
+
+    $ja->assertOk()
+        ->assertJsonPath('message', 'ログインに成功しました');
+});
+
 test('admin auth flow supports login me and logout', function () {
     $admin = AdminUser::create([
         'username' => 'root',
