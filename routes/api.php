@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AdminMeController;
 use App\Http\Controllers\Api\AdminAuthController;
+use App\Http\Controllers\Api\AdminPasswordResetController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\UserMeController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\CategoryController;
@@ -70,6 +72,8 @@ Route::delete('users/{user}', [UserController::class, 'destroy']);
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/forgot-password', [PasswordResetController::class, 'forgot']);
+    Route::post('/reset-password', [PasswordResetController::class, 'reset']);
     Route::middleware(['auth:sanctum', 'abilities:user'])->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
     });
@@ -78,6 +82,8 @@ Route::prefix('auth')->group(function () {
 Route::prefix('admin/auth')->group(function () {
     Route::post('/login', [AdminAuthController::class, 'login']);
     Route::post('/register', [AdminAuthController::class, 'register']);
+    Route::post('/forgot-password', [AdminPasswordResetController::class, 'forgot']);
+    Route::post('/reset-password', [AdminPasswordResetController::class, 'reset']);
     Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout']);
         Route::get('/me', AdminMeController::class);
