@@ -4,6 +4,8 @@ namespace Frieren\Core\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 
 class AdminUser extends Authenticatable
@@ -29,5 +31,20 @@ class AdminUser extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function profile(): HasOne
+    {
+        return $this->hasOne(AdminProfile::class, 'user_admin_id');
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_admin_has_roles');
+    }
+
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'user_admin_has_permissions');
     }
 }
