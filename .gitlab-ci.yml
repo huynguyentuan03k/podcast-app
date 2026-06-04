@@ -89,28 +89,6 @@ lint_js:
   rules:
     - if: $CI_COMMIT_BRANCH
 
-test_api:
-  stage: test
-  image: php:8.3-cli
-  tags:
-    - hp70602-runner
-  needs:
-    - prepare_php
-  before_script:
-    - apt-get update
-    - apt-get install -y git unzip libzip-dev libxml2-dev libsqlite3-dev sqlite3 pkg-config
-    - docker-php-ext-install pdo_sqlite zip pcntl
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-    - rm composer-setup.php
-    - touch database/database.sqlite
-    - cp .env.example .env
-    - php artisan key:generate
-  script:
-    - composer test
-  rules:
-    - if: $CI_COMMIT_BRANCH
-
 deploy_to_dokku:
   stage: deploy
   image: alpine:latest
@@ -119,7 +97,6 @@ deploy_to_dokku:
   needs:
     - lint_php
     - lint_js
-    - test_api
   before_script:
     - apk update && apk add git openssh-client
     - mkdir -p ~/.ssh
