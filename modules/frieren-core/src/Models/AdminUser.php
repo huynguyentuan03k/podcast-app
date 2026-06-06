@@ -44,12 +44,12 @@ class AdminUser extends Authenticatable implements MustVerifyEmail
 
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'user_admin_has_roles');
+        return $this->belongsToMany(Role::class, 'user_admin_has_roles', 'user_admin_id', 'role_id');
     }
 
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'user_admin_has_permissions');
+        return $this->belongsToMany(Permission::class, 'user_admin_has_permissions', 'user_admin_id', 'permission_id');
     }
 
     public function sendPasswordResetNotification($token): void

@@ -2,61 +2,70 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Frieren\Core\Models\AdminUser;
+use Frieren\Core\Models\Permission;
+use Frieren\Core\Models\Role;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        //
-        $permissions = [
-            // Users
-            'user.view',
-            'user.create',
-            'user.update',
-            'user.delete',
-
-            // Podcasts
-            'podcast.view',
-            'podcast.create',
-            'podcast.update',
-            'podcast.delete',
+        $permissionGroups = [
+            'user' => ['view', 'create', 'update', 'delete'],
+            'admin_user' => ['view', 'create', 'update', 'delete'],
+            'admin_profile' => ['view', 'create', 'update', 'delete'],
+            'role' => ['view', 'create', 'update', 'delete'],
+            'permission' => ['view', 'create', 'update', 'delete'],
+            'podcast' => ['view', 'create', 'update', 'delete'],
+            'author' => ['view', 'create', 'update', 'delete'],
+            'category' => ['view', 'create', 'update', 'delete'],
+            'publisher' => ['view', 'create', 'update', 'delete'],
+            'episode' => ['view', 'create', 'update', 'delete'],
+            'tag' => ['view', 'create', 'update', 'delete'],
+            'setting' => ['view', 'update'],
+            'activity' => ['view'],
         ];
 
-        foreach($permissions as $permission){
-            Permission::firstOrCreate(['name' => $permission]);
+        $permissions = [];
+
+        foreach ($permissionGroups as $groupName => $actions) {
+            foreach ($actions as $action) {
+                $name = "{$groupName}.{$action}";
+
+                $permissions[] = Permission::firstOrCreate(
+                    ['name' => $name],
+                    [
+                        'display_name' => str_replace('_', ' ', $groupName) . ' ' . $action,
+                        'group_name' => $groupName,
+                    ]
+                );
+            }
         }
 
-        // role
-        $admin = Role::firstOrCreate(['name'=>'admin']);
-        $editor = Role::firstOrCreate(['name'=>'editor']);
-        $viewer = Role::firstOrCreate(['name'=>'viewer']);
+        $role = Role::firstOrCreate(
+            ['name' => 'super-admin'],
+            [
+                'display_name' => 'Super Admin',
+                'description' => 'Full access to the portal administration module.',
+            ]
+        );
 
+        $role->permissions()->sync(collect($permissions)->pluck('id')->all());
 
-        // gán permisson vào role
-        $admin->givePermissionTo(Permission::all());
+        $adminEmail = env('DEFAULT_ADMIN_EMAIL', 'admin@email.com');
+        $adminPassword = env('DEFAULT_ADMIN_PASSWORD', 'Aa12345@');
 
-        $viewer->givePermissionTo([
-            'podcast.view',
-            'user.view',
-        ]);
+        $admin = AdminUser::firstOrCreate(
+            ['email' => $adminEmail],
+            [
+                'username' => 'superadmin',
+                'password' => Hash::make($adminPassword),
+                'status' => 'active',
+            ]
+        );
 
-        $editor->givePermissionTo([
-            'podcast.view',
-            'podcast.create',
-            'podcast.update',
-            'podcast.delete',
-        ]);
-
-
-
-
-
+        $admin->roles()->syncWithoutDetaching([$role->id]);
     }
 }

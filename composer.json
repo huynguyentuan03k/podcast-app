@@ -11,12 +11,12 @@
     "require": {
         "php": "^8.2",
         "darkaonline/l5-swagger": "^11.0",
+        "frieren/frieren-core": "^1.0",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.47",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1",
-        "frieren/frieren-core": "^1.0",
         "sentry/sentry-laravel": "^4.20",
         "spatie/laravel-activitylog": "^4.11",
         "spatie/laravel-query-builder": "^6.3",
