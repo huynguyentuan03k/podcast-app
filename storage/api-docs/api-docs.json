@@ -280,13 +280,100 @@
                     "Admin Auth"
                 ],
                 "description": "Get current authenticated admin",
-                "operationId": "d509076423316ad492ed908cae4e7c1e",
+                "operationId": "ab79324e0fd2ebdbb2cf4aa59dc6c276",
                 "responses": {
                     "200": {
                         "description": "Current admin retrieved successfully"
                     },
                     "401": {
                         "description": "Unauthenticated"
+                    }
+                }
+            }
+        },
+        "/api/admin/auth/forgot-password": {
+            "post": {
+                "tags": [
+                    "Admin Auth"
+                ],
+                "description": "Send password reset link for admin client",
+                "operationId": "e2277e3a9452ebcc39ceba3323576395",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reset link sent"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/admin/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "Admin Auth"
+                ],
+                "description": "Reset password for admin client",
+                "operationId": "3696a9748ef65e02ebf657e455de99eb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "reset-token"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -416,16 +503,16 @@
                 }
             }
         },
-        "/api/auth/me": {
-            "get": {
+        "/api/auth/logout": {
+            "post": {
                 "tags": [
                     "Auth"
                 ],
-                "description": "Get current authenticated web/mobile user",
-                "operationId": "b5de204f5e452ef51327c691aa99e77c",
+                "description": "Logout authenticated web/mobile user",
+                "operationId": "df9bdc6c7a6d9f20b983526b2ec0f698",
                 "responses": {
                     "200": {
-                        "description": "Current user retrieved successfully"
+                        "description": "Logout successfully"
                     },
                     "401": {
                         "description": "Unauthenticated"
@@ -1471,6 +1558,93 @@
                     },
                     "404": {
                         "description": "Keyword not found"
+                    }
+                }
+            }
+        },
+        "/api/auth/forgot-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Send password reset link for web/mobile client",
+                "operationId": "2bc87cdee42a3e7a0332d86054875d5b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Reset link sent"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Reset password for web/mobile client",
+                "operationId": "bcc9b35459c798c465fb34a002de76fa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "token",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "token": {
+                                        "type": "string",
+                                        "example": "reset-token"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 }
             }
@@ -2604,6 +2778,23 @@
                     },
                     "404": {
                         "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Get current authenticated web/mobile user",
+                "operationId": "5b8da694fbf212028bc1f501491226fd",
+                "responses": {
+                    "200": {
+                        "description": "Current user retrieved successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
                     }
                 }
             }
