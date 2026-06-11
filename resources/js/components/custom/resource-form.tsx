@@ -4,6 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router, useForm } from '@inertiajs/react';
+import { type FormDataConvertible } from '@inertiajs/core';
 import { LoaderCircle, Save } from 'lucide-react';
 import { FormEvent } from 'react';
 import { appendFormValue, blankValues, csrfToken, valuesFromRecord } from './helpers';
@@ -17,7 +18,8 @@ type Props = {
 
 export function ResourceForm({ config, mode, record }: Props) {
     const fields = config.fields.filter((field) => mode === 'create' || !field.createOnly);
-    const form = useForm<Record<string, any>>(record ? valuesFromRecord(fields, record) : blankValues(fields));
+    const initialValues = (record ? valuesFromRecord(fields, record) : blankValues(fields)) as Record<string, FormDataConvertible>;
+    const form = useForm<Record<string, FormDataConvertible>>(initialValues);
     const title = mode === 'create' ? `Create ${config.singular}` : `Edit ${config.singular}`;
 
     const submit = async (event: FormEvent) => {

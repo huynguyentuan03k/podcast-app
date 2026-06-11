@@ -16,6 +16,19 @@ type ChartConfig = Record<
     }
 >;
 
+type ChartPayloadItem = {
+    dataKey?: string;
+    name?: string;
+    value?: unknown;
+    color?: string;
+};
+
+type ChartLegendItem = {
+    dataKey?: string;
+    value?: string;
+    color?: string;
+};
+
 function useChart() {
     const context = React.useContext(ChartContext);
 
@@ -72,7 +85,7 @@ function ChartTooltipContent({
     formatter,
 }: React.ComponentProps<'div'> & {
     active?: boolean;
-    payload?: Array<any>;
+    payload?: ChartPayloadItem[];
     label?: string;
     hideLabel?: boolean;
     labelFormatter?: (label: unknown, payload: unknown) => React.ReactNode;
@@ -86,9 +99,9 @@ function ChartTooltipContent({
         <div className={cn('border-border/60 bg-popover text-popover-foreground grid min-w-40 gap-2 rounded-lg border px-3 py-2 text-xs shadow-md', className)}>
             {!hideLabel && <div className="font-medium">{labelFormatter ? labelFormatter(label, payload) : label}</div>}
             <div className="grid gap-1">
-                {payload.map((item: any, index: number) => {
+                {payload.map((item, index: number) => {
                     const key = item.dataKey ?? item.name ?? `item-${index}`;
-                    const itemConfig = config[key] ?? {};
+                    const itemConfig = key ? config[key] ?? {} : {};
                     const value = formatter ? formatter(item.value, item.name, item, index, payload) : item.value;
 
                     return (
@@ -114,16 +127,16 @@ function ChartLegend({
     return <RechartsPrimitive.Legend content={content ?? <ChartLegendContent />} {...props} />;
 }
 
-function ChartLegendContent({ payload, className }: React.ComponentProps<'div'> & { payload?: Array<any> }) {
+function ChartLegendContent({ payload, className }: React.ComponentProps<'div'> & { payload?: ChartLegendItem[] }) {
     const { config } = useChart();
 
     if (!payload?.length) return null;
 
     return (
         <div className={cn('flex flex-wrap items-center justify-center gap-4', className)}>
-            {payload.map((item: any) => {
-                const key = item.dataKey ?? item.value;
-                const itemConfig = config[key] ?? {};
+            {payload.map((item: ChartLegendItem) => {
+                const key = item.dataKey ?? item.value ?? '';
+                const itemConfig = key ? config[key] ?? {} : {};
 
                 return (
                     <div key={key} className="flex items-center gap-2">

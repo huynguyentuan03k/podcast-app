@@ -8,9 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { KeyRound, Mail, Bell, User, Save, Lock, Languages, Smartphone } from 'lucide-react';
+import { Bell, KeyRound, Lock, Save, User } from 'lucide-react';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 const tabs = [
     { key: 'profile', label: 'Profile', icon: User },

@@ -164,38 +164,50 @@ export default function CreateEpisode() {
                                     <FormField
                                         control={form.control}
                                         name="audio_path"
-                                        render={({ field: { onChange, value, ...field } }) => (
-                                            <FormItem>
-                                                <FormLabel>Audio file</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="file"
-                                                        accept="audio/*"
-                                                        {...field}
-                                                        onChange={(event) => onChange(event.target.files)}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        render={({ field }) => {
+                                            const { onChange, value, ...inputProps } = field;
+                                            void value;
+
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Audio file</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="file"
+                                                            accept="audio/*"
+                                                            {...inputProps}
+                                                            value={undefined}
+                                                            onChange={(event) => onChange(event.target.files)}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            );
+                                        }}
                                     />
                                     <FormField
                                         control={form.control}
                                         name="cover_image"
-                                        render={({ field: { onChange, value, ...field } }) => (
-                                            <FormItem>
-                                                <FormLabel>Cover image</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        {...field}
-                                                        onChange={(event) => onChange(event.target.files)}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        render={({ field }) => {
+                                            const { onChange, value, ...inputProps } = field;
+                                            void value;
+
+                                            return (
+                                                <FormItem>
+                                                    <FormLabel>Cover image</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            {...inputProps}
+                                                            value={undefined}
+                                                            onChange={(event) => onChange(event.target.files)}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            );
+                                        }}
                                     />
                                 </div>
                             </Form>
