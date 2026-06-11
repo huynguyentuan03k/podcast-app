@@ -97,7 +97,9 @@ Route::prefix('portal')->name('portal.')->middleware('auth:admin')->group(functi
 Route::middleware('auth:admin')->get('/admin/clear-cache', function () {
     Artisan::call('optimize:clear');
 
-    return redirect()->back();
+    return response()->json([
+        'message' => 'Application cache cleared successfully.',
+    ]);
 })->name('admin.clear-cache');
 
 require __DIR__.'/settings.php';
