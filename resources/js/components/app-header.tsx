@@ -50,7 +50,9 @@ interface AppHeaderProps {
 export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
+    const currentUser = auth.user ?? auth.admin;
     const getInitials = useInitials();
+    const displayName = currentUser ? ('name' in currentUser ? currentUser.name : currentUser.username) : 'User';
     return (
         <>
             <div className="border-b border-sidebar-border/80">
@@ -161,15 +163,15 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="size-10 rounded-full p-1">
                                     <Avatar className="size-8 overflow-hidden rounded-full">
-                                        <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                        <AvatarImage src={currentUser?.avatar} alt={displayName} />
                                         <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
-                                            {getInitials(auth.user.name)}
+                                            {getInitials(displayName)}
                                         </AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end">
-                                <UserMenuContent user={auth.user} />
+                                {currentUser ? <UserMenuContent user={currentUser} /> : null}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>

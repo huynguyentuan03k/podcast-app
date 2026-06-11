@@ -4,6 +4,7 @@
     "scripts": {
         "build": "vite build",
         "build:ssr": "vite build && vite build --ssr",
+        "start": "vite",
         "dev": "vite",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
@@ -62,6 +63,7 @@
         "react-dropzone": "^14.3.8",
         "react-hook-form": "^7.57.0",
         "react-router-dom": "^7.6.2",
+        "recharts": "^3.8.1",
         "tailwind-merge": "^3.0.1",
         "tailwindcss-animate": "^1.0.7",
         "typescript": "^5.7.2",

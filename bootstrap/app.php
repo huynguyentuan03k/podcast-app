@@ -1,13 +1,16 @@
 <?php
 
+use App\Http\Middleware\Demomiddlewareage;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\Demomiddlewareage;
+use App\Http\Middleware\SetApiLocale;
+use App\Http\Middleware\TranslateApiResponse;
 use App\Services\ExceptionLogger;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Http\Request;
 use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -19,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin/*') ? route('admin.login') : route('login'));
 
         // đây là middleware toàn cục cho prefix api locahost:8000 luôn và đi qua các middleware ở dưới
         $middleware->web(append: [
@@ -28,8 +32,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->api(append: [
-            \App\Http\Middleware\SetApiLocale::class,
-            \App\Http\Middleware\TranslateApiResponse::class,
+            SetApiLocale::class,
+            TranslateApiResponse::class,
         ]);
 
         // khai báo cho middleware cụ thể của 1 router nào đó
@@ -40,7 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
 
-        $exceptions->report(function(Throwable $e){
+        $exceptions->report(function (Throwable $e) {
             ExceptionLogger::log($e);
         });
 

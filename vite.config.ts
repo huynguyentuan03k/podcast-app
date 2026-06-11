@@ -5,11 +5,18 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+    server: {
+        watch: {
+            ignored: ['**/vendor/**'],
+            usePolling: true,
+        },
+    },
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
+            input: ['resources/css/app.css', 'resources/js/main.tsx'],
             ssr: 'resources/js/ssr.tsx',
             refresh: true,
+            hotFile: 'storage/framework/vite.hot',
         }),
         react(),
         tailwindcss(),

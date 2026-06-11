@@ -1,21 +1,24 @@
-import { AppContent } from '@/components/app-content';
-import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
-import { AppSidebarHeader } from '@/components/app-sidebar-header';
+import { Breadcrumbs } from '@/components/breadcrumbs';
+import { PortalTopbar } from '@/components/portal-topbar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { type BreadcrumbItem } from '@/types';
 import { type PropsWithChildren } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 
 export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWithChildren<{ breadcrumbs?: BreadcrumbItem[] }>) {
     return (
-        <BrowserRouter>
-            <AppShell variant="sidebar">
-                <AppSidebar />
-                <AppContent variant="sidebar" className="overflow-x-hidden">
-                    <AppSidebarHeader breadcrumbs={breadcrumbs} />
-                    {children}
-                </AppContent>
-            </AppShell>
-        </BrowserRouter>
+        <SidebarProvider>
+            <AppSidebar />
+            <main className="flex min-h-svh flex-1 flex-col">
+                <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-sidebar-border/50 px-4">
+                    <div className="flex min-w-0 items-center gap-2">
+                        <SidebarTrigger />
+                        <Breadcrumbs breadcrumbs={breadcrumbs} />
+                    </div>
+                    <PortalTopbar />
+                </header>
+                <section className="flex flex-1 flex-col overflow-hidden">{children}</section>
+            </main>
+        </SidebarProvider>
     );
 }

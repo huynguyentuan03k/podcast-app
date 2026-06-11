@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use App\Services\SettingService;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,7 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if($this->app->environment('production')){
+        Vite::useHotFile(storage_path('framework/vite.hot'));
+
+        if ($this->app->environment('production')) {
             URL::forceScheme('https');
             URL::forceRootUrl('https://huynguyen-nginx.io.vn');
         }
