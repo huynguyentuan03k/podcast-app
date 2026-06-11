@@ -1,4 +1,3 @@
-import AppLayout from '@/layouts/app-layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { Bell, KeyRound, Lock, Save, User } from 'lucide-react';
 import { useState } from 'react';
@@ -199,7 +199,9 @@ export default function AccountPage() {
                                             <Checkbox defaultChecked />
                                             <div className="space-y-1">
                                                 <div className="font-medium">System updates</div>
-                                                <div className="text-sm text-muted-foreground">Notify me about portal updates and maintenance windows.</div>
+                                                <div className="text-sm text-muted-foreground">
+                                                    Notify me about portal updates and maintenance windows.
+                                                </div>
                                             </div>
                                         </label>
                                         <label className="flex items-start gap-3 rounded-lg border p-4">

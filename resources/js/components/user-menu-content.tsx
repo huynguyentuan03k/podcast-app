@@ -2,8 +2,8 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSep
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type AdminUser, type User } from '@/types';
-import { Link } from 'react-router-dom';
 import { LogOut, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface UserMenuContentProps {
     user: User | AdminUser;

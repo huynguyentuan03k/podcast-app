@@ -55,9 +55,7 @@ export function PortalTopbar() {
                     ))}
                 </SelectContent>
             </Select>
-            <div className="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-xs font-semibold">
-                HN
-            </div>
+            <div className="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-xs font-semibold">HN</div>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { FilePenLine, Folder, Headphones, LayoutDashboard, Languages, Newspaper, Podcast, Tags, User, UsersRound } from 'lucide-react';
+import { FilePenLine, Folder, Headphones, Languages, LayoutDashboard, Newspaper, Podcast, Tags, User, UsersRound } from 'lucide-react';
 import type React from 'react';
 
 interface NavLink {

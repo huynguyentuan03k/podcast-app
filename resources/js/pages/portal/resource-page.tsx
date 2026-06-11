@@ -8,7 +8,7 @@ export default function PortalResourcePage() {
     const params = useParams();
     const segments = pathname.split('/').filter(Boolean);
     const resource = params.resource ?? segments[1] ?? 'resource';
-    const action = segments[segments.length - 1] === resource ? 'overview' : segments[segments.length - 1] ?? 'overview';
+    const action = segments[segments.length - 1] === resource ? 'overview' : (segments[segments.length - 1] ?? 'overview');
     const id = params.id ?? '';
 
     const titleMap: Record<string, string> = {

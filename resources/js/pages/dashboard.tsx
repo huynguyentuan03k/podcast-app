@@ -2,10 +2,10 @@ import AppLayout from '@/layouts/app-layout';
 import { Link } from 'react-router-dom';
 import { Bar, BarChart, Cell, Pie, PieChart, XAxis, YAxis } from 'recharts';
 
-import { ChartContainer, ChartLegend, ChartTooltip } from '@/components/ui/chart';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartContainer, ChartLegend, ChartTooltip } from '@/components/ui/chart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AudioLines, CircleDot, LibraryBig, MessageSquareMore, Podcast, Sparkles } from 'lucide-react';
 
@@ -168,7 +168,10 @@ export default function Dashboard() {
                                             <TableCell className="font-medium">{item.title}</TableCell>
                                             <TableCell>{item.type}</TableCell>
                                             <TableCell>
-                                                <Badge variant="secondary" className="border border-border/60 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="border border-border/60 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300"
+                                                >
                                                     {item.status}
                                                 </Badge>
                                             </TableCell>
@@ -195,7 +198,11 @@ export default function Dashboard() {
                             <Button asChild variant="outline" className="justify-start border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10">
                                 <Link to="/portal/publishers">Manage publishers</Link>
                             </Button>
-                            <Button asChild variant="outline" className="justify-start border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10">
+                            <Button
+                                asChild
+                                variant="outline"
+                                className="justify-start border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10"
+                            >
                                 <Link to="/portal/categories">Manage categories</Link>
                             </Button>
                             <Button asChild variant="outline" className="justify-start border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10">
