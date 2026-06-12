@@ -56,6 +56,9 @@ RUN rm -f bootstrap/cache/*.php
 # 3. Chạy tối ưu autoload nhưng bỏ qua composer scripts để tránh package:discover lỗi lúc build
 RUN composer dump-autoload --optimize --no-scripts
 
+# 4. Kiểm tra Laravel boot được route trước khi image được deploy
+RUN php artisan route:list > /dev/null
+
 # Khởi tạo SQLite phòng hờ
 RUN mkdir -p /var/www/database && touch /var/www/database/database.sqlite
 
