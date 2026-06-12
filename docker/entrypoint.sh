@@ -17,25 +17,25 @@ if [ -f /var/www/database/database.sqlite ]; then
     chmod 664 /var/www/database/database.sqlite
 fi
 
-# 3. Tạo Storage Link một cách an toàn
+# 3. Xóa cache runtime trước mọi lệnh artisan để tránh dùng bootstrap cũ
+echo "🧹 Xóa Laravel runtime cache..."
+rm -f /var/www/bootstrap/cache/*.php
+rm -f /var/www/storage/framework/cache/data/*
+
+# 4. Tạo Storage Link một cách an toàn
 echo "🔗 Tạo symlink public/storage..."
 su -s /bin/bash www-data -c "php artisan storage:link" || true
 
-# =====================================================================
-# LƯU Ý LỚN: ĐÃ LƯỢC BỎ CÁC LỆNH CLEAR CACHE GÂY SẬP CONTAINER TẠI ĐÂY.
-# Việc cache và dọn dẹp config ĐÃ được xử lý triệt để lúc BUILD và PREDEPLOY.
-# =====================================================================
-
-# 4. Chỉ giữ lại lệnh sinh Swagger (nếu thực sự cần sinh động khi chạy app)
+# 5. Chỉ giữ lại lệnh sinh Swagger (nếu thực sự cần sinh động khi chạy app)
 if php artisan list | grep -q "l5-swagger:generate"; then
     echo "📝 Đang sinh tài liệu Swagger API..."
     su -s /bin/bash www-data -c "php artisan l5-swagger:generate" || true
 fi
 
-# 5. Tự động chạy Migration cập nhật Database
+# 6. Tự động chạy Migration cập nhật Database
 echo "🗄️ Chạy Database Migration..."
 su -s /bin/bash www-data -c "php artisan migrate --force" || echo "⚠️ Chưa kết nối được DB để migrate, bỏ qua bước này để app khởi động trước."
 
-# 6. Chạy Supervisor quản lý Nginx + PHP-FPM
+# 7. Chạy Supervisor quản lý Nginx + PHP-FPM
 echo "🏁 Khởi động Supervisor process manager..."
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
