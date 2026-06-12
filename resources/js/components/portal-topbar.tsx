@@ -13,6 +13,30 @@ const languages = [
     { label: 'JA', value: 'ja' },
 ];
 
+const portalLinks = [
+    {
+        label: 'Swagger',
+        href: '/api/documentation',
+        icon: BookText,
+        iconClassName: 'text-blue-600',
+        hoverClassName: 'hover:text-blue-600',
+    },
+    {
+        label: 'Telescope',
+        href: '/telescope',
+        icon: Telescope,
+        iconClassName: 'text-emerald-600',
+        hoverClassName: 'hover:text-emerald-600',
+    },
+    {
+        label: 'Horizon',
+        href: '/horizon',
+        icon: Globe,
+        iconClassName: 'text-violet-600',
+        hoverClassName: 'hover:text-violet-600',
+    },
+] as const;
+
 export function PortalTopbar() {
     const location = useLocation();
     const currentLanguage = new URLSearchParams(location.search).get('lang') ?? 'en';
@@ -46,38 +70,23 @@ export function PortalTopbar() {
 
     return (
         <div className="flex flex-wrap items-center justify-end gap-2">
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-md">
-                        <a href="/api/documentation" target="_blank" rel="noreferrer" aria-label="Swagger">
-                            <BookText className="size-4" />
-                        </a>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>Swagger</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-md">
-                        <a href="/horizon" target="_blank" rel="noreferrer" aria-label="Horizon">
-                            <Globe className="size-4" />
-                        </a>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>Horizon</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button asChild variant="ghost" size="icon" className="h-9 w-9 rounded-md">
-                        <a href="/telescope" target="_blank" rel="noreferrer" aria-label="Telescope">
-                            <Telescope className="size-4" />
-                        </a>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>Telescope</TooltipContent>
-            </Tooltip>
+            {portalLinks.map((item) => (
+                <Tooltip key={item.label}>
+                    <TooltipTrigger asChild>
+                        <Button
+                            asChild
+                            variant="ghost"
+                            size="icon"
+                            className={cn('group h-9 w-9 rounded-md transition-colors', item.hoverClassName)}
+                        >
+                            <a href={item.href} target="_blank" rel="noreferrer" aria-label={item.label}>
+                                <item.icon className={cn('size-4 transition-colors', item.iconClassName)} />
+                            </a>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{item.label}</TooltipContent>
+                </Tooltip>
+            ))}
 
             <Tooltip>
                 <TooltipTrigger asChild>
