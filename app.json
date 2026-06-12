@@ -3,7 +3,5 @@
   "builder": {
     "selected": "dockerfile"
   },
-  "scripts": {
-    "predeploy": "php artisan optimize:clear"
-  }
+  "scripts": {}
 }

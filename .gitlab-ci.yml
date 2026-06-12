@@ -1,116 +1,22 @@
-variables:
-  GIT_DEPTH: '0'
-  APP_ENV: testing
-  CACHE_DRIVER: array
-  DB_CONNECTION: sqlite
-  DB_DATABASE: database/database.sqlite
-  QUEUE_CONNECTION: sync
-  SESSION_DRIVER: array
-
 stages:
-  - prepare
-  - lint
-  - test
   - deploy
 
-default:
-  interruptible: true
-
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - vendor/
-    - node_modules/
-
-prepare_php:
-  stage: prepare
-  image: php:8.3-cli
-  tags:
-    - hp70602-runner
-  before_script:
-    - apt-get update
-    - apt-get install -y git unzip libzip-dev libxml2-dev libsqlite3-dev sqlite3 pkg-config
-    - docker-php-ext-install pdo_sqlite zip pcntl
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-    - rm composer-setup.php
-  script:
-    - composer install --no-interaction --prefer-dist --no-progress
-  artifacts:
-    paths:
-      - vendor/
-    expire_in: 1 hour
-  rules:
-    - if: $CI_COMMIT_BRANCH
-
-prepare_js:
-  stage: prepare
-  image: node:22-alpine
-  tags:
-    - hp70602-runner
-  script:
-    - npm ci
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 hour
-  rules:
-    - if: $CI_COMMIT_BRANCH
-
-lint_php:
-  stage: lint
-  image: php:8.3-cli
-  tags:
-    - hp70602-runner
-  needs:
-    - prepare_php
-  before_script:
-    - apt-get update
-    - apt-get install -y git unzip libzip-dev libxml2-dev libsqlite3-dev sqlite3 pkg-config
-    - docker-php-ext-install pdo_sqlite zip pcntl
-    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-    - rm composer-setup.php
-  script:
-    - vendor/bin/pint --test --dirty
-  rules:
-    - if: $CI_COMMIT_BRANCH
-
-lint_js:
-  stage: lint
-  image: node:22-alpine
-  tags:
-    - hp70602-runner
-  needs:
-    - prepare_js
-  script:
-    - npx eslint .
-    - npm run format:check
-  rules:
-    - if: $CI_COMMIT_BRANCH
-
-deploy_to_dokku:
+deploy:
   stage: deploy
-  image: alpine:latest
-  tags:
-    - hp70602-runner
-  needs:
-    - lint_php
-    - lint_js
+  image: alpine:3.20
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: on_success
+    - when: never
   before_script:
-    - apk update && apk add git openssh-client
+    - apk add --no-cache git openssh-client
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - echo "$DOKKU_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - eval $(ssh-agent -s)
-    - ssh-add ~/.ssh/id_rsa
-    - ssh-keyscan -H 192.168.1.21 >> ~/.ssh/known_hosts
+    - ssh-keyscan -p "${DOKKU_SSH_PORT:-22}" -H "$DOKKU_SSH_HOST" >> ~/.ssh/known_hosts
+    - git config --global user.email "${GITLAB_USER_EMAIL:-ci@example.com}"
+    - git config --global user.name "${GITLAB_USER_NAME:-GitLab CI}"
+    - git remote add dokku "ssh://dokku@${DOKKU_SSH_HOST}:${DOKKU_SSH_PORT:-22}/${DOKKU_APP_NAME}"
   script:
-    - echo "--- BẮT ĐẦU QUY TRÌNH DEPLOY LÊN DOKKU ---"
-    - git remote remove dokku || true
-    - git remote add dokku dokku@192.168.1.21:podcast-api
-    - git push dokku HEAD:main --force
-    - echo "--- DEPLOY THÀNH CÔNG! DOKKU ĐANG XỬ LÝ KHỞI CHẠY NGẦM ---"
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - git push --force dokku "HEAD:main"
