@@ -10,8 +10,8 @@ deploy:
     - when: never
   before_script:
     - apk add --no-cache git openssh-client
-    - test -n "${DOKKU_HOST:-}" || (echo "Missing DOKKU_HOST" && exit 1)
-    - test -n "${DOKKU_APP:-}" || (echo "Missing DOKKU_APP" && exit 1)
+    - export DOKKU_HOST="${DOKKU_HOST:-2402:800:6313:2782:24e:1ff:fea0:9aa2}"
+    - export DOKKU_APP="${DOKKU_APP:-podcast-api}"
     - test -n "${DOKKU_DEPLOY_KEY:-}" || (echo "Missing DOKKU_DEPLOY_KEY" && exit 1)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
