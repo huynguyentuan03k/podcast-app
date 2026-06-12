@@ -4,6 +4,8 @@ stages:
 deploy:
   stage: deploy
   image: alpine:3.20
+  tags:
+    - lan
 
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
@@ -12,21 +14,23 @@ deploy:
 
   before_script:
     - apk add --no-cache git openssh-client
-    - export DOKKU_HOST="2402:800:6313:2782:24e:1ff:fea0:9aa2"
+    - export DOKKU_HOST="192.168.1.21"
     - export DOKKU_APP="podcast-api"
-    - export DOKKU_REMOTE="dokku@[${DOKKU_HOST}]:${DOKKU_APP}"
+    - export DOKKU_REMOTE="dokku@${DOKKU_HOST}:${DOKKU_APP}"
 
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - printf '%s\n' "$DOKKU_DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+
     - ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+    - ssh-keyscan -H "$DOKKU_HOST" >> ~/.ssh/known_hosts
 
     - git remote remove dokku 2>/dev/null || true
     - git remote add dokku "$DOKKU_REMOTE"
     - git remote -v
 
-    - ssh -o BatchMode=yes -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa dokku@"$DOKKU_HOST" version
+    - ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -i ~/.ssh/id_rsa dokku@"$DOKKU_HOST" version
 
   script:
-    - GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=no' git push --force dokku HEAD:main
+    - GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes' git push --force dokku HEAD:main
