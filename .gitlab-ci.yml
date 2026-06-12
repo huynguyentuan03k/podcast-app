@@ -12,9 +12,9 @@ deploy:
 
   before_script:
     - apk add --no-cache git openssh-client
-    - export DOKKU_HOST="192.168.1.21"
+    - export DOKKU_HOST="2402:800:6313:2782:24e:1ff:fea0:9aa2"
     - export DOKKU_APP="podcast-api"
-    - export DOKKU_REMOTE="dokku@${DOKKU_HOST}:${DOKKU_APP}"
+    - export DOKKU_REMOTE="dokku@[${DOKKU_HOST}]:${DOKKU_APP}"
 
     - |
       echo "Branch: ${CI_COMMIT_BRANCH}"
@@ -30,14 +30,12 @@ deploy:
     - chmod 700 ~/.ssh
 
     - |
-      if [ -f "$DOKKU_DEPLOY_KEY" ]; then
-        cp "$DOKKU_DEPLOY_KEY" ~/.ssh/id_rsa
-      else
-        printf '%s\n' "$DOKKU_DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-      fi
+      printf '%s\n' "$DOKKU_DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
 
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keygen -lf ~/.ssh/id_rsa
+    - ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+    - ssh-keygen -lf ~/.ssh/id_rsa.pub
+
     - ssh-keyscan -H "$DOKKU_HOST" >> ~/.ssh/known_hosts
 
     - git config --global user.email "${GITLAB_USER_EMAIL:-ci@example.com}"
