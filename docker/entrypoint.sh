@@ -27,7 +27,7 @@ echo "🔗 Tạo symlink public/storage..."
 su -s /bin/bash www-data -c "php artisan storage:link" || true
 
 # 5. Chỉ giữ lại lệnh sinh Swagger (nếu thực sự cần sinh động khi chạy app)
-if php artisan list | grep -q "l5-swagger:generate"; then
+if [ -d /var/www/vendor/darkaonline/l5-swagger ]; then
     echo "📝 Đang sinh tài liệu Swagger API..."
     su -s /bin/bash www-data -c "php artisan l5-swagger:generate" || true
 fi
