@@ -5,7 +5,7 @@ deploy:
   stage: deploy
   image: alpine:3.20
   tags:
-    - lan
+    - hp70602-runner
 
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
