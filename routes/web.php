@@ -5,8 +5,11 @@ use App\Http\Controllers\Admin\Auth\NewPasswordController as AdminNewPasswordCon
 use App\Http\Controllers\Admin\Auth\PasswordResetLinkController as AdminPasswordResetLinkController;
 use App\Http\Controllers\Admin\Auth\RegisteredAdminController;
 use App\Http\Controllers\Admin\PortalResourceController;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -49,7 +52,7 @@ Route::get('/test-sentry', function () {
     throw new Exception('Test sentry error');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware([Authenticate::class, EnsureEmailIsVerified::class])->group(function () {
     Route::get('dashboard', function () {
         return view('app');
     })->name('dashboard');
@@ -60,7 +63,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::redirect('/', '/');
     Route::redirect('dashboard', '/')->name('dashboard');
 
-    Route::middleware('guest:admin')->group(function () {
+    Route::middleware(RedirectIfAuthenticated::using('admin'))->group(function () {
         Route::get('register', [RegisteredAdminController::class, 'create'])->name('register');
         Route::post('register', [RegisteredAdminController::class, 'store']);
 
@@ -74,7 +77,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('reset-password', [AdminNewPasswordController::class, 'store'])->name('password.store');
     });
 
-    Route::middleware('auth:admin')->group(function () {
+    Route::middleware(Authenticate::using('admin'))->group(function () {
         Route::get('{resource}', fn (string $resource) => redirect("/portal/{$resource}"))->name('resources.index');
         Route::get('{resource}/create', fn (string $resource) => redirect("/portal/{$resource}/create"))->name('resources.create');
         Route::get('{resource}/{id}', fn (string $resource, int $id) => redirect("/portal/{$resource}/{$id}/show"))->whereNumber('id')->name('resources.show');
@@ -84,7 +87,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-Route::prefix('portal')->name('portal.')->middleware('auth:admin')->group(function () {
+Route::prefix('portal')->name('portal.')->middleware(Authenticate::using('admin'))->group(function () {
     Route::get('aboutme', fn () => redirect('/settings/profile'))->name('aboutme');
     Route::get('{resource}', [PortalResourceController::class, 'index'])->name('resources.index');
     Route::get('{resource}/create', [PortalResourceController::class, 'create'])->name('resources.create');
@@ -94,7 +97,7 @@ Route::prefix('portal')->name('portal.')->middleware('auth:admin')->group(functi
     Route::get('{resource}/{id}/delete', fn (string $resource, int $id) => redirect("/portal/{$resource}"))->whereNumber('id')->name('resources.delete');
 });
 
-Route::middleware('auth:admin')->get('/admin/clear-cache', function () {
+Route::middleware(Authenticate::using('admin'))->get('/admin/clear-cache', function () {
     Artisan::call('optimize:clear');
 
     return response()->json([

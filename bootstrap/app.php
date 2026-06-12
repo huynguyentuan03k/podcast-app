@@ -16,6 +16,8 @@ use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
+use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -48,6 +50,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => EnsureEmailIsVerified::class,
             'signed' => ValidateSignature::class,
             'throttle' => ThrottleRequests::class,
+            'abilities' => CheckAbilities::class,
+            'ability' => CheckForAnyAbility::class,
             'check.age' => Demomiddlewareage::class,
         ]);
     })

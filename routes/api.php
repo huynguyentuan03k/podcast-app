@@ -14,13 +14,15 @@ use App\Http\Controllers\Api\PodcastController;
 use App\Http\Controllers\Api\PublisherController;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\UserController;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 
-Route::middleware('auth:sanctum')->get('/user', function () {
+Route::middleware(Authenticate::using('sanctum'))->get('/user', function () {
     return request()->user();
 });
 
-Route::middleware(['auth:sanctum', 'abilities:user'])->group(function () {
+Route::middleware([Authenticate::using('sanctum'), CheckAbilities::class.':user'])->group(function () {
     Route::get('auth/me', UserMeController::class);
 });
 Route::get('podcasts', [PodcastController::class, 'index']);
@@ -74,7 +76,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/forgot-password', [PasswordResetController::class, 'forgot']);
     Route::post('/reset-password', [PasswordResetController::class, 'reset']);
-    Route::middleware(['auth:sanctum', 'abilities:user'])->group(function () {
+    Route::middleware([Authenticate::using('sanctum'), CheckAbilities::class.':user'])->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });
@@ -84,7 +86,7 @@ Route::prefix('admin/auth')->group(function () {
     Route::post('/register', [AdminAuthController::class, 'register']);
     Route::post('/forgot-password', [AdminPasswordResetController::class, 'forgot']);
     Route::post('/reset-password', [AdminPasswordResetController::class, 'reset']);
-    Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+    Route::middleware([Authenticate::using('sanctum'), CheckAbilities::class.':admin'])->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout']);
         Route::get('/me', AdminMeController::class);
     });
