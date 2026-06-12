@@ -10,7 +10,8 @@ deploy:
     - when: never
   before_script:
     - apk add --no-cache git openssh-client
-    - test -n "${DOKKU_REMOTE_URL:-}" || (echo "Missing DOKKU_REMOTE_URL" && exit 1)
+    - test -n "${DOKKU_HOST:-}" || (echo "Missing DOKKU_HOST" && exit 1)
+    - test -n "${DOKKU_APP:-}" || (echo "Missing DOKKU_APP" && exit 1)
     - test -n "${DOKKU_DEPLOY_KEY:-}" || (echo "Missing DOKKU_DEPLOY_KEY" && exit 1)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
@@ -22,10 +23,16 @@ deploy:
       fi
     - chmod 600 ~/.ssh/id_rsa
     - |
-      DOKKU_SSH_HOST="$(printf '%s' "$DOKKU_REMOTE_URL" | sed -E 's#^ssh://[^@]+@([^:/]+).*$#\1#; s#^([^@:/]+@)?([^:/]+).*$#\2#')"
-      DOKKU_SSH_PORT="$(printf '%s' "$DOKKU_REMOTE_URL" | sed -nE 's#^ssh://[^@]+@[^:/]+:([0-9]+)/.*$#\1#p')"
-      DOKKU_SSH_PORT="${DOKKU_SSH_PORT:-22}"
-      ssh-keyscan -p "$DOKKU_SSH_PORT" -H "$DOKKU_SSH_HOST" >> ~/.ssh/known_hosts
+      DOKKU_SSH_HOST_RAW="$DOKKU_HOST"
+      DOKKU_SSH_PORT="${DOKKU_PORT:-22}"
+      DOKKU_REMOTE_USER="${DOKKU_USER:-dokku}"
+      if printf '%s' "$DOKKU_SSH_HOST_RAW" | grep -q ':'; then
+        DOKKU_SSH_HOST="[$DOKKU_SSH_HOST_RAW]"
+      else
+        DOKKU_SSH_HOST="$DOKKU_SSH_HOST_RAW"
+      fi
+      DOKKU_REMOTE_URL="ssh://${DOKKU_REMOTE_USER}@${DOKKU_SSH_HOST}:${DOKKU_SSH_PORT}/${DOKKU_APP}"
+      ssh-keyscan -p "$DOKKU_SSH_PORT" -H "$DOKKU_SSH_HOST_RAW" >> ~/.ssh/known_hosts
     - git config --global user.email "${GITLAB_USER_EMAIL:-ci@example.com}"
     - git config --global user.name "${GITLAB_USER_NAME:-GitLab CI}"
     - git remote add dokku "$DOKKU_REMOTE_URL"
