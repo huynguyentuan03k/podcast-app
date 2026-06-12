@@ -35,6 +35,7 @@ deploy:
       ssh-keyscan -p "$DOKKU_SSH_PORT" -H "$DOKKU_SSH_HOST_RAW" >> ~/.ssh/known_hosts
     - git config --global user.email "${GITLAB_USER_EMAIL:-ci@example.com}"
     - git config --global user.name "${GITLAB_USER_NAME:-GitLab CI}"
+    - git remote remove dokku || true
     - git remote add dokku "$DOKKU_REMOTE_URL"
   script:
     - git push --force dokku "HEAD:main"
