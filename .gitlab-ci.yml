@@ -14,7 +14,11 @@ deploy:
     - export DOKKU_APP="${DOKKU_APP:-podcast-api}"
     - echo "Branch: ${CI_COMMIT_BRANCH}"
     - echo "Protected ref: ${CI_COMMIT_REF_PROTECTED}"
-    - test -n "${DOKKU_DEPLOY_KEY:-}" || (echo "Missing DOKKU_DEPLOY_KEY. If this variable is protected, the branch must be protected too." && exit 1)
+    - |
+      if [ -z "${DOKKU_DEPLOY_KEY:-}" ]; then
+        echo "Missing DOKKU_DEPLOY_KEY"
+        exit 1
+      fi
     - |
       mkdir -p ~/.ssh
       chmod 700 ~/.ssh
@@ -25,21 +29,18 @@ deploy:
       fi
       chmod 600 ~/.ssh/id_rsa
       ssh-keygen -lf ~/.ssh/id_rsa
-      DOKKU_SSH_HOST_RAW="$DOKKU_HOST"
+    - |
       DOKKU_SSH_PORT="${DOKKU_PORT:-22}"
-      DOKKU_REMOTE_USER="${DOKKU_USER:-dokku}"
-      if printf '%s' "$DOKKU_SSH_HOST_RAW" | grep -q ':'; then
-        DOKKU_SSH_HOST="[$DOKKU_SSH_HOST_RAW]"
-      else
-        DOKKU_SSH_HOST="$DOKKU_SSH_HOST_RAW"
-      fi
-      DOKKU_REMOTE_URL="ssh://${DOKKU_REMOTE_USER}@${DOKKU_SSH_HOST}:${DOKKU_SSH_PORT}/${DOKKU_APP}"
-      ssh-keyscan -p "$DOKKU_SSH_PORT" -H "$DOKKU_SSH_HOST_RAW" >> ~/.ssh/known_hosts
-      echo "Remote: $DOKKU_REMOTE_URL"
-      git config --global user.email "${GITLAB_USER_EMAIL:-ci@example.com}"
-      git config --global user.name "${GITLAB_USER_NAME:-GitLab CI}"
-      git remote remove dokku || true
-      git remote add dokku "$DOKKU_REMOTE_URL"
-      git remote -v
+      ssh-keyscan -p "$DOKKU_SSH_PORT" -H "$DOKKU_HOST" >> ~/.ssh/known_hosts
+      echo "SSH host: $DOKKU_HOST"
+      echo "SSH port: $DOKKU_SSH_PORT"
+      echo "App: $DOKKU_APP"
+      echo "Deploy key file: ~/.ssh/id_rsa"
+    - git config --global user.email "${GITLAB_USER_EMAIL:-ci@example.com}"
+    - git config --global user.name "${GITLAB_USER_NAME:-GitLab CI}"
+    - git remote remove dokku 2>/dev/null || true
+    - git remote add dokku "ssh://dokku@${DOKKU_HOST}:${DOKKU_PORT:-22}/${DOKKU_APP}"
+    - git remote -v
+    - ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -i ~/.ssh/id_rsa -p "${DOKKU_PORT:-22}" dokku@"$DOKKU_HOST" version
   script:
-    - GIT_SSH_COMMAND='ssh -vvv' git push --force dokku "HEAD:main"
+    - GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes' git push --force dokku "HEAD:main"
