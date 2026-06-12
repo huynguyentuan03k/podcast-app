@@ -33,4 +33,5 @@ deploy:
     - ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -i ~/.ssh/id_rsa dokku@"$DOKKU_HOST" version
 
   script:
+    - git fetch --unshallow || true
     - GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes' git push --force dokku HEAD:main

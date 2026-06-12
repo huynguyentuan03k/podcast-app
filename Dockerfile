@@ -53,8 +53,8 @@ RUN if [ -f package.json ]; then npm run build; fi
 # 2. Xóa các file cache cũ đi kèm theo code
 RUN rm -f bootstrap/cache/*.php
 
-# 3. Chạy tối ưu autoload sinh classmap cho PHP
-RUN composer dump-autoload --optimize
+# 3. Chạy tối ưu autoload nhưng bỏ qua composer scripts để tránh package:discover lỗi lúc build
+RUN composer dump-autoload --optimize --no-scripts
 
 # Khởi tạo SQLite phòng hờ
 RUN mkdir -p /var/www/database && touch /var/www/database/database.sqlite
