@@ -66,9 +66,9 @@ export function NavMain({ items = [] }: { items: SideLink[] }) {
 
     return (
         <>
-            {items.map((group) => (
+            {items.map((group, index) => (
                 <SidebarGroup key={`${group.title}-${group.href}`} className="px-2 py-0">
-                    <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                    {index > 0 && <SidebarGroupLabel>{group.title}</SidebarGroupLabel>}
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <NavSection group={group} url={url} />

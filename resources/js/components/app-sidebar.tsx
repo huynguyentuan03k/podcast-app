@@ -1,6 +1,7 @@
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { sidelinks } from '@/components/side-link';
+import { Separator } from '@/components/ui/separator';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Link, useLocation } from 'react-router-dom';
 import AppLogo from './app-logo';
@@ -15,7 +16,7 @@ export function AppSidebar() {
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild className="px-2">
+                        <SidebarMenuButton size="lg" asChild className="h-20 items-stretch px-1.5 py-1 group-data-[collapsible=icon]:h-8">
                             <Link to={homeHref}>
                                 <AppLogo />
                             </Link>
@@ -23,8 +24,9 @@ export function AppSidebar() {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
+            <Separator />
 
-            <SidebarContent className="px-0">
+            <SidebarContent className="px-0 pt-3">
                 <NavMain items={sidelinks} />
             </SidebarContent>
 
