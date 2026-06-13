@@ -47,7 +47,9 @@ export type DataTableV1FacetedFilterOption = {
 export type DataTableV1FacetedFilter = {
     key: string;
     title: string;
-    options: DataTableV1FacetedFilterOption[];
+    options?: DataTableV1FacetedFilterOption[];
+    columnKey?: string;
+    searchPlaceholder?: string;
 };
 
 export type DataTableV1DateRange = {

@@ -5,7 +5,7 @@ import { Download, Plus, Search, X } from 'lucide-react';
 import { DataTableDateFilter } from './data-table-date-filter';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
-import type { DataTableV1DateRangeFilter, DataTableV1FacetedFilter, DataTableV1FilterState } from './types';
+import type { DataTableV1DateRangeFilter, DataTableV1FacetedFilter, DataTableV1FacetedFilterOption, DataTableV1FilterState } from './types';
 
 type DataTableToolbarProps<TData> = {
     table: Table<TData>;
@@ -19,6 +19,52 @@ type DataTableToolbarProps<TData> = {
     onFacetChange: (key: string, value: string[]) => void;
     onDateRangeChange: (key: string, value: DataTableV1FilterState['dateRanges'][string]) => void;
 };
+
+function getValueByColumnKey<TData>(row: Row<TData>, columnKey: string) {
+    const rowValue = row.getValue(columnKey);
+
+    if (rowValue !== undefined && rowValue !== null && rowValue !== '') {
+        return String(rowValue);
+    }
+
+    const original = row.original as Record<string, unknown>;
+    const originalValue = original[columnKey];
+
+    if (originalValue === undefined || originalValue === null || originalValue === '') {
+        return undefined;
+    }
+
+    return String(originalValue);
+}
+
+function getFilterOptions<TData>(table: Table<TData>, filter: DataTableV1FacetedFilter): DataTableV1FacetedFilterOption[] {
+    if (filter.options?.length) {
+        return filter.options;
+    }
+
+    if (!filter.columnKey) {
+        return [];
+    }
+
+    const optionMap = new Map<string, DataTableV1FacetedFilterOption>();
+
+    table.getRowModel().rows.forEach((row) => {
+        const value = getValueByColumnKey(row, filter.columnKey!);
+
+        if (!value) {
+            return;
+        }
+
+        const current = optionMap.get(value);
+        optionMap.set(value, {
+            label: value,
+            value,
+            count: (current?.count ?? 0) + 1,
+        });
+    });
+
+    return Array.from(optionMap.values()).sort((first, second) => first.label.localeCompare(second.label));
+}
 
 export function DataTableToolbar<TData>({
     table,
@@ -49,9 +95,10 @@ export function DataTableToolbar<TData>({
                     <DataTableFacetedFilter
                         key={filter.key}
                         title={filter.title}
-                        options={filter.options}
+                        options={getFilterOptions(table, filter)}
                         value={filters.facets[filter.key] ?? []}
                         onChange={(value) => onFacetChange(filter.key, value)}
+                        searchPlaceholder={filter.searchPlaceholder}
                     />
                 ))}
                 {dateRangeFilter ? (
