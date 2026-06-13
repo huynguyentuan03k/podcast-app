@@ -1,7 +1,6 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { type ResourceRecord } from '@/components/custom/types';
-import { publisherConfig } from '../shema';
+import PublisherForm from '../form/PublisherForm';
+import type { Publisher } from '../shema';
 
-export default function EditPublisher({ record }: { record: ResourceRecord }) {
-    return <ResourceForm config={publisherConfig} mode="edit" record={record} />;
+export default function EditPublisher({ record }: { record: Publisher }) {
+    return <PublisherForm mode="edit" publisher={record} />;
 }

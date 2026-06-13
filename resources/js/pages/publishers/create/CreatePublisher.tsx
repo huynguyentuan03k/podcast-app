@@ -1,6 +1,5 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { publisherConfig } from '../shema';
+import PublisherForm from '../form/PublisherForm';
 
 export default function CreatePublisher() {
-    return <ResourceForm config={publisherConfig} mode="create" />;
+    return <PublisherForm mode="create" />;
 }

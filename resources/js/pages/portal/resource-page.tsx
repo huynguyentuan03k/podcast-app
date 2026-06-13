@@ -13,12 +13,17 @@ import PodcastOverview from '@/pages/podcasts/overview/PodcastOverview';
 import CreatePodcast from '@/pages/podcasts/create/CreatePodcast';
 import EditPodcast from '@/pages/podcasts/edit/EditPodcast';
 import ShowPodcast from '@/pages/podcasts/show/ShowPodcast';
+import PublisherOverview from '@/pages/publishers/overview/PublisherOverview';
+import CreatePublisher from '@/pages/publishers/create/CreatePublisher';
+import EditPublisher from '@/pages/publishers/edit/EditPublisher';
+import ShowPublisher from '@/pages/publishers/show/ShowPublisher';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { authorConfig, type Author } from '../authors/shema';
 import { categoryConfig, type Category } from '../categories/shema';
 import { podcastConfig, type Podcast } from '../podcasts/shema';
+import { publisherConfig, type Publisher } from '../publishers/shema';
 
 function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
     const { data, isLoading } = useQuery({
@@ -110,6 +115,36 @@ function PodcastRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }
     return mode === 'edit' ? <EditPodcast record={data} /> : <ShowPodcast record={data} />;
 }
 
+function PublisherRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['publishers', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: Publisher }>(`/publishers/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={publisherConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading publisher...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={publisherConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Publisher not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditPublisher record={data} /> : <ShowPublisher record={data} />;
+}
+
 export default function PortalResourcePage() {
     const { pathname } = useLocation();
     const params = useParams();
@@ -160,6 +195,22 @@ export default function PortalResourcePage() {
         }
 
         return <PodcastOverview />;
+    }
+
+    if (resource === 'publishers') {
+        if (action === 'create') {
+            return <CreatePublisher />;
+        }
+
+        if (action === 'edit') {
+            return <PublisherRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <PublisherRecordLoader id={id} mode="show" />;
+        }
+
+        return <PublisherOverview />;
     }
 
     if (resource === 'categories') {
