@@ -1,6 +1,5 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { categoryConfig } from '../shema';
+import CategoryForm from '../form/CategoryForm';
 
 export default function CreateCategory() {
-    return <ResourceForm config={categoryConfig} mode="create" />;
+    return <CategoryForm mode="create" />;
 }

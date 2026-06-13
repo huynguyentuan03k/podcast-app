@@ -5,10 +5,15 @@ import AuthorOverview from '@/pages/authors/overview/AuthorOverview';
 import CreateAuthor from '@/pages/authors/create/CreateAuthor';
 import EditAuthor from '@/pages/authors/edit/EditAuthor';
 import ShowAuthor from '@/pages/authors/show/ShowAuthor';
+import CategoryOverview from '@/pages/categories/overview/CategoryOverview';
+import CreateCategory from '@/pages/categories/create/CreateCategory';
+import EditCategory from '@/pages/categories/edit/EditCategory';
+import ShowCategory from '@/pages/categories/show/ShowCategory';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { authorConfig, type Author } from '../authors/shema';
+import { categoryConfig, type Category } from '../categories/shema';
 
 function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
     const { data, isLoading } = useQuery({
@@ -38,6 +43,36 @@ function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' })
     }
 
     return mode === 'edit' ? <EditAuthor record={data} /> : <ShowAuthor record={data} />;
+}
+
+function CategoryRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['categories', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: Category }>(`/categories/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={categoryConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading category...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={categoryConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Category not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditCategory record={data} /> : <ShowCategory record={data} />;
 }
 
 export default function PortalResourcePage() {
@@ -74,6 +109,22 @@ export default function PortalResourcePage() {
         }
 
         return <AuthorOverview />;
+    }
+
+    if (resource === 'categories') {
+        if (action === 'create') {
+            return <CreateCategory />;
+        }
+
+        if (action === 'edit') {
+            return <CategoryRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <CategoryRecordLoader id={id} mode="show" />;
+        }
+
+        return <CategoryOverview />;
     }
 
     return (
