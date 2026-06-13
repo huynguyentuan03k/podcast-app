@@ -1,7 +1,44 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
+import AuthorOverview from '@/pages/authors/overview/AuthorOverview';
+import CreateAuthor from '@/pages/authors/create/CreateAuthor';
+import EditAuthor from '@/pages/authors/edit/EditAuthor';
+import ShowAuthor from '@/pages/authors/show/ShowAuthor';
+import http from '@/http/client';
+import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { authorConfig, type Author } from '../authors/shema';
+
+function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['authors', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: Author }>(`/authors/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={authorConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading author...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={authorConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Author not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditAuthor record={data} /> : <ShowAuthor record={data} />;
+}
 
 export default function PortalResourcePage() {
     const { pathname } = useLocation();
@@ -22,6 +59,22 @@ export default function PortalResourcePage() {
     };
 
     const title = titleMap[resource] ?? resource;
+
+    if (resource === 'authors') {
+        if (action === 'create') {
+            return <CreateAuthor />;
+        }
+
+        if (action === 'edit') {
+            return <AuthorRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <AuthorRecordLoader id={id} mode="show" />;
+        }
+
+        return <AuthorOverview />;
+    }
 
     return (
         <AppLayout>

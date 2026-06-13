@@ -1,6 +1,5 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { authorConfig } from '../shema';
+import AuthorForm from '../form/AuthorForm';
 
 export default function CreateAuthor() {
-    return <ResourceForm config={authorConfig} mode="create" />;
+    return <AuthorForm mode="create" />;
 }
