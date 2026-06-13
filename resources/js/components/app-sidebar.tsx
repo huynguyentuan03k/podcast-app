@@ -29,6 +29,9 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter className="mt-auto">
+                <div className="px-2 text-[11px] font-medium text-sidebar-foreground/55 group-data-[collapsible=icon]:hidden">
+                    Version {__APP_VERSION__}
+                </div>
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

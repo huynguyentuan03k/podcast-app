@@ -1,11 +1,13 @@
 import AppearanceToggleDropdown from '@/components/appearance-dropdown';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { BookText, Globe, RefreshCcw, Telescope } from 'lucide-react';
+import { BookText, Globe, RefreshCcw, Settings, Telescope, UserRound } from 'lucide-react';
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const languages = [
     { label: 'EN', value: 'en' },
@@ -120,7 +122,42 @@ export function PortalTopbar() {
                     ))}
                 </SelectContent>
             </Select>
-            <div className="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-muted text-xs font-semibold">HN</div>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="ml-1 size-10 rounded-full p-1 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                        aria-label="Open account menu"
+                    >
+                        <Avatar className="size-9 rounded-full ring-1 ring-border/70">
+                            <AvatarFallback className="bg-neutral-950 text-xs font-semibold text-white dark:bg-neutral-100 dark:text-neutral-950">
+                                HN
+                            </AvatarFallback>
+                        </Avatar>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 rounded-lg" align="end" sideOffset={8}>
+                    <div className="px-2 py-1.5">
+                        <p className="text-sm font-medium">Account</p>
+                        <p className="text-xs text-muted-foreground">Profile and settings</p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                        <Link className="flex w-full items-center" to="/portal/aboutme">
+                            <UserRound className="mr-2 size-4" />
+                            My profile
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link className="flex w-full items-center" to="/portal/settings">
+                            <Settings className="mr-2 size-4" />
+                            Settings
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
     );
 }

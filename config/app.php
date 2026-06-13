@@ -56,6 +56,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'version' => trim(file_get_contents(base_path('VERSION'))) ?: '0.0.0',
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

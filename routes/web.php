@@ -1,13 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminAuthenticatedSessionController;
-use App\Http\Controllers\Admin\Auth\NewPasswordController as AdminNewPasswordController;
-use App\Http\Controllers\Admin\Auth\PasswordResetLinkController as AdminPasswordResetLinkController;
-use App\Http\Controllers\Admin\Auth\RegisteredAdminController;
 use App\Http\Controllers\Admin\PortalResourceController;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
-use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -63,27 +58,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::redirect('/', '/');
     Route::redirect('dashboard', '/')->name('dashboard');
 
-    Route::middleware(RedirectIfAuthenticated::using('admin'))->group(function () {
-        Route::get('register', [RegisteredAdminController::class, 'create'])->name('register');
-        Route::post('register', [RegisteredAdminController::class, 'store']);
-
-        Route::get('login', [AdminAuthenticatedSessionController::class, 'create'])->name('login');
-        Route::post('login', [AdminAuthenticatedSessionController::class, 'store']);
-
-        Route::get('forgot-password', [AdminPasswordResetLinkController::class, 'create'])->name('password.request');
-        Route::post('forgot-password', [AdminPasswordResetLinkController::class, 'store'])->name('password.email');
-
-        Route::get('reset-password/{token}', [AdminNewPasswordController::class, 'create'])->name('password.reset');
-        Route::post('reset-password', [AdminNewPasswordController::class, 'store'])->name('password.store');
-    });
-
     Route::middleware(Authenticate::using('admin'))->group(function () {
         Route::get('{resource}', fn (string $resource) => redirect("/portal/{$resource}"))->name('resources.index');
         Route::get('{resource}/create', fn (string $resource) => redirect("/portal/{$resource}/create"))->name('resources.create');
         Route::get('{resource}/{id}', fn (string $resource, int $id) => redirect("/portal/{$resource}/{$id}/show"))->whereNumber('id')->name('resources.show');
         Route::get('{resource}/{id}/show', fn (string $resource, int $id) => redirect("/portal/{$resource}/{$id}/show"))->whereNumber('id');
         Route::get('{resource}/{id}/edit', fn (string $resource, int $id) => redirect("/portal/{$resource}/{$id}/edit"))->whereNumber('id')->name('resources.edit');
-        Route::post('logout', [AdminAuthenticatedSessionController::class, 'destroy'])->name('logout');
     });
 });
 
