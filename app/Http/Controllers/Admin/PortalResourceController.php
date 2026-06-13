@@ -10,8 +10,7 @@ use App\Models\Podcast;
 use App\Models\Publisher;
 use App\Models\Tag;
 use App\Models\User;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 
 class PortalResourceController extends Controller
 {
@@ -81,32 +80,32 @@ class PortalResourceController extends Controller
         ],
     ];
 
-    public function index(string $resource): Response
+    public function index(string $resource): View
     {
-        return Inertia::render($this->resource($resource)['overview']);
+        $this->resource($resource);
+
+        return view('app');
     }
 
-    public function create(string $resource): Response
+    public function create(string $resource): View
     {
-        return Inertia::render($this->resource($resource)['create']);
+        $this->resource($resource);
+
+        return view('app');
     }
 
-    public function show(string $resource, int $id): Response
+    public function show(string $resource, int $id): View
     {
-        $config = $this->resource($resource);
+        $this->resource($resource);
 
-        return Inertia::render($config['show'], [
-            'record' => $this->record($config['endpoint'], $id),
-        ]);
+        return view('app');
     }
 
-    public function edit(string $resource, int $id): Response
+    public function edit(string $resource, int $id): View
     {
-        $config = $this->resource($resource);
+        $this->resource($resource);
 
-        return Inertia::render($config['edit'], [
-            'record' => $this->record($config['endpoint'], $id),
-        ]);
+        return view('app');
     }
 
     private function resource(string $resource): array

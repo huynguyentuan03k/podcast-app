@@ -22,7 +22,10 @@ class AdminResetPasswordNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $url = url('/admin/reset-password/' . $this->token . '?email=' . urlencode($notifiable->email));
+        $url = route('admin.password.reset', [
+            'token' => $this->token,
+            'email' => $notifiable->email,
+        ]);
 
         return (new MailMessage)
             ->subject('Reset your admin password')

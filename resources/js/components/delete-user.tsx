@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { useForm } from '@/lib/navigation';
 import { FormEventHandler, useRef } from 'react';
 
 import InputError from '@/components/input-error';

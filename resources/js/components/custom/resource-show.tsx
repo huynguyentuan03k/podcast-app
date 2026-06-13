@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link } from '@/lib/navigation';
 import { Pencil } from 'lucide-react';
 import { displayValue, getValue } from './helpers';
 import { type ResourceConfig, type ResourceRecord } from './types';

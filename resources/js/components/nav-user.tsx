@@ -3,12 +3,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { ChevronsUpDown, Settings, UserRound } from 'lucide-react';
+import { ChevronsUpDown, LogOut, Settings, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function NavUser() {
     const { state } = useSidebar();
     const isMobile = useIsMobile();
+    const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? '';
 
     return (
         <SidebarMenu className="gap-0">
@@ -60,6 +61,16 @@ export function NavUser() {
                                 <Settings className="mr-2 size-4" />
                                 Settings
                             </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <form action="/admin/logout" method="post" className="w-full">
+                                <input type="hidden" name="_token" value={csrfToken} />
+                                <button type="submit" className="flex w-full items-center">
+                                    <LogOut className="mr-2 size-4" />
+                                    Log out
+                                </button>
+                            </form>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

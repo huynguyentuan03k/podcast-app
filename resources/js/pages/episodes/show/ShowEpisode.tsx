@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import http from '@/http/client';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router } from '@/lib/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { Pencil } from 'lucide-react';
 import { EpisodeSchema, type Episode } from '../shema';

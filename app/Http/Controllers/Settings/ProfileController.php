@@ -8,17 +8,16 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     /**
      * Show the user's profile settings page.
      */
-    public function edit(Request $request): Response
+    public function edit(Request $request): View
     {
-        return Inertia::render('settings/profile', [
+        return view('app', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
         ]);
@@ -29,13 +28,13 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        Auth::guard('admin')->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if (Auth::guard('admin')->user()->isDirty('email') && array_key_exists('email_verified_at', Auth::guard('admin')->user()->getAttributes())) {
+            Auth::guard('admin')->user()->email_verified_at = null;
         }
 
-        $request->user()->save();
+        Auth::guard('admin')->user()->save();
 
         return to_route('profile.edit');
     }
@@ -46,12 +45,12 @@ class ProfileController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $request->validate([
-            'password' => ['required', 'current_password'],
+            'password' => ['required', 'current_password:admin'],
         ]);
 
-        $user = $request->user();
+        $user = Auth::guard('admin')->user();
 
-        Auth::logout();
+        Auth::guard('admin')->logout();
 
         $user->delete();
 

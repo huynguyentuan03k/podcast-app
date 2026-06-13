@@ -55,7 +55,6 @@ return [
         'cache'           => env('DEBUGBAR_COLLECTORS_CACHE', true),            // Display cache events
         'models'          => env('DEBUGBAR_COLLECTORS_MODELS', true),           // Display models
         'livewire'        => env('DEBUGBAR_COLLECTORS_LIVEWIRE', true),         // Display Livewire (when available)
-        'inertia'         => env('DEBUGBAR_COLLECTORS_INERTIA', true),          // Display Inertia (when available)
         'jobs'            => env('DEBUGBAR_COLLECTORS_JOBS', true),             // Display dispatched jobs
         'pennant'         => env('DEBUGBAR_COLLECTORS_PENNANT', true),          // Display Pennant feature flags
         'http_client'     => env('DEBUGBAR_COLLECTORS_HTTP_CLIENT', true),      // Display HTTP Client requests
@@ -122,9 +121,6 @@ return [
             'exclude_paths' => [    // Add the paths which you don't want to appear in the views
                 'vendor/filament',   // Exclude Filament components by default
             ],
-        ],
-        'inertia' => [
-            'pages' => env('DEBUGBAR_OPTIONS_VIEWS_INERTIA_PAGES', 'js/Pages'),  // Path for Inertia views
         ],
         'route' => [
             'label' => env('DEBUGBAR_OPTIONS_ROUTE_LABEL', true),  // Show complete route on bar

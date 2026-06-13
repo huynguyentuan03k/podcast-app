@@ -1,6 +1,6 @@
 import AppLogoIcon from '@/components/app-logo-icon';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from '@inertiajs/react';
+import { Link } from '@/lib/navigation';
 import { type PropsWithChildren } from 'react';
 
 export default function AuthCardLayout({

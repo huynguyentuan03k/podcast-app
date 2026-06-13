@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import http from '@/http/client';
-import { Link } from '@inertiajs/react';
+import { Link } from '@/lib/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 import { type Episode } from '../shema';

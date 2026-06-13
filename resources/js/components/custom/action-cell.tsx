@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Link } from '@inertiajs/react';
+import { Link } from '@/lib/navigation';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 import { type ResourceConfig, type ResourceRecord } from './types';
 

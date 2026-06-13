@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import http from '@/http/client';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/react';
+import { Head, router } from '@/lib/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { LoaderCircle } from 'lucide-react';

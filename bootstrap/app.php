@@ -2,7 +2,6 @@
 
 use App\Http\Middleware\Demomiddlewareage;
 use App\Http\Middleware\HandleAppearance;
-use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetApiLocale;
 use App\Http\Middleware\TranslateApiResponse;
 use App\Services\ExceptionLogger;
@@ -27,13 +26,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        $middleware->encryptCookies(except: ['appearance', 'locale', 'sidebar_state']);
         $middleware->redirectGuestsTo(fn () => route('login'));
 
         // đây là middleware toàn cục cho prefix api locahost:8000 luôn và đi qua các middleware ở dưới
         $middleware->web(append: [
             HandleAppearance::class,
-            HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 

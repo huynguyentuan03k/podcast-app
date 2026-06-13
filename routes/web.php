@@ -1,23 +1,47 @@
 <?php
 
-use App\Http\Controllers\Admin\PortalResourceController;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return view('app');
-})->name('home');
+Route::post('/auth/preferences', function (Request $request) {
+    $validated = $request->validate([
+        'locale' => ['nullable', 'in:en,vi,ja'],
+        'appearance' => ['nullable', 'in:light,dark,system'],
+    ]);
+
+    if (isset($validated['locale'])) {
+        $request->session()->put('locale', $validated['locale']);
+    }
+
+    $response = back();
+
+    if (isset($validated['locale'])) {
+        $response->withCookie(cookie('locale', $validated['locale'], 60 * 24 * 365));
+    }
+
+    if (isset($validated['appearance'])) {
+        $response->withCookie(cookie('appearance', $validated['appearance'], 60 * 24 * 365));
+    }
+
+    return $response;
+})->name('auth.preferences');
+
+Route::middleware(Authenticate::using('admin'))->group(function () {
+    Route::get('/', function () {
+        return view('app');
+    })->name('home');
+});
 
 Route::get('dashboard/episodes', function () {
-    return request()->header('X-Inertia') ? Inertia::location('/portal/episodes') : redirect('/portal/episodes');
+    return redirect('/portal/episodes');
 })->name('episodes/index');
 
 Route::get('dashboard/podcasts', function () {
-    return request()->header('X-Inertia') ? Inertia::location('/portal/podcasts') : redirect('/portal/podcasts');
+    return redirect('/portal/podcasts');
 })->name('episode/index');
 
 /**
@@ -59,6 +83,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::redirect('dashboard', '/')->name('dashboard');
 
     Route::middleware(Authenticate::using('admin'))->group(function () {
+        Route::post('logout', function (Request $request) {
+            Auth::guard('admin')->logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login');
+        })->name('logout');
+
         Route::get('{resource}', fn (string $resource) => redirect("/portal/{$resource}"))->name('resources.index');
         Route::get('{resource}/create', fn (string $resource) => redirect("/portal/{$resource}/create"))->name('resources.create');
         Route::get('{resource}/{id}', fn (string $resource, int $id) => redirect("/portal/{$resource}/{$id}/show"))->whereNumber('id')->name('resources.show');
@@ -68,13 +101,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 Route::prefix('portal')->name('portal.')->middleware(Authenticate::using('admin'))->group(function () {
-    Route::get('aboutme', fn () => redirect('/settings/profile'))->name('aboutme');
-    Route::get('{resource}', [PortalResourceController::class, 'index'])->name('resources.index');
-    Route::get('{resource}/create', [PortalResourceController::class, 'create'])->name('resources.create');
-    Route::get('{resource}/{id}', fn (string $resource, int $id) => redirect("/portal/{$resource}/{$id}/show"))->whereNumber('id');
-    Route::get('{resource}/{id}/show', [PortalResourceController::class, 'show'])->whereNumber('id')->name('resources.show');
-    Route::get('{resource}/{id}/edit', [PortalResourceController::class, 'edit'])->whereNumber('id')->name('resources.edit');
-    Route::get('{resource}/{id}/delete', fn (string $resource, int $id) => redirect("/portal/{$resource}"))->whereNumber('id')->name('resources.delete');
+    Route::get('{any?}', fn () => view('app'))
+        ->where('any', '.*')
+        ->name('app');
 });
 
 Route::middleware(Authenticate::using('admin'))->get('/admin/clear-cache', function () {
@@ -89,4 +118,5 @@ require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
 Route::view('{any}', 'app')
-    ->where('any', '^(?!api).*$');
+    ->where('any', '^(?!api).*$')
+    ->middleware(Authenticate::using('admin'));

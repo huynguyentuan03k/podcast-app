@@ -2,7 +2,7 @@ import { SpinnerLoading } from '@/components/custom/SpinnerLoading';
 import http from '@/http/client';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head } from '@/lib/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { EpisodesSchema, type EpisodeResponse, type Episodes } from '../shema';
 import { columns } from './columns';
