@@ -1,6 +1,5 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { podcastConfig } from '../shema';
+import PodcastForm from '../form/PodcastForm';
 
 export default function CreatePodcast() {
-    return <ResourceForm config={podcastConfig} mode="create" />;
+    return <PodcastForm mode="create" />;
 }

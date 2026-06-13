@@ -9,11 +9,16 @@ import CategoryOverview from '@/pages/categories/overview/CategoryOverview';
 import CreateCategory from '@/pages/categories/create/CreateCategory';
 import EditCategory from '@/pages/categories/edit/EditCategory';
 import ShowCategory from '@/pages/categories/show/ShowCategory';
+import PodcastOverview from '@/pages/podcasts/overview/PodcastOverview';
+import CreatePodcast from '@/pages/podcasts/create/CreatePodcast';
+import EditPodcast from '@/pages/podcasts/edit/EditPodcast';
+import ShowPodcast from '@/pages/podcasts/show/ShowPodcast';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { authorConfig, type Author } from '../authors/shema';
 import { categoryConfig, type Category } from '../categories/shema';
+import { podcastConfig, type Podcast } from '../podcasts/shema';
 
 function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
     const { data, isLoading } = useQuery({
@@ -75,6 +80,36 @@ function CategoryRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' 
     return mode === 'edit' ? <EditCategory record={data} /> : <ShowCategory record={data} />;
 }
 
+function PodcastRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['podcasts', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: Podcast }>(`/podcasts/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={podcastConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading podcast...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={podcastConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Podcast not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditPodcast record={data} /> : <ShowPodcast record={data} />;
+}
+
 export default function PortalResourcePage() {
     const { pathname } = useLocation();
     const params = useParams();
@@ -109,6 +144,22 @@ export default function PortalResourcePage() {
         }
 
         return <AuthorOverview />;
+    }
+
+    if (resource === 'podcasts') {
+        if (action === 'create') {
+            return <CreatePodcast />;
+        }
+
+        if (action === 'edit') {
+            return <PodcastRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <PodcastRecordLoader id={id} mode="show" />;
+        }
+
+        return <PodcastOverview />;
     }
 
     if (resource === 'categories') {

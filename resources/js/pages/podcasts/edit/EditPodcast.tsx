@@ -1,7 +1,6 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { type ResourceRecord } from '@/components/custom/types';
-import { podcastConfig } from '../shema';
+import PodcastForm from '../form/PodcastForm';
+import type { Podcast } from '../shema';
 
-export default function EditPodcast({ record }: { record: ResourceRecord }) {
-    return <ResourceForm config={podcastConfig} mode="edit" record={record} />;
+export default function EditPodcast({ record }: { record: Podcast }) {
+    return <PodcastForm mode="edit" podcast={record} />;
 }

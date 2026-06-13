@@ -19,8 +19,8 @@ class CreatePodcastAction
             }
 
             $podcast = Podcast::create($data);
-            $podcast->categories()->sync($data['category_ids']);
-            $podcast->authors()->sync($data['author_ids']);
+            $podcast->categories()->sync($data['category_ids'] ?? []);
+            $podcast->authors()->sync($data['author_ids'] ?? []);
 
             return $podcast;
         });
