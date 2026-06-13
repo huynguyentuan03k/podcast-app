@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'locale', 'sidebar_state']);
         $middleware->redirectGuestsTo(fn () => route('login'));
+        $middleware->redirectUsersTo(fn () => route('home'));
 
         // đây là middleware toàn cục cho prefix api locahost:8000 luôn và đi qua các middleware ở dưới
         $middleware->web(append: [

@@ -14,9 +14,9 @@ class ConfirmablePasswordController extends Controller
     /**
      * Show the confirm password page.
      */
-    public function show(): View
+    public function show(): RedirectResponse
     {
-        return view('auth.confirm-password');
+        return redirect()->route('home');
     }
 
     /**

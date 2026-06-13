@@ -4,6 +4,7 @@ return [
     'brand' => 'Quản trị Podcast',
     'language' => 'Ngôn ngữ',
     'theme' => 'Giao diện',
+    'switch_layout' => 'Đổi vị trí ảnh và form',
     'english' => 'Tiếng Anh',
     'vietnamese' => 'Tiếng Việt',
     'japanese' => 'Tiếng Nhật',

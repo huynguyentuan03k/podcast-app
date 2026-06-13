@@ -4,6 +4,7 @@ return [
     'brand' => 'Podcast Admin',
     'language' => '言語',
     'theme' => 'テーマ',
+    'switch_layout' => '画像とフォームの位置を切り替える',
     'english' => '英語',
     'vietnamese' => 'ベトナム語',
     'japanese' => '日本語',

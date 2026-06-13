@@ -4,6 +4,7 @@ return [
     'brand' => 'Podcast Admin',
     'language' => 'Language',
     'theme' => 'Theme',
+    'switch_layout' => 'Switch image and form position',
     'english' => 'English',
     'vietnamese' => 'Vietnamese',
     'japanese' => 'Japanese',

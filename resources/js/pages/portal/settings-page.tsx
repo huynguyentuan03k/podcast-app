@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useBrandAssets } from '@/hooks/use-brand-assets';
+import { AuthImagePosition, useBrandAssets } from '@/hooks/use-brand-assets';
 import AppLayout from '@/layouts/app-layout';
 import { ImagePlus, Info, Save } from 'lucide-react';
 import { useState } from 'react';
@@ -58,9 +59,9 @@ function AssetLabel({ children, tooltip }: { children: string; tooltip: string }
 }
 
 export default function SettingsPage() {
-    const { favicon, logo, setAsset } = useBrandAssets();
+    const { favicon, logo, authImage, authImagePosition, setAsset, setAuthImagePosition } = useBrandAssets();
 
-    const uploadAsset = async (key: 'logo' | 'favicon', files: File[]) => {
+    const uploadAsset = async (key: 'logo' | 'favicon' | 'authImage', files: File[]) => {
         const file = files[0];
 
         if (!file) {
@@ -134,6 +135,38 @@ export default function SettingsPage() {
                                     </div>
                                 )}
                             </Dropzone>
+                        </div>
+                        <div className="w-full max-w-80 space-y-2 sm:w-80">
+                            <AssetLabel tooltip="Image displayed on admin login and forgot password screens. PNG, JPG, WEBP, or SVG are supported.">
+                                Auth Image
+                            </AssetLabel>
+                            <Dropzone
+                                accept={imageAccept}
+                                onDrop={(files) => void uploadAsset('authImage', files)}
+                                className="relative flex aspect-[4/3] items-center justify-center rounded-lg border border-border/70 bg-background p-5 shadow-sm hover:bg-blue-50/50"
+                            >
+                                {authImage ? (
+                                    <img src={authImage} alt="Auth visual" className="max-h-full max-w-full object-contain" />
+                                ) : (
+                                    <div className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
+                                        <ImagePlus className="size-6" />
+                                        Upload auth image
+                                    </div>
+                                )}
+                                <ImagePlus className="pointer-events-none absolute right-3 bottom-3 size-5 text-muted-foreground/45" />
+                            </Dropzone>
+                        </div>
+                        <div className="w-full max-w-56 space-y-2 sm:w-56">
+                            <Label htmlFor="auth-image-position">Auth Image Position</Label>
+                            <Select value={authImagePosition} onValueChange={(value) => setAuthImagePosition(value as AuthImagePosition)}>
+                                <SelectTrigger id="auth-image-position">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="left">Image left, form right</SelectItem>
+                                    <SelectItem value="right">Form left, image right</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 
