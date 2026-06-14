@@ -12,6 +12,7 @@
         "php": "^8.2",
         "darkaonline/l5-swagger": "^11.0",
         "frieren/frieren-core": "^1.0",
+        "frieren/frieren-podcast": "^1.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.47",
         "laravel/sanctum": "^4.3",
@@ -50,6 +51,13 @@
         {
             "type": "path",
             "url": "modules/frieren-core",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "modules/frieren-podcast",
             "options": {
                 "symlink": true
             }

@@ -93,8 +93,8 @@ export default function AccountPage() {
             };
 
             return profile?.id
-                ? http.put(`/api/frieren-core/admin-profiles/${profile.id}`, payload)
-                : http.post('/api/frieren-core/admin-profiles', payload);
+                ? http.put(`/frieren-core/admin-profiles/${profile.id}`, payload)
+                : http.post('/frieren-core/admin-profiles', payload);
         },
         onSuccess: async () => {
             toast({

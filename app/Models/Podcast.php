@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Frieren\Podcast\Models\PodcastTranslation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -26,6 +27,11 @@ class Podcast extends Model
     public function episodes(): HasMany
     {
         return $this->hasMany(Episode::class);
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(PodcastTranslation::class);
     }
 
     public function authors(): BelongsToMany

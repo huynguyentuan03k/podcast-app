@@ -1,0 +1,23 @@
+{
+    "name": "frieren/frieren-podcast",
+    "version": "1.0.0",
+    "description": "Podcast and audio domain module for Frieren.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Frieren\\Podcast\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Frieren\\Podcast\\FrierenPodcastServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "laravel/framework": "^12.0"
+    }
+}

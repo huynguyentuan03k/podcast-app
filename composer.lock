@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1001730ecbd9d5b21b8918ac7f698cb7",
+    "content-hash": "338424cd30519ded1ae4ffccb93a909e",
     "packages": [
         {
             "name": "brick/math",
@@ -617,6 +617,40 @@
                 "MIT"
             ],
             "description": "Core admin module for Frieren.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "frieren/frieren-podcast",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/frieren-podcast",
+                "reference": "6f344522688b441fd6916afe1d037e1dc299c857"
+            },
+            "require": {
+                "laravel/framework": "^12.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Frieren\\Podcast\\FrierenPodcastServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frieren\\Podcast\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Podcast and audio domain module for Frieren.",
             "transport-options": {
                 "symlink": true,
                 "relative": true

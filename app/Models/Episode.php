@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Frieren\Podcast\Models\EpisodeAudioTrack;
+use Frieren\Podcast\Models\EpisodeTranslation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -25,6 +28,16 @@ class Episode extends Model
     public function podcast(): BelongsTo
     {
         return $this->belongsTo(Podcast::class);
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(EpisodeTranslation::class);
+    }
+
+    public function audioTracks(): HasMany
+    {
+        return $this->hasMany(EpisodeAudioTrack::class);
     }
 
     public function voiceAction(): BelongsTo

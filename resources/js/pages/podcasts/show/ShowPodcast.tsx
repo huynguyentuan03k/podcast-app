@@ -1,11 +1,17 @@
+import { DataTableV1 } from '@/components/custom/data-table-v1';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/hooks/use-toast';
 import http from '@/http/client';
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@/lib/navigation';
+import { getEpisodeColumns } from '@/pages/episodes/overview/columns';
+import { normalizeEpisodeIndexResponse } from '@/pages/episodes/overview/filters';
+import { defaultEpisodeSorting } from '@/pages/episodes/overview/sorting';
+import type { Episode } from '@/pages/episodes/shema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { podcastConfig, type Podcast } from '../shema';
 
@@ -30,6 +36,16 @@ function formatDate(value: Podcast['created_at']) {
     }).format(new Date(value));
 }
 
+function buildPodcastEpisodesUrl(podcastId: number, pageIndex: number, pageSize: number) {
+    const params = new URLSearchParams({
+        page: String(pageIndex + 1),
+        per_page: String(pageSize),
+        'filter[podcast_id]': String(podcastId),
+    });
+
+    return `/episodes?${params.toString()}`;
+}
+
 export default function ShowPodcast({ record }: { record: Podcast }) {
     const navigate = useNavigate();
     const { toast } = useToast();
@@ -46,6 +62,11 @@ export default function ShowPodcast({ record }: { record: Podcast }) {
             toast({ title: 'delete podcast failed', description: 'Something went wrong', variant: 'destructive' });
         },
     });
+
+    const episodeColumns = useMemo(
+        () => getEpisodeColumns({ deletingId: null, onDelete: () => undefined, onRequestDelete: () => undefined }).filter((column) => column.id !== 'actions'),
+        [],
+    );
 
     return (
         <AppLayout breadcrumbs={[...podcastConfig.breadcrumbs, { title: `ID: ${record.id}`, href: '#' }]}>
@@ -117,6 +138,24 @@ export default function ShowPodcast({ record }: { record: Podcast }) {
                             <p className="whitespace-pre-wrap text-sm font-medium">{record.content || <span className="italic text-muted-foreground">Not available</span>}</p>
                         </div>
                     </div>
+                </div>
+
+                <div className="rounded-lg border bg-card p-6 shadow-sm">
+                    <h2 className="mb-2 text-base font-semibold">Episodes</h2>
+                    <p className="mb-6 text-sm text-muted-foreground">Episodes that belong to this podcast.</p>
+                    <DataTableV1<Episode, unknown>
+                        title={undefined}
+                        columns={episodeColumns}
+                        queryKey={['podcast-episodes', record.id]}
+                        initialSorting={defaultEpisodeSorting}
+                        initialColumnVisibility={{ podcast_title: false }}
+                        searchPlaceholder="Search episodes"
+                        queryFn={async (request) => {
+                            const response = await http.get(buildPodcastEpisodesUrl(record.id, request.pageIndex, request.pageSize));
+
+                            return normalizeEpisodeIndexResponse(response.data);
+                        }}
+                    />
                 </div>
             </div>
         </AppLayout>
