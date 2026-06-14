@@ -1,262 +1,210 @@
 import { SpinnerLoading } from '@/components/custom/SpinnerLoading';
+import { PageTransition, useLoadingNavigate } from '@/components/custom/page-transition';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useToast } from '@/components/ui/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import http from '@/http/client';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@/lib/navigation';
+import { Head } from '@/lib/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { LoaderCircle } from 'lucide-react';
-import { useEffect } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { EpisodeSchema, type Episode, type EpisodeForm, type PodcastOption } from '../shema';
+import type { AxiosError } from 'axios';
+import { ArrowLeft, LoaderCircle, Save } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useForm, type Resolver } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { EpisodeFormSchema, episodeConfig, type Episode, type EpisodeForm, type PodcastOption } from '../shema';
+import AudioUrlValidator, { type AudioValidationStatus } from '../form/AudioUrlValidator';
 
-type ApiErrorResponse = {
-    message: string;
+type LaravelValidationError = {
+    message?: string;
     errors?: Record<string, string[]>;
 };
 
-function toFormData(data: EpisodeForm) {
-    const formData = new FormData();
-
-    formData.append('_method', 'PUT');
-    formData.append('title', data.title);
-    formData.append('slug', data.slug);
-    formData.append('podcast_id', String(data.podcast_id));
-    if (data.description) formData.append('description', data.description);
-    if (data.duration) formData.append('duration', data.duration);
-    if (data.audio_path?.[0]) formData.append('audio_path', data.audio_path[0]);
-    if (data.cover_image?.[0]) formData.append('cover_image', data.cover_image[0]);
-
-    return formData;
-}
-
 export default function EditEpisode({ record }: { record: Episode }) {
-    const id = record.id;
+    const navigate = useNavigate();
+    const loadingNavigate = useLoadingNavigate();
+    const { toast } = useToast();
     const queryClient = useQueryClient();
-
-    const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Episodes', href: '/portal/episodes' },
-        { title: `Edit #${id}`, href: `/portal/episodes/${id}/edit` },
-    ];
-
-    const form = useForm<EpisodeForm>({
-        defaultValues: {
-            title: '',
-            description: '',
-            slug: '',
-            podcast_id: 0,
-            duration: '',
-        },
-    });
-
-    const { data, isLoading } = useQuery({
-        queryKey: ['episode', id],
-        queryFn: async () => {
-            const response = await http.get<{ data: Episode }>(`/episodes/${id}`);
-            return EpisodeSchema.parse(response.data.data);
-        },
-        initialData: EpisodeSchema.parse(record),
-    });
+    const [audioStatus, setAudioStatus] = useState<AudioValidationStatus>(record.audio_path ? 'valid' : 'idle');
 
     const { data: podcastOptions = [] } = useQuery({
-        queryKey: ['podcasts'],
+        queryKey: ['podcasts', 'options'],
         queryFn: async () => {
             const response = await http.get<{ data: PodcastOption[] }>('/podcasts');
-            return response.data.data;
+
+            return response.data.data ?? [];
         },
     });
 
-    useEffect(() => {
-        if (!data) return;
+    const defaultValues = useMemo<EpisodeForm>(
+        () => ({
+            title: record.title ?? '',
+            slug: record.slug ?? '',
+            description: record.description ?? '',
+            podcast_id: record.podcast_id,
+            audio_path: record.audio_path ?? record.audio_url ?? '',
+            duration: record.duration ? String(record.duration) : '0',
+        }),
+        [record],
+    );
 
-        form.reset({
-            title: data.title ?? '',
-            description: data.description ?? '',
-            slug: data.slug ?? '',
-            podcast_id: data.podcast_id,
-            duration: data.duration ?? '',
-        });
-    }, [data, form]);
+    const form = useForm<EpisodeForm>({
+        resolver: zodResolver(EpisodeFormSchema) as Resolver<EpisodeForm>,
+        values: defaultValues,
+    });
 
     const mutation = useMutation({
-        mutationFn: (episode: EpisodeForm) => http.post(`/episodes/${id}`, toFormData(episode)),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['episode', id] });
-            queryClient.invalidateQueries({ queryKey: ['Episodes'] });
-            router.visit(`/portal/episodes/${id}/show`);
+        mutationFn: async (values: EpisodeForm) => http.put(`/episodes/${record.id}`, values),
+        onSuccess: async () => {
+            toast({ title: 'update episode successfully', description: 'episode has been updated.' });
+            await queryClient.invalidateQueries({ queryKey: ['episodes'] });
+            navigate(episodeConfig.basePath);
         },
-        onError: (error: AxiosError<ApiErrorResponse>) => {
-            Object.entries(error.response?.data.errors ?? {}).forEach(([key, messages]) => {
-                form.setError(key as keyof EpisodeForm, { message: messages[0] });
+        onError: (error: AxiosError<LaravelValidationError>) => {
+            toast({
+                title: 'update episode failed',
+                description: error.response?.data?.message || 'Something went wrong',
+                variant: 'destructive',
+            });
+            Object.entries(error.response?.data?.errors ?? {}).forEach(([field, messages]) => {
+                form.setError(field as keyof EpisodeForm, { type: 'server', message: messages[0] ?? 'Invalid value.' });
             });
         },
     });
 
-    const onSubmit: SubmitHandler<EpisodeForm> = (values) => mutation.mutate(values);
-
-    if (isLoading) return <SpinnerLoading />;
+    if (!record) {
+        return <SpinnerLoading />;
+    }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Edit episode #${id}`} />
-            <div className="p-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Edit Episode</CardTitle>
-                        <CardDescription>Update this episode through the episode API controller.</CardDescription>
-                    </CardHeader>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <CardContent>
-                            <Form {...form}>
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    <FormField
-                                        control={form.control}
-                                        name="title"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Title</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Episode title" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="slug"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Slug</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="episode-slug" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="podcast_id"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Podcast</FormLabel>
-                                                <Select
-                                                    value={field.value ? String(field.value) : ''}
-                                                    onValueChange={(value) => field.onChange(Number(value))}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select podcast" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {podcastOptions.map((podcast) => (
-                                                            <SelectItem key={podcast.id} value={String(podcast.id)}>
-                                                                {podcast.title}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="description"
-                                        render={({ field }) => (
-                                            <FormItem className="md:col-span-2">
-                                                <FormLabel>Description</FormLabel>
-                                                <FormControl>
-                                                    <Textarea placeholder="Episode description" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="duration"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Duration</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="00:03:15" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="audio_path"
-                                        render={({ field }) => {
-                                            const { onChange, value, ...inputProps } = field;
-                                            void value;
+        <AppLayout breadcrumbs={[...episodeConfig.breadcrumbs, { title: `ID: ${record.id}`, href: `${episodeConfig.basePath}/${record.id}/show` }, { title: 'Edit Episode', href: '#' }]}>
+            <Head title={`Edit Episode #${record.id}`} />
+            <PageTransition className="flex h-full flex-1 flex-col gap-4 overflow-auto p-4 md:p-6">
+                <div className="flex items-start justify-between gap-4">
+                    <h1 className="text-2xl font-semibold">Episodes Edit</h1>
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" className="gap-2 shadow-sm" onClick={() => loadingNavigate(episodeConfig.basePath)}>
+                            <ArrowLeft className="size-4" />
+                            Cancel
+                        </Button>
+                        <Button
+                            form="episode-form"
+                            type="submit"
+                            disabled={mutation.isPending || audioStatus !== 'valid'}
+                            className="gap-2 bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-500"
+                        >
+                            {mutation.isPending ? <LoaderCircle className="size-4 animate-spin" /> : <Save className="size-4" />}
+                            Save
+                        </Button>
+                    </div>
+                </div>
 
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Audio file</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type="file"
-                                                            accept="audio/*"
-                                                            {...inputProps}
-                                                            value={undefined}
-                                                            onChange={(event) => onChange(event.target.files)}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            );
-                                        }}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="cover_image"
-                                        render={({ field }) => {
-                                            const { onChange, value, ...inputProps } = field;
-                                            void value;
-
-                                            return (
-                                                <FormItem>
-                                                    <FormLabel>Cover image</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            {...inputProps}
-                                                            value={undefined}
-                                                            onChange={(event) => onChange(event.target.files)}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            );
-                                        }}
-                                    />
-                                </div>
-                            </Form>
-                        </CardContent>
-                        <CardFooter className="justify-end gap-2">
-                            <Button type="button" variant="outline" onClick={() => router.visit('/portal/episodes')}>
-                                Back
-                            </Button>
-                            <Button type="submit" disabled={mutation.isPending}>
-                                {mutation.isPending && <LoaderCircle className="mr-2 size-4 animate-spin" />}
-                                Save
-                            </Button>
-                        </CardFooter>
+                <Form {...form}>
+                    <form id="episode-form" onSubmit={form.handleSubmit((values) => mutation.mutate(values))}>
+                        <div className="rounded-lg border bg-card p-6 shadow-sm">
+                            <div className="grid grid-cols-1 gap-x-8 gap-y-6 lg:grid-cols-3">
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Title <span className="text-destructive">*</span>
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Episode title" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="slug"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Slug <span className="text-destructive">*</span>
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="episode-slug" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="podcast_id"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Podcast <span className="text-destructive">*</span>
+                                            </FormLabel>
+                                            <Select value={field.value ? String(field.value) : ''} onValueChange={(value) => field.onChange(Number(value))}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select podcast" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {podcastOptions.map((podcast) => (
+                                                        <SelectItem key={podcast.id} value={String(podcast.id)}>
+                                                            {podcast.title ?? `#${podcast.id}`}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem className="lg:col-span-3">
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Textarea className="min-h-24" placeholder="Episode description" {...field} value={field.value ?? ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="audio_path"
+                                    render={({ field }) => (
+                                        <FormItem className="lg:col-span-3">
+                                            <FormLabel>
+                                                Audio URL <span className="text-destructive">*</span>
+                                            </FormLabel>
+                                            <FormControl>
+                                                <AudioUrlValidator
+                                                    value={field.value}
+                                                    status={audioStatus}
+                                                    duration={Number(form.watch('duration') ?? 0)}
+                                                    onChange={field.onChange}
+                                                    onValidated={(status, duration) => {
+                                                        setAudioStatus(status);
+                                                        form.setValue('duration', String(duration ?? 0), { shouldValidate: true });
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
                     </form>
-                </Card>
-            </div>
+                </Form>
+            </PageTransition>
         </AppLayout>
     );
 }

@@ -1,68 +1,49 @@
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import http from '@/http/client';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link } from '@/lib/navigation';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
-import { type Episode } from '../shema';
+import { episodeConfig, type Episode } from '../shema';
 
-export default function ActionsCellEpisode({ episode }: { episode: Episode }) {
-    const queryClient = useQueryClient();
+type ActionsCellEpisodeProps = {
+    episode: Episode;
+    deleting: boolean;
+    onDelete: (record: Episode) => void;
+    onRequestDelete: (record: Episode) => void;
+};
 
-    const mutation = useMutation({
-        mutationFn: (id: number) => http.delete(`/episodes/${id}`),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['Episodes'] });
-        },
-    });
-
+export default function ActionsCellEpisode({ episode, deleting, onRequestDelete }: ActionsCellEpisodeProps) {
     return (
-        <div className="flex gap-2" onClick={(event) => event.stopPropagation()}>
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button asChild variant="outline" size="icon">
-                            <Link href={`/portal/episodes/${episode.id}/show`}>
-                                <Eye className="size-4" />
-                            </Link>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>View</TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+        <div className="flex gap-2">
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button asChild variant="outline" size="icon">
+                        <Link href={`${episodeConfig.basePath}/${episode.id}/show`}>
+                            <Eye className="size-4" />
+                        </Link>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>View</TooltipContent>
+            </Tooltip>
 
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button asChild variant="outline" size="icon">
-                            <Link href={`/portal/episodes/${episode.id}/edit`}>
-                                <Pencil className="size-4" />
-                            </Link>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button asChild size="icon" className="bg-blue-600 text-white shadow-xs hover:bg-blue-700 focus-visible:ring-blue-500">
+                        <Link href={`${episodeConfig.basePath}/${episode.id}/edit`}>
+                            <Pencil className="size-4" />
+                        </Link>
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-blue-600 text-white">Edit</TooltipContent>
+            </Tooltip>
 
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant="destructive"
-                            size="icon"
-                            disabled={mutation.isPending}
-                            onClick={() => {
-                                if (confirm(`Delete episode #${episode.id}?`)) {
-                                    mutation.mutate(episode.id);
-                                }
-                            }}
-                        >
-                            <Trash2 className="size-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button variant="destructive" size="icon" disabled={deleting} onClick={() => onRequestDelete(episode)}>
+                        <Trash2 className="size-4" />
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete</TooltipContent>
+            </Tooltip>
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import { DataTableColumnHeader } from '@/components/custom/data-table-v1';
 import { Badge } from '@/components/ui/badge';
+import { formatDateTime } from '@/lib/date-format';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Publisher } from '../shema';
 import ActionsCellPublisher from './ActionsCellPublisher';
@@ -9,18 +10,6 @@ type PublisherColumnsOptions = {
     onDelete: (publisher: Publisher) => void;
     onRequestDelete: (publisher: Publisher) => void;
 };
-
-function formatDate(value: unknown) {
-    if (!value) {
-        return '';
-    }
-
-    return new Intl.DateTimeFormat('en', {
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-    }).format(new Date(String(value)));
-}
 
 export function getPublisherColumns({ deletingId, onDelete, onRequestDelete }: PublisherColumnsOptions): ColumnDef<Publisher>[] {
     return [
@@ -67,7 +56,7 @@ export function getPublisherColumns({ deletingId, onDelete, onRequestDelete }: P
         {
             accessorKey: 'created_at',
             header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
-            cell: ({ row }) => <Badge variant="secondary">{formatDate(row.original.created_at)}</Badge>,
+            cell: ({ row }) => <Badge variant="secondary">{formatDateTime(row.original.created_at)}</Badge>,
         },
         {
             id: 'actions',

@@ -35,7 +35,15 @@ class Episode extends Model
     // trong laraval phai dat la : accessor tuc la getAudioUrlAttribute
     // lam nhu vay trong resource moi dung dc nhu nay : audio_url => $this->audio_url
     public function getAudioUrlAttribute(){
-        return $this->audio_file ?? asset("storage/episodes/{$this->podcast->title}/{$this->audio_path}");
+        if (!$this->audio_path) {
+            return null;
+        }
+
+        if (filter_var($this->audio_path, FILTER_VALIDATE_URL)) {
+            return $this->audio_path;
+        }
+
+        return asset("storage/episodes/{$this->podcast->title}/{$this->audio_path}");
     }
 
     public function getActivitylogOptions(): LogOptions

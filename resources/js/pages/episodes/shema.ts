@@ -17,15 +17,21 @@ export type Links = {
     next: string | null;
 };
 
+export const EpisodePodcastSchema = z.object({
+    id: z.number(),
+    title: z.string().nullable(),
+});
+
 export const EpisodeSchema = z.object({
     id: z.number(),
     title: z.string().nullable(),
     description: z.string().nullable(),
     slug: z.string().nullable(),
     podcast_id: z.number(),
+    podcast: EpisodePodcastSchema.nullable().optional(),
     audio_path: z.string().nullable(),
     audio_url: z.string().nullable().optional(),
-    duration: z.string().nullable().optional(),
+    duration: z.union([z.string(), z.number()]).nullable().optional(),
     cover_image: z.string().nullable(),
     created_at: z.union([z.date(), z.string()]).nullable(),
     updated_at: z.union([z.date(), z.string()]).nullable(),
@@ -33,8 +39,18 @@ export const EpisodeSchema = z.object({
 
 export const EpisodesSchema = z.array(EpisodeSchema);
 
+export const EpisodeFormSchema = z.object({
+    title: z.string().min(1, 'Title is required.'),
+    description: z.string().nullable(),
+    slug: z.string().min(1, 'Slug is required.'),
+    podcast_id: z.coerce.number().min(1, 'Podcast is required.'),
+    audio_path: z.string().url('Audio URL must be valid.'),
+    duration: z.string().nullable(),
+});
+
 export type Episode = z.infer<typeof EpisodeSchema>;
 export type Episodes = z.infer<typeof EpisodesSchema>;
+export type EpisodeForm = z.infer<typeof EpisodeFormSchema>;
 
 export type EpisodeResponse<T> = {
     data: T;
@@ -42,17 +58,16 @@ export type EpisodeResponse<T> = {
     links?: Links;
 };
 
-export type EpisodeForm = {
-    title: string;
-    description: string;
-    slug: string;
-    podcast_id: number;
-    duration?: string;
-    audio_path?: FileList;
-    cover_image?: FileList;
-};
-
 export type PodcastOption = {
     id: number;
-    title: string;
+    title: string | null;
+};
+
+export const episodeConfig = {
+    key: 'episodes',
+    title: 'Episodes',
+    singular: 'Episode',
+    endpoint: '/api/episodes',
+    basePath: '/portal/episodes',
+    breadcrumbs: [{ title: 'Episodes', href: '/portal/episodes' }],
 };

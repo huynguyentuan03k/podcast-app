@@ -158,3 +158,38 @@
         @apply bg-background text-foreground;
     }
 }
+
+@keyframes toast-progress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+.animate-toast-progress {
+    animation-name: toast-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes navigation-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.navigation-loading-spinner {
+    width: 72px;
+    height: 72px;
+    border-radius: 9999px;
+    background: repeating-conic-gradient(from 0deg, rgb(36 36 36 / 92%) 0deg 12deg, transparent 12deg 30deg);
+    mask: radial-gradient(farthest-side, transparent 52%, #000 54%);
+    animation: navigation-loading-spin 0.85s linear infinite;
+}
+
+.dark .navigation-loading-spinner {
+    background: repeating-conic-gradient(from 0deg, rgb(255 255 255 / 86%) 0deg 12deg, transparent 12deg 30deg);
+}

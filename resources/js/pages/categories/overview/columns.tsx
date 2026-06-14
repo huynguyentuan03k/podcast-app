@@ -1,5 +1,6 @@
 import { DataTableColumnHeader } from '@/components/custom/data-table-v1';
 import { Badge } from '@/components/ui/badge';
+import { formatDateTime } from '@/lib/date-format';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Category } from '../shema';
 import ActionsCellCategory from './ActionsCellCategory';
@@ -9,18 +10,6 @@ type CategoryColumnsOptions = {
     onDelete: (category: Category) => void;
     onRequestDelete: (category: Category) => void;
 };
-
-function formatDate(value: unknown) {
-    if (!value) {
-        return '';
-    }
-
-    return new Intl.DateTimeFormat('en', {
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-    }).format(new Date(String(value)));
-}
 
 export function getCategoryColumns({ deletingId, onDelete, onRequestDelete }: CategoryColumnsOptions): ColumnDef<Category>[] {
     return [
@@ -51,7 +40,7 @@ export function getCategoryColumns({ deletingId, onDelete, onRequestDelete }: Ca
         {
             accessorKey: 'created_at',
             header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
-            cell: ({ row }) => <Badge variant="secondary">{formatDate(row.original.created_at)}</Badge>,
+            cell: ({ row }) => <Badge variant="secondary">{formatDateTime(row.original.created_at)}</Badge>,
         },
         {
             id: 'actions',

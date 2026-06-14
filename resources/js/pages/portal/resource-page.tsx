@@ -17,6 +17,10 @@ import PublisherOverview from '@/pages/publishers/overview/PublisherOverview';
 import CreatePublisher from '@/pages/publishers/create/CreatePublisher';
 import EditPublisher from '@/pages/publishers/edit/EditPublisher';
 import ShowPublisher from '@/pages/publishers/show/ShowPublisher';
+import EpisodeOverview from '@/pages/episodes/overview/EpisodeOverview';
+import CreateEpisode from '@/pages/episodes/create/CreateEpisode';
+import EditEpisode from '@/pages/episodes/edit/EditEpisode';
+import ShowEpisode from '@/pages/episodes/show/ShowEpisode';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -24,6 +28,7 @@ import { authorConfig, type Author } from '../authors/shema';
 import { categoryConfig, type Category } from '../categories/shema';
 import { podcastConfig, type Podcast } from '../podcasts/shema';
 import { publisherConfig, type Publisher } from '../publishers/shema';
+import { episodeConfig, type Episode } from '../episodes/shema';
 
 function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
     const { data, isLoading } = useQuery({
@@ -145,6 +150,36 @@ function PublisherRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show'
     return mode === 'edit' ? <EditPublisher record={data} /> : <ShowPublisher record={data} />;
 }
 
+function EpisodeRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['episodes', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: Episode }>(`/episodes/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={episodeConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading episode...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={episodeConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Episode not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditEpisode record={data} /> : <ShowEpisode record={data} />;
+}
+
 export default function PortalResourcePage() {
     const { pathname } = useLocation();
     const params = useParams();
@@ -211,6 +246,22 @@ export default function PortalResourcePage() {
         }
 
         return <PublisherOverview />;
+    }
+
+    if (resource === 'episodes') {
+        if (action === 'create') {
+            return <CreateEpisode />;
+        }
+
+        if (action === 'edit') {
+            return <EpisodeRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <EpisodeRecordLoader id={id} mode="show" />;
+        }
+
+        return <EpisodeOverview />;
     }
 
     if (resource === 'categories') {

@@ -27,7 +27,7 @@ class UpdateEpisodeRequest extends FormRequest
         return [
             'title' => ['required', 'string', Rule::unique('episodes', 'title')->ignore($episodeId)],
             'description' => ['nullable', 'string'],
-            'audio_path' => ['nullable', 'file', 'mimes:mp3,wav,mpeg', 'max:122880'],
+            'audio_path' => ['required', 'url', 'max:2048'],
             'duration' => ['nullable', 'string'],
             'slug' => ['required', 'string'],
             'cover_image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],

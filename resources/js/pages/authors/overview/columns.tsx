@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { formatDateTime } from '@/lib/date-format';
 import { DataTableColumnHeader } from '@/components/custom/data-table-v1';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Author } from '../shema';
@@ -10,18 +11,6 @@ type AuthorColumnsOptions = {
     onDelete: (author: Author) => void;
     onRequestDelete: (author: Author) => void;
 };
-
-function formatDate(value: unknown) {
-    if (!value) {
-        return '';
-    }
-
-    return new Intl.DateTimeFormat('en', {
-        month: 'short',
-        day: '2-digit',
-        year: 'numeric',
-    }).format(new Date(String(value)));
-}
 
 export function getAuthorColumns({ deletingId, onDelete, onRequestDelete }: AuthorColumnsOptions): ColumnDef<Author>[] {
     return [
@@ -73,7 +62,7 @@ export function getAuthorColumns({ deletingId, onDelete, onRequestDelete }: Auth
         {
             accessorKey: 'created_at',
             header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
-            cell: ({ row }) => <Badge variant="secondary">{formatDate(row.original.created_at)}</Badge>,
+            cell: ({ row }) => <Badge variant="secondary">{formatDateTime(row.original.created_at)}</Badge>,
         },
         {
             id: 'actions',
