@@ -1,0 +1,13 @@
+[program:frieren-integrate-outbox]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/api-podcast-app/artisan integrate:outbox:publish
+directory=/var/www/api-podcast-app
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/log/supervisor/frieren-integrate-outbox.log
+stopwaitsecs=30

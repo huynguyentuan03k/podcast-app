@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class RolePermissionSeeder extends Seeder
 {
-    public function run(): void
+public function run(): void
     {
         $permissionGroups = [
             'dashboard' => ['view'],

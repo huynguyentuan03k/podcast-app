@@ -61,6 +61,13 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "modules/frieren-integrate",
+            "options": {
+                "symlink": true
+            }
         }
     ],
     "scripts": {
