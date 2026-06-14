@@ -12,6 +12,7 @@ use Frieren\Core\Http\Resources\AdminProfileResource;
 use Frieren\Core\Models\AdminProfile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Attributes as OA;
 
 class AdminProfileController extends Controller
@@ -59,6 +60,8 @@ class AdminProfileController extends Controller
     )]
     public function index(GetAdminProfileListAction $action)
     {
+        Gate::authorize('admin-permission', 'VIEW_ADMIN_PROFILE');
+
         return AdminProfileResource::collection($action->handle((int) request('per_page', 10)));
     }
 
@@ -93,6 +96,8 @@ class AdminProfileController extends Controller
     )]
     public function store(StoreAdminProfileRequest $request, CreateAdminProfileAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'CREATE_ADMIN_PROFILE');
+
         $profile = $action->handle($request->validated());
 
         return response()->json(['message' => 'Admin profile created successfully.', 'data' => new AdminProfileResource($profile)], 201);
@@ -135,6 +140,8 @@ class AdminProfileController extends Controller
     )]
     public function show(AdminProfile $adminProfile): JsonResponse
     {
+        Gate::authorize('admin-permission', 'VIEW_ADMIN_PROFILE');
+
         return response()->json(['message' => 'Admin profile retrieved successfully.', 'data' => new AdminProfileResource($adminProfile)]);
     }
 
@@ -173,6 +180,8 @@ class AdminProfileController extends Controller
     )]
     public function update(UpdateAdminProfileRequest $request, AdminProfile $adminProfile, UpdateAdminProfileAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'UPDATE_ADMIN_PROFILE');
+
         $adminProfile = $action->handle($adminProfile, $request->validated());
 
         return response()->json(['message' => 'Admin profile updated successfully.', 'data' => new AdminProfileResource($adminProfile->fresh())]);
@@ -197,6 +206,8 @@ class AdminProfileController extends Controller
     )]
     public function destroy(AdminProfile $adminProfile, DeleteAdminProfileAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'DELETE_ADMIN_PROFILE');
+
         $action->handle($adminProfile);
         return response()->json(['message' => 'Admin profile deleted successfully.']);
     }

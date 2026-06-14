@@ -1,3 +1,4 @@
+import { authorizeCheck } from '@/authorization';
 import { DataTableV1 } from '@/components/custom/data-table-v1';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -20,6 +21,8 @@ export default function AdminRoleOverview() {
     const [bulkDeleting, setBulkDeleting] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<AdminRole | null>(null);
     const [bulkDeleteTarget, setBulkDeleteTarget] = useState<{ roles: AdminRole[]; resetSelection: () => void } | null>(null);
+    const canCreate = authorizeCheck('CREATE_ROLE');
+    const canDelete = authorizeCheck('DELETE_ROLE');
 
     const deleteRole = useCallback(async (role: AdminRole) => {
         setDeletingId(role.id);
@@ -71,7 +74,7 @@ export default function AdminRoleOverview() {
 
                         return (
                             <>
-                                {selectedRoles.length > 0 ? (
+                                {canDelete && selectedRoles.length > 0 ? (
                                     <Button
                                         variant="destructive"
                                         size="sm"
@@ -83,12 +86,14 @@ export default function AdminRoleOverview() {
                                         Delete selected ({selectedRoles.length})
                                     </Button>
                                 ) : null}
-                                <Button asChild size="sm" className="gap-2 bg-blue-600 text-white hover:bg-blue-700">
-                                    <Link href={`${adminRoleConfig.basePath}/create`}>
-                                        <Plus className="size-4" />
-                                        Add Admin Role
-                                    </Link>
-                                </Button>
+                                {canCreate ? (
+                                    <Button asChild size="sm" className="gap-2 bg-blue-600 text-white hover:bg-blue-700">
+                                        <Link href={`${adminRoleConfig.basePath}/create`}>
+                                            <Plus className="size-4" />
+                                            Add Admin Role
+                                        </Link>
+                                    </Button>
+                                ) : null}
                             </>
                         );
                     }}

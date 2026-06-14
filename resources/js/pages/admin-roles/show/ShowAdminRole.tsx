@@ -1,3 +1,4 @@
+import { authorizeCheck } from '@/authorization';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/hooks/use-toast';
@@ -25,6 +26,8 @@ export default function ShowAdminRole({ record }: { record: AdminRole }) {
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const members = record.admin_users ?? [];
+    const canUpdate = authorizeCheck('UPDATE_ROLE');
+    const canDelete = authorizeCheck('DELETE_ROLE');
 
     const deleteMutation = useMutation({
         mutationFn: () => http.delete(`${adminRoleConfig.apiPath}/${record.id}`),
@@ -49,16 +52,20 @@ export default function ShowAdminRole({ record }: { record: AdminRole }) {
                             <ArrowLeft className="size-4" />
                             Back
                         </Button>
-                        <Button variant="destructive" className="gap-2 shadow-sm" disabled={deleteMutation.isPending} onClick={() => deleteMutation.mutate()}>
-                            <Trash2 className="size-4" />
-                            Delete
-                        </Button>
-                        <Button asChild className="gap-2 bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-500">
-                            <Link href={`${adminRoleConfig.basePath}/${record.id}/edit`}>
-                                <Pencil className="size-4" />
-                                Edit
-                            </Link>
-                        </Button>
+                        {canDelete ? (
+                            <Button variant="destructive" className="gap-2 shadow-sm" disabled={deleteMutation.isPending} onClick={() => deleteMutation.mutate()}>
+                                <Trash2 className="size-4" />
+                                Delete
+                            </Button>
+                        ) : null}
+                        {canUpdate ? (
+                            <Button asChild className="gap-2 bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-500">
+                                <Link href={`${adminRoleConfig.basePath}/${record.id}/edit`}>
+                                    <Pencil className="size-4" />
+                                    Edit
+                                </Link>
+                            </Button>
+                        ) : null}
                     </div>
                 </div>
 

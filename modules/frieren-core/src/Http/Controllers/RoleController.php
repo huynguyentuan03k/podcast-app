@@ -14,6 +14,7 @@ use Frieren\Core\Http\Resources\RoleResource;
 use Frieren\Core\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Attributes as OA;
 
 class RoleController extends Controller
@@ -58,6 +59,13 @@ class RoleController extends Controller
     )]
     public function index(GetRoleListAction $action)
     {
+        abort_unless(
+            Gate::allows('admin-permission', 'VIEW_ROLE')
+                || Gate::allows('admin-permission', 'CREATE_ADMIN_USER')
+                || Gate::allows('admin-permission', 'UPDATE_ADMIN_USER'),
+            403
+        );
+
         return RoleResource::collection($action->handle((int) request('per_page', 10)));
     }
 
@@ -83,6 +91,8 @@ class RoleController extends Controller
     )]
     public function store(StoreRoleRequest $request, CreateRoleAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'CREATE_ROLE');
+
         $role = $action->handle($request->validated());
 
         return response()->json(['message' => 'Role created successfully.', 'data' => new RoleResource($role)], 201);
@@ -123,6 +133,12 @@ class RoleController extends Controller
     )]
     public function show(Role $role): JsonResponse
     {
+        abort_unless(
+            Gate::allows('admin-permission', 'VIEW_ROLE')
+                || Gate::allows('admin-permission', 'UPDATE_ROLE'),
+            403
+        );
+
         $role->load(['permissions', 'adminUsers.roles']);
 
         return response()->json(['message' => 'Role retrieved successfully.', 'data' => new RoleResource($role)]);
@@ -158,6 +174,8 @@ class RoleController extends Controller
     )]
     public function update(UpdateRoleRequest $request, Role $role, UpdateRoleAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'UPDATE_ROLE');
+
         $role = $action->handle($role, $request->validated());
 
         return response()->json(['message' => 'Role updated successfully.', 'data' => new RoleResource($role)]);
@@ -182,6 +200,8 @@ class RoleController extends Controller
     )]
     public function destroy(Role $role, DeleteRoleAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'DELETE_ROLE');
+
         $action->handle($role);
         return response()->json(['message' => 'Role deleted successfully.']);
     }
@@ -219,6 +239,12 @@ class RoleController extends Controller
     )]
     public function syncPermissions(SyncRolePermissionsRequest $request, Role $role, SyncRolePermissionsAction $action): JsonResponse
     {
+        abort_unless(
+            Gate::allows('admin-permission', 'CREATE_ROLE')
+                || Gate::allows('admin-permission', 'UPDATE_ROLE'),
+            403
+        );
+
         $action->handle($role, $request->validated('permission_ids'));
 
         return response()->json(['message' => 'Role permissions synced successfully.']);

@@ -1,6 +1,5 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { userConfig } from '../shema';
+import UserForm from '../form/UserForm';
 
 export default function CreateUser() {
-    return <ResourceForm config={userConfig} mode="create" />;
+    return <UserForm mode="create" />;
 }

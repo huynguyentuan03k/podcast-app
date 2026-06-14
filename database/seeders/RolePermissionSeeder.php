@@ -13,6 +13,7 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         $permissionGroups = [
+            'dashboard' => ['view'],
             'user' => ['view', 'create', 'update', 'delete'],
             'admin_user' => ['view', 'create', 'update', 'delete'],
             'admin_profile' => ['view', 'create', 'update', 'delete'],

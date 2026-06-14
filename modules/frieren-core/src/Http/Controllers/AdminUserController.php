@@ -16,6 +16,7 @@ use Frieren\Core\Http\Requests\StoreAdminUserRequest;
 use Frieren\Core\Http\Requests\SyncAdminUserPermissionsRequest;
 use Frieren\Core\Http\Requests\SyncAdminUserRolesRequest;
 use Frieren\Core\Http\Requests\UpdateAdminUserRequest;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Attributes as OA;
 
 class AdminUserController extends Controller
@@ -61,6 +62,8 @@ class AdminUserController extends Controller
     )]
     public function index(GetAdminUserListAction $action)
     {
+        Gate::authorize('admin-permission', 'VIEW_ADMIN_USER');
+
         return AdminUserResource::collection($action->handle((int) request('per_page', 10)));
     }
 
@@ -88,6 +91,8 @@ class AdminUserController extends Controller
     )]
     public function store(StoreAdminUserRequest $request, CreateAdminUserAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'CREATE_ADMIN_USER');
+
         $user = $action->handle($request->validated());
 
         return response()->json([
@@ -133,6 +138,12 @@ class AdminUserController extends Controller
     )]
     public function show(AdminUser $adminUser): JsonResponse
     {
+        abort_unless(
+            Gate::allows('admin-permission', 'VIEW_ADMIN_USER')
+                || Gate::allows('admin-permission', 'UPDATE_ADMIN_USER'),
+            403
+        );
+
         $adminUser->load(['profile', 'roles', 'permissions']);
 
         return response()->json([
@@ -174,6 +185,8 @@ class AdminUserController extends Controller
     )]
     public function update(UpdateAdminUserRequest $request, AdminUser $adminUser, UpdateAdminUserAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'UPDATE_ADMIN_USER');
+
         $adminUser = $action->handle($adminUser, $request->validated());
 
         return response()->json([
@@ -201,6 +214,8 @@ class AdminUserController extends Controller
     )]
     public function destroy(AdminUser $adminUser, DeleteAdminUserAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'DELETE_ADMIN_USER');
+
         $action->handle($adminUser);
 
         return response()->json(['message' => 'Admin user deleted successfully.']);
@@ -208,6 +223,12 @@ class AdminUserController extends Controller
 
     public function syncRoles(SyncAdminUserRolesRequest $request, AdminUser $adminUser, SyncAdminUserRolesAction $action): JsonResponse
     {
+        abort_unless(
+            Gate::allows('admin-permission', 'CREATE_ADMIN_USER')
+                || Gate::allows('admin-permission', 'UPDATE_ADMIN_USER'),
+            403
+        );
+
         $action->handle($adminUser, $request->validated('role_ids'));
 
         return response()->json(['message' => 'Roles synced successfully.']);
@@ -215,6 +236,12 @@ class AdminUserController extends Controller
 
     public function syncPermissions(SyncAdminUserPermissionsRequest $request, AdminUser $adminUser, SyncAdminUserPermissionsAction $action): JsonResponse
     {
+        abort_unless(
+            Gate::allows('admin-permission', 'CREATE_ADMIN_USER')
+                || Gate::allows('admin-permission', 'UPDATE_ADMIN_USER'),
+            403
+        );
+
         $action->handle($adminUser, $request->validated('permission_ids'));
 
         return response()->json(['message' => 'Permissions synced successfully.']);

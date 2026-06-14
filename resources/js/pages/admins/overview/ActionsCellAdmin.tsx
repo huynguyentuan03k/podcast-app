@@ -1,3 +1,4 @@
+import { authorizeCheck } from '@/authorization';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Link } from '@/lib/navigation';
@@ -11,6 +12,9 @@ type ActionsCellAdminProps = {
 };
 
 export default function ActionsCellAdmin({ admin, deleting, onRequestDelete }: ActionsCellAdminProps) {
+    const canUpdate = authorizeCheck('UPDATE_ADMIN_USER');
+    const canDelete = authorizeCheck('DELETE_ADMIN_USER');
+
     return (
         <div className="flex items-center justify-end gap-1">
             <Tooltip>
@@ -23,24 +27,28 @@ export default function ActionsCellAdmin({ admin, deleting, onRequestDelete }: A
                 </TooltipTrigger>
                 <TooltipContent className="bg-blue-600 text-white">View admin</TooltipContent>
             </Tooltip>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button asChild variant="ghost" size="icon" className="text-blue-600 hover:bg-blue-50 hover:text-blue-700">
-                        <Link href={`${adminConfig.basePath}/${admin.id}/edit`}>
-                            <Pencil className="size-4" />
-                        </Link>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-blue-600 text-white">Edit admin</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:bg-red-50 hover:text-destructive" disabled={deleting} onClick={() => onRequestDelete(admin)}>
-                        {deleting ? <LoaderCircle className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete admin</TooltipContent>
-            </Tooltip>
+            {canUpdate ? (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button asChild variant="ghost" size="icon" className="text-blue-600 hover:bg-blue-50 hover:text-blue-700">
+                            <Link href={`${adminConfig.basePath}/${admin.id}/edit`}>
+                                <Pencil className="size-4" />
+                            </Link>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-blue-600 text-white">Edit admin</TooltipContent>
+                </Tooltip>
+            ) : null}
+            {canDelete ? (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:bg-red-50 hover:text-destructive" disabled={deleting} onClick={() => onRequestDelete(admin)}>
+                            {deleting ? <LoaderCircle className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete admin</TooltipContent>
+                </Tooltip>
+            ) : null}
         </div>
     );
 }

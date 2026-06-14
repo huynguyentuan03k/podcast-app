@@ -1,3 +1,4 @@
+import { authorizeCheck } from '@/authorization';
 import { type SideLink } from '@/components/side-link';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -20,11 +21,12 @@ function isActive(url: string, href: string) {
 }
 
 function NavSection({ group, url }: { group: SideLink; url: string }) {
-    const defaultOpen = (group.children ?? []).some((item) => isActive(url, item.href));
+    const visibleChildren = (group.children ?? []).filter((item) => authorizeCheck(item.permission ?? 'ANY'));
+    const defaultOpen = visibleChildren.some((item) => isActive(url, item.href));
     const [open, setOpen] = useState(defaultOpen);
     const activeParent = defaultOpen || isActive(url, group.href);
 
-    if (!group.children?.length) {
+    if (!visibleChildren.length) {
         return null;
     }
 
@@ -41,7 +43,7 @@ function NavSection({ group, url }: { group: SideLink; url: string }) {
             </SidebarMenuItem>
             <CollapsibleContent>
                 <SidebarMenuSub>
-                    {group.children.map((item) => {
+                    {visibleChildren.map((item) => {
                         const active = isActive(url, item.href);
 
                         return (

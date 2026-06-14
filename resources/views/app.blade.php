@@ -20,6 +20,42 @@
             })();
         </script>
 
+        @php
+            $admin = auth('admin')->user();
+            $permissions = class_exists(\Frieren\Core\Models\Permission::class)
+                ? \Frieren\Core\Models\Permission::query()->orderBy('group_name')->orderBy('name')->get()
+                : collect();
+            $permissionGroups = $permissions
+                ->groupBy('group_name')
+                ->map(fn ($items) => $items->pluck('name')->map(fn ($permission) => \Frieren\Core\Support\AdminPermission::toClientName($permission))->values())
+                ->toArray();
+            $clientPermissions = $permissions
+                ->pluck('name')
+                ->merge(['dashboard.view'])
+                ->map(fn ($permission) => \Frieren\Core\Support\AdminPermission::toClientName($permission))
+                ->unique()
+                ->values()
+                ->all();
+            $currentAdminPermissions = $admin instanceof \Frieren\Core\Models\AdminUser
+                ? \Frieren\Core\Support\AdminPermission::userClientPermissions($admin)
+                : [];
+            $appSettings = [
+                'permissions' => $clientPermissions,
+                'permissionGroups' => $permissionGroups,
+                'superPermission' => \Frieren\Core\Support\AdminPermission::SUPER,
+                'currentAdmin' => $admin ? [
+                    'id' => $admin->id,
+                    'username' => $admin->username,
+                    'email' => $admin->email,
+                    'permissions' => $currentAdminPermissions,
+                ] : null,
+            ];
+        @endphp
+
+        <script>
+            window.appSettings = @json($appSettings);
+        </script>
+
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
         <style>
             html {

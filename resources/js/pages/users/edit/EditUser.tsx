@@ -1,7 +1,6 @@
-import { ResourceForm } from '@/components/custom/resource-form';
-import { type ResourceRecord } from '@/components/custom/types';
-import { userConfig } from '../shema';
+import type { User } from '../shema';
+import UserForm from '../form/UserForm';
 
-export default function EditUser({ record }: { record: ResourceRecord }) {
-    return <ResourceForm config={userConfig} mode="edit" record={record} />;
+export default function EditUser({ record }: { record: User }) {
+    return <UserForm mode="edit" user={record} />;
 }

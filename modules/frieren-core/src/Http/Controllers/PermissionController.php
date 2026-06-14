@@ -12,6 +12,7 @@ use Frieren\Core\Http\Resources\PermissionResource;
 use Frieren\Core\Models\Permission;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Gate;
 use OpenApi\Attributes as OA;
 
 class PermissionController extends Controller
@@ -57,6 +58,13 @@ class PermissionController extends Controller
     )]
     public function index(GetPermissionListAction $action)
     {
+        abort_unless(
+            Gate::allows('admin-permission', 'VIEW_ROLE')
+                || Gate::allows('admin-permission', 'CREATE_ROLE')
+                || Gate::allows('admin-permission', 'UPDATE_ROLE'),
+            403
+        );
+
         return PermissionResource::collection($action->handle((int) request('per_page', 10)));
     }
 
@@ -82,6 +90,8 @@ class PermissionController extends Controller
     )]
     public function store(StorePermissionRequest $request, CreatePermissionAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'CREATE_PERMISSION');
+
         $permission = $action->handle($request->validated());
 
         return response()->json(['message' => 'Permission created successfully.', 'data' => new PermissionResource($permission)], 201);
@@ -122,6 +132,8 @@ class PermissionController extends Controller
     )]
     public function show(Permission $permission): JsonResponse
     {
+        Gate::authorize('admin-permission', 'VIEW_PERMISSION');
+
         return response()->json(['message' => 'Permission retrieved successfully.', 'data' => new PermissionResource($permission)]);
     }
 
@@ -155,6 +167,8 @@ class PermissionController extends Controller
     )]
     public function update(UpdatePermissionRequest $request, Permission $permission, UpdatePermissionAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'UPDATE_PERMISSION');
+
         $permission = $action->handle($permission, $request->validated());
 
         return response()->json(['message' => 'Permission updated successfully.', 'data' => new PermissionResource($permission)]);
@@ -179,6 +193,8 @@ class PermissionController extends Controller
     )]
     public function destroy(Permission $permission, DeletePermissionAction $action): JsonResponse
     {
+        Gate::authorize('admin-permission', 'DELETE_PERMISSION');
+
         $action->handle($permission);
         return response()->json(['message' => 'Permission deleted successfully.']);
     }

@@ -1,3 +1,4 @@
+import { authorizeCheck } from '@/authorization';
 import { DataTableV1 } from '@/components/custom/data-table-v1';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -20,6 +21,8 @@ export default function AdminOverview() {
     const [bulkDeleting, setBulkDeleting] = useState(false);
     const [deleteTarget, setDeleteTarget] = useState<Admin | null>(null);
     const [bulkDeleteTarget, setBulkDeleteTarget] = useState<{ admins: Admin[]; resetSelection: () => void } | null>(null);
+    const canCreate = authorizeCheck('CREATE_ADMIN_USER');
+    const canDelete = authorizeCheck('DELETE_ADMIN_USER');
 
     const deleteAdmin = useCallback(async (admin: Admin) => {
         setDeletingId(admin.id);
@@ -71,7 +74,7 @@ export default function AdminOverview() {
 
                         return (
                             <>
-                                {selectedAdmins.length > 0 ? (
+                                {canDelete && selectedAdmins.length > 0 ? (
                                     <Button
                                         variant="destructive"
                                         size="sm"
@@ -83,12 +86,14 @@ export default function AdminOverview() {
                                         Delete selected ({selectedAdmins.length})
                                     </Button>
                                 ) : null}
-                                <Button asChild size="sm" className="gap-2 bg-blue-600 text-white hover:bg-blue-700">
-                                    <Link href={`${adminConfig.basePath}/create`}>
-                                        <Plus className="size-4" />
-                                        Add Admin
-                                    </Link>
-                                </Button>
+                                {canCreate ? (
+                                    <Button asChild size="sm" className="gap-2 bg-blue-600 text-white hover:bg-blue-700">
+                                        <Link href={`${adminConfig.basePath}/create`}>
+                                            <Plus className="size-4" />
+                                            Add Admin
+                                        </Link>
+                                    </Button>
+                                ) : null}
                             </>
                         );
                     }}

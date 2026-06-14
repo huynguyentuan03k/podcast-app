@@ -1,3 +1,4 @@
+import { authorizeCheck } from '@/authorization';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
@@ -25,6 +26,10 @@ import AdminOverview from '@/pages/admins/overview/AdminOverview';
 import CreateAdmin from '@/pages/admins/create/CreateAdmin';
 import EditAdmin from '@/pages/admins/edit/EditAdmin';
 import ShowAdmin from '@/pages/admins/show/ShowAdmin';
+import UserOverview from '@/pages/users/overview/UserOverview';
+import CreateUser from '@/pages/users/create/CreateUser';
+import EditUser from '@/pages/users/edit/EditUser';
+import ShowUser from '@/pages/users/show/ShowUser';
 import AdminRoleOverview from '@/pages/admin-roles/overview/AdminRoleOverview';
 import CreateAdminRole from '@/pages/admin-roles/create/CreateAdminRole';
 import EditAdminRole from '@/pages/admin-roles/edit/EditAdminRole';
@@ -38,7 +43,85 @@ import { podcastConfig, type Podcast } from '../podcasts/shema';
 import { publisherConfig, type Publisher } from '../publishers/shema';
 import { episodeConfig, type Episode } from '../episodes/shema';
 import { adminConfig, type Admin } from '../admins/shema';
+import { userConfig, type User } from '../users/shema';
 import { adminRoleConfig, type AdminRole } from '../admin-roles/shema';
+
+function UnauthorizedPage() {
+    return (
+        <AppLayout>
+            <div className="flex h-full flex-1 items-center justify-center p-6">
+                <Card className="w-full max-w-md rounded-lg text-center">
+                    <CardHeader>
+                        <CardTitle>Permission denied</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-muted-foreground">You do not have permission to access this page.</p>
+                        <Button asChild variant="outline">
+                            <Link to="/">Back to dashboard</Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        </AppLayout>
+    );
+}
+
+function authorizeResourceAction(resource: string, action: string) {
+    const permissions: Record<string, Record<string, string>> = {
+        authors: {
+            overview: 'VIEW_AUTHOR',
+            show: 'VIEW_AUTHOR',
+            create: 'CREATE_AUTHOR',
+            edit: 'UPDATE_AUTHOR',
+        },
+        categories: {
+            overview: 'VIEW_CATEGORY',
+            show: 'VIEW_CATEGORY',
+            create: 'CREATE_CATEGORY',
+            edit: 'UPDATE_CATEGORY',
+        },
+        episodes: {
+            overview: 'VIEW_EPISODE',
+            show: 'VIEW_EPISODE',
+            create: 'CREATE_EPISODE',
+            edit: 'UPDATE_EPISODE',
+        },
+        podcasts: {
+            overview: 'VIEW_PODCAST',
+            show: 'VIEW_PODCAST',
+            create: 'CREATE_PODCAST',
+            edit: 'UPDATE_PODCAST',
+        },
+        publishers: {
+            overview: 'VIEW_PUBLISHER',
+            show: 'VIEW_PUBLISHER',
+            create: 'CREATE_PUBLISHER',
+            edit: 'UPDATE_PUBLISHER',
+        },
+        users: {
+            overview: 'VIEW_USER',
+            show: 'VIEW_USER',
+            create: 'CREATE_USER',
+            edit: 'UPDATE_USER',
+        },
+        admins: {
+            overview: 'VIEW_ADMIN_USER',
+            show: 'VIEW_ADMIN_USER',
+            create: 'CREATE_ADMIN_USER',
+            edit: 'UPDATE_ADMIN_USER',
+        },
+        'admin-roles': {
+            overview: 'VIEW_ROLE',
+            show: 'VIEW_ROLE',
+            create: 'CREATE_ROLE',
+            edit: 'UPDATE_ROLE',
+        },
+    };
+
+    const permission = permissions[resource]?.[action] ?? 'ANY';
+
+    return authorizeCheck(permission);
+}
 
 function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
     const { data, isLoading } = useQuery({
@@ -220,6 +303,36 @@ function AdminRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) 
     return mode === 'edit' ? <EditAdmin record={data} /> : <ShowAdmin record={data} />;
 }
 
+function UserRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['users', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: User }>(`/users/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={userConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading user...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={userConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">User not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditUser record={data} /> : <ShowUser record={data} />;
+}
+
 function AdminRoleRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
     const { data, isLoading } = useQuery({
         queryKey: ['admin-roles', id],
@@ -271,6 +384,10 @@ export default function PortalResourcePage() {
     };
 
     const title = titleMap[resource] ?? resource;
+
+    if (!authorizeResourceAction(resource, action)) {
+        return <UnauthorizedPage />;
+    }
 
     if (resource === 'authors') {
         if (action === 'create') {
@@ -366,6 +483,22 @@ export default function PortalResourcePage() {
         }
 
         return <AdminOverview />;
+    }
+
+    if (resource === 'users') {
+        if (action === 'create') {
+            return <CreateUser />;
+        }
+
+        if (action === 'edit') {
+            return <UserRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <UserRecordLoader id={id} mode="show" />;
+        }
+
+        return <UserOverview />;
     }
 
     if (resource === 'admin-roles') {

@@ -97,6 +97,8 @@ class UserController extends Controller
     )]
     public function show(User $user)
     {
+        $user->load(['profile', 'preference', 'devices', 'socialAccounts']);
+
         return response()->json([
             'message' => 'User retrieved successfully',
             'data' => new UserResource($user),
@@ -134,7 +136,16 @@ class UserController extends Controller
         $user = DB::transaction(function () use ($data) {
             $data['password'] = Hash::make($data['password']);
 
-            return User::create($data);
+            $profile = $data['profile'] ?? [];
+            $preference = $data['preference'] ?? [];
+
+            unset($data['profile'], $data['preference']);
+
+            $user = User::create($data);
+            $user->profile()->create($profile);
+            $user->preference()->create($preference);
+
+            return $user->load(['profile', 'preference', 'devices', 'socialAccounts']);
         });
 
         return response()->json([
@@ -183,11 +194,20 @@ class UserController extends Controller
             unset($data['password']);
         }
 
-        $user->update($data);
+        $profile = $data['profile'] ?? [];
+        $preference = $data['preference'] ?? [];
+
+        unset($data['profile'], $data['preference']);
+
+        DB::transaction(function () use ($user, $data, $profile, $preference) {
+            $user->update($data);
+            $user->profile()->updateOrCreate(['user_id' => $user->id], $profile);
+            $user->preference()->updateOrCreate(['user_id' => $user->id], $preference);
+        });
 
         return response()->json([
             'message' => 'User updated successfully.',
-            'data' => new UserResource($user->fresh()),
+            'data' => new UserResource($user->fresh()->load(['profile', 'preference', 'devices', 'socialAccounts'])),
         ]);
     }
 
