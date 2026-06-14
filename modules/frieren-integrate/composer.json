@@ -1,5 +1,6 @@
 {
   "name": "frieren/integrate",
+  "version": "1.0.0",
   "description": "Integration module for crawler events, RabbitMQ, inbox/outbox and webhooks.",
   "type": "library",
   "license": "proprietary",

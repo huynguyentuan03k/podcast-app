@@ -31,7 +31,7 @@
                 ->toArray();
             $clientPermissions = $permissions
                 ->pluck('name')
-                ->merge(['dashboard.view'])
+                ->merge(['dashboard.view', 'integration.view', 'integration.update'])
                 ->map(fn ($permission) => \Frieren\Core\Support\AdminPermission::toClientName($permission))
                 ->unique()
                 ->values()

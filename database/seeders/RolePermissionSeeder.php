@@ -25,6 +25,7 @@ public function run(): void
             'publisher' => ['view', 'create', 'update', 'delete'],
             'episode' => ['view', 'create', 'update', 'delete'],
             'tag' => ['view', 'create', 'update', 'delete'],
+            'integration' => ['view', 'update'],
             'setting' => ['view', 'update'],
             'activity' => ['view'],
         ];

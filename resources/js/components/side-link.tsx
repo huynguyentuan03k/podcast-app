@@ -1,4 +1,4 @@
-import { FilePenLine, Folder, Headphones, Languages, LayoutDashboard, Newspaper, Podcast, ShieldCheck, Tags, User, UserCog, UsersRound } from 'lucide-react';
+import { FilePenLine, Folder, Headphones, Languages, LayoutDashboard, Network, Newspaper, Podcast, ShieldCheck, Tags, User, UserCog, UsersRound } from 'lucide-react';
 import type React from 'react';
 
 interface NavLink {
@@ -25,7 +25,7 @@ export const sidelinks: SideLink[] = [
                 title: 'Dashboard',
                 href: '/',
                 icon: <LayoutDashboard size={18} />,
-                permission: 'VIEW_DASHBOARD',
+                permission: 'ANY',
             },
             {
                 title: 'Profile',
@@ -56,6 +56,12 @@ export const sidelinks: SideLink[] = [
                 href: '/portal/admin-roles',
                 icon: <ShieldCheck size={18} />,
                 permission: 'VIEW_ROLE',
+            },
+            {
+                title: 'Integrations',
+                href: '/portal/integrations',
+                icon: <Network size={18} />,
+                permission: 'ANY',
             },
         ],
     },

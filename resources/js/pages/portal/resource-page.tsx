@@ -36,6 +36,7 @@ import AdminRoleOverview from '@/pages/admin-roles/overview/AdminRoleOverview';
 import CreateAdminRole from '@/pages/admin-roles/create/CreateAdminRole';
 import EditAdminRole from '@/pages/admin-roles/edit/EditAdminRole';
 import ShowAdminRole from '@/pages/admin-roles/show/ShowAdminRole';
+import IntegrationDashboard from '@/pages/integrations/IntegrationDashboard';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -124,6 +125,9 @@ function authorizeResourceAction(resource: string, action: string) {
             show: 'VIEW_ROLE',
             create: 'CREATE_ROLE',
             edit: 'UPDATE_ROLE',
+        },
+        integrations: {
+            overview: 'ANY',
         },
     };
 
@@ -420,6 +424,7 @@ export default function PortalResourcePage() {
         users: 'Users',
         admins: 'Admins',
         'admin-roles': 'Admin Roles',
+        integrations: 'Integrations',
     };
 
     const title = titleMap[resource] ?? resource;
@@ -570,6 +575,10 @@ export default function PortalResourcePage() {
         }
 
         return <AdminRoleOverview />;
+    }
+
+    if (resource === 'integrations') {
+        return <IntegrationDashboard />;
     }
 
     return (
