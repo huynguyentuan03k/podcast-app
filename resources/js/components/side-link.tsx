@@ -1,4 +1,4 @@
-import { FilePenLine, Folder, Headphones, Languages, LayoutDashboard, Newspaper, Podcast, Tags, User, UsersRound } from 'lucide-react';
+import { FilePenLine, Folder, Headphones, Languages, LayoutDashboard, Newspaper, Podcast, ShieldCheck, Tags, User, UserCog, UsersRound } from 'lucide-react';
 import type React from 'react';
 
 interface NavLink {
@@ -28,8 +28,8 @@ export const sidelinks: SideLink[] = [
                 permission: 'VIEW_DASHBOARD',
             },
             {
-                title: 'My profile',
-                href: '/portal/aboutme',
+                title: 'Profile',
+                href: '/portal/profile',
                 icon: <User size={18} />,
                 permission: 'ANY',
             },
@@ -37,6 +37,24 @@ export const sidelinks: SideLink[] = [
                 title: 'Settings',
                 href: '/portal/settings',
                 icon: <Languages size={18} />,
+                permission: 'ANY',
+            },
+            {
+                title: 'Users',
+                href: '/portal/users',
+                icon: <UsersRound size={18} />,
+                permission: 'VIEW_USER',
+            },
+            {
+                title: 'Admins',
+                href: '/portal/admins',
+                icon: <UserCog size={18} />,
+                permission: 'ANY',
+            },
+            {
+                title: 'Admin Roles',
+                href: '/portal/admin-roles',
+                icon: <ShieldCheck size={18} />,
                 permission: 'ANY',
             },
         ],
@@ -81,19 +99,6 @@ export const sidelinks: SideLink[] = [
                 href: '/portal/tags',
                 icon: <Tags size={18} />,
                 permission: 'VIEW_TAG',
-            },
-        ],
-    },
-    {
-        title: 'Administration',
-        icon: <UsersRound size={18} />,
-        href: '/portal/users',
-        children: [
-            {
-                title: 'Users',
-                href: '/portal/users',
-                icon: <UsersRound size={18} />,
-                permission: 'VIEW_USER',
             },
         ],
     },

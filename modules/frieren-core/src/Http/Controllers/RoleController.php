@@ -123,7 +123,7 @@ class RoleController extends Controller
     )]
     public function show(Role $role): JsonResponse
     {
-        $role->load('permissions');
+        $role->load(['permissions', 'adminUsers.roles']);
 
         return response()->json(['message' => 'Role retrieved successfully.', 'data' => new RoleResource($role)]);
     }

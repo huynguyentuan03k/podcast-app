@@ -145,9 +145,9 @@ export function PortalTopbar() {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <Link className="flex w-full items-center" to="/portal/aboutme">
+                        <Link className="flex w-full items-center" to="/portal/profile">
                             <UserRound className="mr-2 size-4" />
-                            My profile
+                            Profile
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>

@@ -17,4 +17,9 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class, 'role_has_permissions');
     }
+
+    public function adminUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(AdminUser::class, 'user_admin_has_roles', 'role_id', 'user_admin_id');
+    }
 }

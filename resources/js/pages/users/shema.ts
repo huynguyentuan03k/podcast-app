@@ -9,7 +9,10 @@ export const userConfig: ResourceConfig = {
     singular: 'User',
     endpoint: '/api/users',
     basePath: '/portal/users',
-    breadcrumbs: [{ title: 'Users', href: '/portal/users' }],
+    breadcrumbs: [
+        { title: 'System', href: '/' },
+        { title: 'Users', href: '/portal/users' },
+    ],
     columns: [
         { key: 'id', label: 'ID' },
         { key: 'name', label: 'Name' },

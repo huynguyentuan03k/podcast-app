@@ -21,6 +21,14 @@ import EpisodeOverview from '@/pages/episodes/overview/EpisodeOverview';
 import CreateEpisode from '@/pages/episodes/create/CreateEpisode';
 import EditEpisode from '@/pages/episodes/edit/EditEpisode';
 import ShowEpisode from '@/pages/episodes/show/ShowEpisode';
+import AdminOverview from '@/pages/admins/overview/AdminOverview';
+import CreateAdmin from '@/pages/admins/create/CreateAdmin';
+import EditAdmin from '@/pages/admins/edit/EditAdmin';
+import ShowAdmin from '@/pages/admins/show/ShowAdmin';
+import AdminRoleOverview from '@/pages/admin-roles/overview/AdminRoleOverview';
+import CreateAdminRole from '@/pages/admin-roles/create/CreateAdminRole';
+import EditAdminRole from '@/pages/admin-roles/edit/EditAdminRole';
+import ShowAdminRole from '@/pages/admin-roles/show/ShowAdminRole';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -29,6 +37,8 @@ import { categoryConfig, type Category } from '../categories/shema';
 import { podcastConfig, type Podcast } from '../podcasts/shema';
 import { publisherConfig, type Publisher } from '../publishers/shema';
 import { episodeConfig, type Episode } from '../episodes/shema';
+import { adminConfig, type Admin } from '../admins/shema';
+import { adminRoleConfig, type AdminRole } from '../admin-roles/shema';
 
 function AuthorRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
     const { data, isLoading } = useQuery({
@@ -180,6 +190,66 @@ function EpisodeRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }
     return mode === 'edit' ? <EditEpisode record={data} /> : <ShowEpisode record={data} />;
 }
 
+function AdminRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['admins', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: Admin }>(`${adminConfig.apiPath}/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={adminConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading admin...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={adminConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Admin not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditAdmin record={data} /> : <ShowAdmin record={data} />;
+}
+
+function AdminRoleRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['admin-roles', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: AdminRole }>(`${adminRoleConfig.apiPath}/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={adminRoleConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading admin role...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={adminRoleConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Admin role not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditAdminRole record={data} /> : <ShowAdminRole record={data} />;
+}
+
 export default function PortalResourcePage() {
     const { pathname } = useLocation();
     const params = useParams();
@@ -196,6 +266,8 @@ export default function PortalResourcePage() {
         tags: 'Tags',
         authors: 'Authors',
         users: 'Users',
+        admins: 'Admins',
+        'admin-roles': 'Admin Roles',
     };
 
     const title = titleMap[resource] ?? resource;
@@ -278,6 +350,38 @@ export default function PortalResourcePage() {
         }
 
         return <CategoryOverview />;
+    }
+
+    if (resource === 'admins') {
+        if (action === 'create') {
+            return <CreateAdmin />;
+        }
+
+        if (action === 'edit') {
+            return <AdminRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <AdminRecordLoader id={id} mode="show" />;
+        }
+
+        return <AdminOverview />;
+    }
+
+    if (resource === 'admin-roles') {
+        if (action === 'create') {
+            return <CreateAdminRole />;
+        }
+
+        if (action === 'edit') {
+            return <AdminRoleRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <AdminRoleRecordLoader id={id} mode="show" />;
+        }
+
+        return <AdminRoleOverview />;
     }
 
     return (

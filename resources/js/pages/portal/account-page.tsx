@@ -35,7 +35,7 @@ export default function AccountPage() {
                         <span className="mx-2">›</span>
                         <span>General</span>
                         <span className="mx-2">›</span>
-                        <span className="text-foreground">My Account</span>
+                        <span className="text-foreground">Profile</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="rounded-full px-3 py-1">
@@ -48,7 +48,7 @@ export default function AccountPage() {
                 </div>
 
                 <div>
-                    <h1 className="text-2xl font-semibold">My Account</h1>
+                    <h1 className="text-2xl font-semibold">Profile</h1>
                     <p className="text-sm text-muted-foreground">Manage your account information.</p>
                 </div>
 

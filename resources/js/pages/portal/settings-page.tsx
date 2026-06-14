@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { AuthImagePosition, useBrandAssets } from '@/hooks/use-brand-assets';
+import { useBrandAssets } from '@/hooks/use-brand-assets';
 import AppLayout from '@/layouts/app-layout';
 import { ImagePlus, Info, Save } from 'lucide-react';
 import { useState } from 'react';
@@ -59,7 +58,7 @@ function AssetLabel({ children, tooltip }: { children: string; tooltip: string }
 }
 
 export default function SettingsPage() {
-    const { favicon, logo, authImage, authImagePosition, setAsset, setAuthImagePosition } = useBrandAssets();
+    const { favicon, logo, authImage, setAsset } = useBrandAssets();
 
     const uploadAsset = async (key: 'logo' | 'favicon' | 'authImage', files: File[]) => {
         const file = files[0];
@@ -155,18 +154,6 @@ export default function SettingsPage() {
                                 )}
                                 <ImagePlus className="pointer-events-none absolute right-3 bottom-3 size-5 text-muted-foreground/45" />
                             </Dropzone>
-                        </div>
-                        <div className="w-full max-w-56 space-y-2 sm:w-56">
-                            <Label htmlFor="auth-image-position">Auth Image Position</Label>
-                            <Select value={authImagePosition} onValueChange={(value) => setAuthImagePosition(value as AuthImagePosition)}>
-                                <SelectTrigger id="auth-image-position">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="left">Image left, form right</SelectItem>
-                                    <SelectItem value="right">Form left, image right</SelectItem>
-                                </SelectContent>
-                            </Select>
                         </div>
                     </div>
 

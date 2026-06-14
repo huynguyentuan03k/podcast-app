@@ -15,7 +15,8 @@ export default function AppRouter() {
                 <Route path="portal/:resource/:id/edit" element={<PortalResourcePage />} />
                 <Route path="portal/:resource/:id/show" element={<PortalResourcePage />} />
                 <Route path="portal/:resource/:id/delete" element={<PortalResourcePage />} />
-                <Route path="portal/aboutme" element={<AccountPage />} />
+                <Route path="portal/profile" element={<AccountPage />} />
+                <Route path="portal/aboutme" element={<Navigate to="/portal/profile" replace />} />
                 <Route path="portal/settings" element={<SettingsPage />} />
                 <Route path="login" element={<Navigate to="/" replace />} />
                 <Route path="signup" element={<Navigate to="/" replace />} />
