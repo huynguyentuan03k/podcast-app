@@ -39,6 +39,9 @@
             $currentAdminPermissions = $admin instanceof \Frieren\Core\Models\AdminUser
                 ? \Frieren\Core\Support\AdminPermission::userClientPermissions($admin)
                 : [];
+            $currentAdminProfile = $admin instanceof \Frieren\Core\Models\AdminUser
+                ? optional($admin->loadMissing('profile'))->profile
+                : null;
             $appSettings = [
                 'permissions' => $clientPermissions,
                 'permissionGroups' => $permissionGroups,
@@ -48,6 +51,17 @@
                     'username' => $admin->username,
                     'email' => $admin->email,
                     'permissions' => $currentAdminPermissions,
+                    'profile' => $currentAdminProfile ? [
+                        'id' => $currentAdminProfile->id,
+                        'user_admin_id' => $currentAdminProfile->user_admin_id,
+                        'employee_code' => $currentAdminProfile->employee_code,
+                        'first_name' => $currentAdminProfile->first_name,
+                        'last_name' => $currentAdminProfile->last_name,
+                        'phone_number' => $currentAdminProfile->phone_number,
+                        'avatar' => $currentAdminProfile->avatar,
+                        'department' => $currentAdminProfile->department,
+                        'metadata' => $currentAdminProfile->metadata,
+                    ] : null,
                 ] : null,
             ];
         @endphp

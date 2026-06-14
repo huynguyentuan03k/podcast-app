@@ -7,7 +7,10 @@ use App\Http\Requests\CreateTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Http\Resources\TagResource;
 use App\Models\Tag;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 use OpenApi\Attributes as OA;
 
 class TagController extends Controller
@@ -49,10 +52,17 @@ class TagController extends Controller
             )
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
-        $perPage = request()->query('per_page', 10);
-        $tags = Tag::paginate($perPage);
+        $perPage = (int) $request->query('per_page', 10);
+        $tags = QueryBuilder::for(Tag::query())
+            ->allowedFilters([
+                AllowedFilter::partial('name'),
+            ])
+            ->defaultSort('-created_at')
+            ->allowedSorts(['id', 'name', 'slug', 'created_at', 'updated_at'])
+            ->paginate($perPage);
+
         return TagResource::collection($tags);
     }
 

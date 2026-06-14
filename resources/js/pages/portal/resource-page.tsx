@@ -22,6 +22,8 @@ import EpisodeOverview from '@/pages/episodes/overview/EpisodeOverview';
 import CreateEpisode from '@/pages/episodes/create/CreateEpisode';
 import EditEpisode from '@/pages/episodes/edit/EditEpisode';
 import ShowEpisode from '@/pages/episodes/show/ShowEpisode';
+import TagOverview from '@/pages/tags/overview/TagOverview';
+import ShowTag from '@/pages/tags/show/ShowTag';
 import AdminOverview from '@/pages/admins/overview/AdminOverview';
 import CreateAdmin from '@/pages/admins/create/CreateAdmin';
 import EditAdmin from '@/pages/admins/edit/EditAdmin';
@@ -42,6 +44,7 @@ import { categoryConfig, type Category } from '../categories/shema';
 import { podcastConfig, type Podcast } from '../podcasts/shema';
 import { publisherConfig, type Publisher } from '../publishers/shema';
 import { episodeConfig, type Episode } from '../episodes/shema';
+import { tagConfig, type Tag } from '../tags/shema';
 import { adminConfig, type Admin } from '../admins/shema';
 import { userConfig, type User } from '../users/shema';
 import { adminRoleConfig, type AdminRole } from '../admin-roles/shema';
@@ -97,6 +100,12 @@ function authorizeResourceAction(resource: string, action: string) {
             show: 'VIEW_PUBLISHER',
             create: 'CREATE_PUBLISHER',
             edit: 'UPDATE_PUBLISHER',
+        },
+        tags: {
+            overview: 'VIEW_TAG',
+            show: 'VIEW_TAG',
+            create: 'CREATE_TAG',
+            edit: 'UPDATE_TAG',
         },
         users: {
             overview: 'VIEW_USER',
@@ -241,6 +250,36 @@ function PublisherRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show'
     }
 
     return mode === 'edit' ? <EditPublisher record={data} /> : <ShowPublisher record={data} />;
+}
+
+function TagRecordLoader({ id }: { id: string }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['tags', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: Tag }>(`/tags/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={tagConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading tag...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={tagConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Tag not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return <ShowTag record={data} />;
 }
 
 function EpisodeRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
@@ -435,6 +474,22 @@ export default function PortalResourcePage() {
         }
 
         return <PublisherOverview />;
+    }
+
+    if (resource === 'tags') {
+        if (action === 'create') {
+            return <TagOverview initialDialogMode="create" />;
+        }
+
+        if (action === 'edit') {
+            return <TagOverview initialDialogMode="edit" initialTagId={id} />;
+        }
+
+        if (action === 'show') {
+            return <TagRecordLoader id={id} />;
+        }
+
+        return <TagOverview />;
     }
 
     if (resource === 'episodes') {
