@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eea8ba4821c2eeb223480af3f1b35050",
+    "content-hash": "6340da0060584ac9e93ab0be2a729464",
     "packages": [
         {
             "name": "brick/math",
@@ -587,6 +587,44 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "frieren/crawler",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/frieren-crawler",
+                "reference": "49335cb3e3cf276c24b597570e01b8f0daadbcbb"
+            },
+            "require": {
+                "illuminate/contracts": "^11.0|^12.0",
+                "illuminate/database": "^11.0|^12.0",
+                "illuminate/http": "^11.0|^12.0",
+                "illuminate/routing": "^11.0|^12.0",
+                "illuminate/support": "^11.0|^12.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Frieren\\Crawler\\Providers\\CrawlerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Frieren\\Crawler\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Crawler management module for configuring crawl sources and dispatching crawler jobs.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "frieren/frieren-core",

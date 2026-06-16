@@ -26,6 +26,7 @@ public function run(): void
             'episode' => ['view', 'create', 'update', 'delete'],
             'tag' => ['view', 'create', 'update', 'delete'],
             'integration' => ['view', 'update'],
+            'crawler' => ['view', 'update'],
             'setting' => ['view', 'update'],
             'activity' => ['view'],
         ];

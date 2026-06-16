@@ -1,4 +1,4 @@
-import { FilePenLine, Folder, Headphones, Languages, LayoutDashboard, Network, Newspaper, Podcast, ShieldCheck, Tags, User, UserCog, UsersRound } from 'lucide-react';
+import { Bot, FilePenLine, Folder, Headphones, Languages, LayoutDashboard, Network, Newspaper, Podcast, Radar, ShieldCheck, Tags, User, UserCog, UsersRound } from 'lucide-react';
 import type React from 'react';
 
 interface NavLink {
@@ -56,6 +56,19 @@ export const sidelinks: SideLink[] = [
                 href: '/portal/admin-roles',
                 icon: <ShieldCheck size={18} />,
                 permission: 'VIEW_ROLE',
+            },
+        ],
+    },
+    {
+        title: 'Crawler management',
+        icon: <Bot size={18} />,
+        href: '/portal/crawlers',
+        children: [
+            {
+                title: 'Crawlers',
+                href: '/portal/crawlers',
+                icon: <Radar size={18} />,
+                permission: 'VIEW_CRAWLER',
             },
             {
                 title: 'Integrations',

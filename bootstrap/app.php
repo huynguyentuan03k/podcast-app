@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\Demomiddlewareage;
+use App\Http\Middleware\EnsureAdminPermission;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\SetApiLocale;
 use App\Http\Middleware\TranslateApiResponse;
@@ -51,6 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
             'check.age' => Demomiddlewareage::class,
+            'admin.permission' => EnsureAdminPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

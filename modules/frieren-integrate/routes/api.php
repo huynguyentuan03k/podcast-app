@@ -21,7 +21,7 @@ Route::prefix('api/frieren-integrate/admin')
         Route::get('/inbox', [AdminIntegrationController::class, 'inbox']);
         Route::get('/outbox', [AdminIntegrationController::class, 'outbox']);
 
-        Route::middleware('can:admin-permission,UPDATE_INTEGRATION')->group(function (): void {
+        Route::middleware('admin.permission:UPDATE_INTEGRATION')->group(function (): void {
             Route::patch('/import-batches/{importBatch}/status', [AdminIntegrationController::class, 'updateImportBatchStatus']);
             Route::post('/outbox/{outbox}/retry', [AdminIntegrationController::class, 'retryOutbox']);
             Route::post('/outbox/publish-once', [AdminIntegrationController::class, 'publishOutboxOnce']);
