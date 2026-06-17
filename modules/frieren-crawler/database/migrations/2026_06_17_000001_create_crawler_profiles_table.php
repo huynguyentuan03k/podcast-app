@@ -8,21 +8,22 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('crawler_sources', function (Blueprint $table): void {
+        Schema::create('crawler_profiles', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
-            $table->string('type')->default('generic');
-            $table->text('url');
-            $table->string('status')->default('active');
+            $table->string('key')->unique();
+            $table->string('driver')->default('website')->index();
+            $table->unsignedInteger('version')->default(1);
             $table->json('selectors')->nullable();
             $table->json('options')->nullable();
-            $table->timestamp('last_crawled_at')->nullable();
+            $table->boolean('is_active')->default(true)->index();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('crawler_sources');
+        Schema::dropIfExists('crawler_profiles');
     }
 };

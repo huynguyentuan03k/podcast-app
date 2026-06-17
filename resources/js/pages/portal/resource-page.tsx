@@ -38,6 +38,10 @@ import EditAdminRole from '@/pages/admin-roles/edit/EditAdminRole';
 import ShowAdminRole from '@/pages/admin-roles/show/ShowAdminRole';
 import IntegrationDashboard from '@/pages/integrations/IntegrationDashboard';
 import CrawlerDashboard from '@/pages/crawlers/CrawlerDashboard';
+import CrawlerItemOverview from '@/pages/crawler-items/overview/CrawlerItemOverview';
+import ShowCrawlerItem from '@/pages/crawler-items/show/ShowCrawlerItem';
+import CreateCrawlerItem from '@/pages/crawler-items/create/CreateCrawlerItem';
+import EditCrawlerItem from '@/pages/crawler-items/edit/EditCrawlerItem';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -50,6 +54,7 @@ import { tagConfig, type Tag } from '../tags/shema';
 import { adminConfig, type Admin } from '../admins/shema';
 import { userConfig, type User } from '../users/shema';
 import { adminRoleConfig, type AdminRole } from '../admin-roles/shema';
+import { crawlerItemConfig, type CrawlerItem } from '../crawler-items/shema';
 
 function UnauthorizedPage() {
     return (
@@ -132,6 +137,12 @@ function authorizeResourceAction(resource: string, action: string) {
         },
         crawlers: {
             overview: 'VIEW_CRAWLER',
+        },
+        'crawler-items': {
+            overview: 'VIEW_CRAWLER',
+            show: 'VIEW_CRAWLER',
+            create: 'UPDATE_CRAWLER',
+            edit: 'UPDATE_CRAWLER',
         },
     };
 
@@ -410,6 +421,36 @@ function AdminRoleRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show'
     return mode === 'edit' ? <EditAdminRole record={data} /> : <ShowAdminRole record={data} />;
 }
 
+function CrawlerItemRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['crawler-items', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: CrawlerItem }>(`/frieren-crawler/admin/items/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={crawlerItemConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading crawler item...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={crawlerItemConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Crawler item not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditCrawlerItem record={data} /> : <ShowCrawlerItem record={data} />;
+}
+
 export default function PortalResourcePage() {
     const { pathname } = useLocation();
     const params = useParams();
@@ -430,6 +471,7 @@ export default function PortalResourcePage() {
         'admin-roles': 'Admin Roles',
         integrations: 'Integrations',
         crawlers: 'Crawler management',
+        'crawler-items': 'Crawler Items',
     };
 
     const title = titleMap[resource] ?? resource;
@@ -588,6 +630,22 @@ export default function PortalResourcePage() {
 
     if (resource === 'crawlers') {
         return <CrawlerDashboard />;
+    }
+
+    if (resource === 'crawler-items') {
+        if (action === 'create') {
+            return <CreateCrawlerItem />;
+        }
+
+        if (action === 'edit') {
+            return <CrawlerItemRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <CrawlerItemRecordLoader id={id} mode="show" />;
+        }
+
+        return <CrawlerItemOverview />;
     }
 
     return (

@@ -11,11 +11,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import http from '@/http/client';
 import { formatDateTime } from '@/lib/date-format';
-import { Head } from '@/lib/navigation';
+import { Head, Link } from '@/lib/navigation';
 import AppLayout from '@/layouts/app-layout';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { Bot, CheckCircle2, Play, RefreshCw, Server, Trash2, XCircle } from 'lucide-react';
+import { Bot, CheckCircle2, Eye, Play, RefreshCw, Server, Trash2, XCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 type CrawlerOverview = {
@@ -47,15 +47,55 @@ type CrawlerSource = {
 
 type CrawlerJob = {
     id: number;
-    external_job_id: string | null;
-    target_url: string;
+    cursor?: { external_job_id?: string | null; response?: unknown } | null;
+    target_url?: string;
     status: string;
-    payload: unknown;
-    response: unknown;
+    options?: unknown;
     error_message: string | null;
-    dispatched_at: string | null;
+    started_at?: string | null;
+    finished_at?: string | null;
     created_at: string;
     source?: Pick<CrawlerSource, 'id' | 'name' | 'type' | 'url'> | null;
+    items?: Array<Pick<CrawlerItem, 'id' | 'title' | 'source_url' | 'status' | 'audio_count'>>;
+};
+
+type CrawlerItemAudio = {
+    id: number;
+    title: string | null;
+    position: number | null;
+    audio_url: string;
+    http_status: number | null;
+    content_type: string | null;
+    content_length: number | null;
+    duration_seconds: number | null;
+    status: string;
+    error_message: string | null;
+    last_crawled_at: string | null;
+    episode?: { id: number; title: string; slug: string | null } | null;
+};
+
+type CrawlerItem = {
+    id: number;
+    title: string | null;
+    source_url: string;
+    canonical_url: string | null;
+    description: string | null;
+    thumbnail_url: string | null;
+    status: string;
+    audio_count: number;
+    audios_count?: number;
+    crawl_count: number;
+    failure_count: number;
+    error_message: string | null;
+    metadata: unknown;
+    first_discovered_at: string | null;
+    last_crawled_at: string | null;
+    last_changed_at: string | null;
+    imported_at: string | null;
+    created_at: string;
+    source?: Pick<CrawlerSource, 'id' | 'name' | 'type' | 'url'> | null;
+    podcast?: { id: number; title: string; slug?: string | null } | null;
+    audios?: CrawlerItemAudio[];
 };
 
 type AudioCandidate = {
@@ -78,7 +118,8 @@ type EpisodeLinkCheck = {
     status: string;
     http_status: number | null;
     error_message: string | null;
-    checked_at: string;
+    checked_at?: string | null;
+    last_crawled_at?: string | null;
     episode?: { id: number; title: string } | null;
 };
 
@@ -166,6 +207,10 @@ export default function CrawlerDashboard() {
     const [rawAudioUrls, setRawAudioUrls] = useState('');
     const [titlePrefix, setTitlePrefix] = useState('');
     const [selectedJson, setSelectedJson] = useState<unknown>(null);
+    const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+    const [bulkItemSourceId, setBulkItemSourceId] = useState('');
+    const [bulkItemCount, setBulkItemCount] = useState('5');
+    const [bulkItemSelection, setBulkItemSelection] = useState('pending');
     const canUpdateCrawler = authorizeCheck('UPDATE_CRAWLER');
 
     const overview = useQuery({
@@ -203,6 +248,31 @@ export default function CrawlerDashboard() {
             });
 
             return response.data;
+        },
+    });
+
+    const items = useQuery({
+        queryKey: ['crawlers', 'items', search, status],
+        queryFn: async () => {
+            const response = await http.get<Paginated<CrawlerItem>>('/frieren-crawler/admin/items', {
+                params: {
+                    search: search || undefined,
+                    status: status === 'all' ? undefined : status,
+                    per_page: 10,
+                },
+            });
+
+            return response.data;
+        },
+    });
+
+    const selectedItem = useQuery({
+        queryKey: ['crawlers', 'items', selectedItemId],
+        enabled: selectedItemId !== null,
+        queryFn: async () => {
+            const response = await http.get<{ data: CrawlerItem }>(`/frieren-crawler/admin/items/${selectedItemId}`);
+
+            return response.data.data;
         },
     });
 
@@ -327,6 +397,38 @@ export default function CrawlerDashboard() {
         },
     });
 
+    const crawlSelectedItems = useMutation({
+        mutationFn: () =>
+            http.post('/frieren-crawler/admin/items/crawl', {
+                source_id: Number(bulkItemSourceId),
+                count: Number(bulkItemCount),
+                selection: bulkItemSelection,
+            }),
+        onSuccess: async (response) => {
+            toast({
+                title: 'crawl items dispatched successfully',
+                description: `${response.data.data?.dispatched_count ?? 0} item(s) were sent to crawler service.`,
+            });
+            await invalidateCrawler();
+        },
+        onError: (error: AxiosError<ErrorResponse>) => {
+            const message = error.response?.data?.message ?? 'Please select a source and valid item count.';
+            toast({ title: 'crawl items failed', description: message, variant: 'destructive' });
+        },
+    });
+
+    const crawlSingleItem = useMutation({
+        mutationFn: (itemId: number) => http.post(`/frieren-crawler/admin/items/${itemId}/crawl`),
+        onSuccess: async () => {
+            toast({ title: 'crawl item dispatched successfully', description: 'Crawler service is processing this item.' });
+            await invalidateCrawler();
+        },
+        onError: (error: AxiosError<ErrorResponse>) => {
+            const message = error.response?.data?.message ?? 'Please check crawler service URL and endpoint.';
+            toast({ title: 'crawl item failed', description: message, variant: 'destructive' });
+        },
+    });
+
     const collectPodcastAudio = useMutation({
         mutationFn: () =>
             http.post(
@@ -391,6 +493,12 @@ export default function CrawlerDashboard() {
                         <Button variant="outline" className="gap-2" disabled={healthCheck.isPending} onClick={() => healthCheck.mutate()}>
                             <RefreshCw className={healthCheck.isPending ? 'size-4 animate-spin' : 'size-4'} />
                             Health check
+                        </Button>
+                        <Button asChild variant="outline" className="gap-2">
+                            <Link href="/portal/crawler-items">
+                                <Eye className="size-4" />
+                                Open items table
+                            </Link>
                         </Button>
                         <Button className="gap-2 bg-blue-600 text-white hover:bg-blue-700" disabled={!canUpdateCrawler} onClick={() => setSourceDialogOpen(true)}>
                             <Bot className="size-4" />
@@ -539,6 +647,93 @@ export default function CrawlerDashboard() {
 
                 <Card className="rounded-lg">
                     <CardHeader>
+                        <CardTitle className="text-base">Crawler items</CardTitle>
+                        <CardDescription>Manage discovered podcast pages and crawl selected items into item audio records.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid gap-3 lg:grid-cols-[280px_160px_180px_auto]">
+                            <Select value={bulkItemSourceId} onValueChange={setBulkItemSourceId}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select source" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {sourceOptions.map((source) => (
+                                        <SelectItem key={source.id} value={String(source.id)}>
+                                            {source.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <Input value={bulkItemCount} onChange={(event) => setBulkItemCount(event.target.value)} type="number" min={1} max={100} placeholder="Item count" />
+                            <Select value={bulkItemSelection} onValueChange={setBulkItemSelection}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="failed">Failed</SelectItem>
+                                    <SelectItem value="oldest">Oldest</SelectItem>
+                                    <SelectItem value="all">All</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button
+                                className="gap-2 bg-blue-600 text-white hover:bg-blue-700"
+                                disabled={!canUpdateCrawler || !bulkItemSourceId || crawlSelectedItems.isPending}
+                                onClick={() => crawlSelectedItems.mutate()}
+                            >
+                                <Bot className="size-4" />
+                                Crawl selected items
+                            </Button>
+                        </div>
+
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Title</TableHead>
+                                    <TableHead>Source</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Audios</TableHead>
+                                    <TableHead>Last crawled</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {(items.data?.data ?? []).map((item) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell className="max-w-[280px]">
+                                            <div className="truncate font-medium">{item.title ?? 'Untitled item'}</div>
+                                            <div className="truncate text-xs text-muted-foreground">{item.source_url}</div>
+                                        </TableCell>
+                                        <TableCell>{item.source?.name ?? '-'}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={statusVariant(item.status)}>{item.status}</Badge>
+                                        </TableCell>
+                                        <TableCell>{item.audio_count || item.audios_count || 0}</TableCell>
+                                        <TableCell>{item.last_crawled_at ? formatDateTime(item.last_crawled_at) : '-'}</TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-1">
+                                                <Button variant="ghost" size="icon" onClick={() => setSelectedItemId(item.id)}>
+                                                    <Eye className="size-4 text-blue-600" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    disabled={!canUpdateCrawler || crawlSingleItem.isPending}
+                                                    onClick={() => crawlSingleItem.mutate(item.id)}
+                                                >
+                                                    <Play className="size-4 text-green-600" />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+
+                <Card className="rounded-lg">
+                    <CardHeader>
                         <CardTitle className="text-base">Crawler sources</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -628,7 +823,7 @@ export default function CrawlerDashboard() {
                                                 <Badge variant={statusVariant(check.status)}>{check.status}</Badge>
                                             </TableCell>
                                             <TableCell>{check.http_status ?? '-'}</TableCell>
-                                            <TableCell>{formatDateTime(check.checked_at)}</TableCell>
+                                            <TableCell>{check.checked_at || check.last_crawled_at ? formatDateTime(check.checked_at ?? check.last_crawled_at ?? '') : '-'}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -656,13 +851,13 @@ export default function CrawlerDashboard() {
                             <TableBody>
                                 {(jobs.data?.data ?? []).map((job) => (
                                     <TableRow key={job.id}>
-                                        <TableCell>{job.external_job_id ?? job.id}</TableCell>
+                                        <TableCell>{job.cursor?.external_job_id ?? job.id}</TableCell>
                                         <TableCell>{job.source?.name ?? 'Custom'}</TableCell>
-                                        <TableCell className="max-w-[420px] truncate">{job.target_url}</TableCell>
+                                        <TableCell className="max-w-[420px] truncate">{job.items?.[0]?.source_url ?? '-'}</TableCell>
                                         <TableCell>
                                             <Badge variant={statusVariant(job.status)}>{job.status}</Badge>
                                         </TableCell>
-                                        <TableCell>{job.dispatched_at ? formatDateTime(job.dispatched_at) : '-'}</TableCell>
+                                        <TableCell>{job.started_at ? formatDateTime(job.started_at) : '-'}</TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="outline" size="sm" onClick={() => setSelectedJson(job)}>
                                                 View
@@ -730,6 +925,83 @@ export default function CrawlerDashboard() {
                                 Save
                             </Button>
                         </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog open={selectedItemId !== null} onOpenChange={(open) => !open && setSelectedItemId(null)}>
+                    <DialogContent className="max-h-[90vh] max-w-5xl overflow-auto">
+                        <DialogHeader>
+                            <DialogTitle>Crawler item detail</DialogTitle>
+                            <DialogDescription>Review item information, crawl status, metadata, and item audio records.</DialogDescription>
+                        </DialogHeader>
+                        {selectedItem.data ? (
+                            <div className="space-y-5">
+                                <div className="grid gap-4 md:grid-cols-[180px_1fr_auto]">
+                                    <div className="overflow-hidden rounded-md border bg-muted/20">
+                                        {selectedItem.data.thumbnail_url ? (
+                                            <img src={selectedItem.data.thumbnail_url} alt={selectedItem.data.title ?? 'Crawler item'} className="aspect-[4/3] h-full w-full object-cover" />
+                                        ) : (
+                                            <div className="flex aspect-[4/3] items-center justify-center text-sm text-muted-foreground">No image</div>
+                                        )}
+                                    </div>
+                                    <div className="min-w-0 space-y-2">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <h3 className="truncate text-lg font-semibold">{selectedItem.data.title ?? 'Untitled item'}</h3>
+                                            <Badge variant={statusVariant(selectedItem.data.status)}>{selectedItem.data.status}</Badge>
+                                        </div>
+                                        <p className="line-clamp-3 text-sm text-muted-foreground">{selectedItem.data.description ?? 'No description'}</p>
+                                        <div className="grid gap-1 text-sm">
+                                            <span className="truncate"><span className="text-muted-foreground">Source:</span> {selectedItem.data.source_url}</span>
+                                            <span><span className="text-muted-foreground">Source name:</span> {selectedItem.data.source?.name ?? '-'}</span>
+                                            <span><span className="text-muted-foreground">Audios:</span> {selectedItem.data.audio_count || selectedItem.data.audios?.length || 0}</span>
+                                            <span><span className="text-muted-foreground">Last crawled:</span> {selectedItem.data.last_crawled_at ? formatDateTime(selectedItem.data.last_crawled_at) : '-'}</span>
+                                            {selectedItem.data.error_message ? <span className="text-red-600">{selectedItem.data.error_message}</span> : null}
+                                        </div>
+                                    </div>
+                                    <Button
+                                        className="gap-2 bg-blue-600 text-white hover:bg-blue-700"
+                                        disabled={!canUpdateCrawler || crawlSingleItem.isPending}
+                                        onClick={() => selectedItem.data && crawlSingleItem.mutate(selectedItem.data.id)}
+                                    >
+                                        <Play className="size-4" />
+                                        Crawl item
+                                    </Button>
+                                </div>
+
+                                <div className="rounded-md border">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead className="w-16">#</TableHead>
+                                                <TableHead>Title</TableHead>
+                                                <TableHead>Audio URL</TableHead>
+                                                <TableHead>Status</TableHead>
+                                                <TableHead>Duration</TableHead>
+                                                <TableHead>HTTP</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {(selectedItem.data.audios ?? []).map((audio) => (
+                                                <TableRow key={audio.id}>
+                                                    <TableCell>{audio.position ?? '-'}</TableCell>
+                                                    <TableCell className="max-w-[220px] truncate">{audio.title ?? '-'}</TableCell>
+                                                    <TableCell className="max-w-[420px] truncate">{audio.audio_url}</TableCell>
+                                                    <TableCell>
+                                                        <Badge variant={statusVariant(audio.status)}>{audio.status}</Badge>
+                                                    </TableCell>
+                                                    <TableCell>{audio.duration_seconds ? `${Math.round(audio.duration_seconds / 60)} min` : '-'}</TableCell>
+                                                    <TableCell>{audio.http_status ?? '-'}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+
+                                <JsonPreview value={selectedItem.data.metadata} />
+                            </div>
+                        ) : (
+                            <div className="py-8 text-center text-sm text-muted-foreground">Loading item detail...</div>
+                        )}
                     </DialogContent>
                 </Dialog>
 
