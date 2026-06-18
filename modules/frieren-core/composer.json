@@ -1,6 +1,6 @@
 {
     "name": "frieren/frieren-core",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Core admin module for Frieren.",
     "type": "library",
     "license": "MIT",

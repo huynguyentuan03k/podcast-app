@@ -77,6 +77,12 @@ export const sidelinks: SideLink[] = [
                 permission: 'VIEW_CRAWLER',
             },
             {
+                title: 'Crawler Sources',
+                href: '/portal/crawler-sources',
+                icon: <Folder size={18} />,
+                permission: 'VIEW_CRAWLER',
+            },
+            {
                 title: 'Integrations',
                 href: '/portal/integrations',
                 icon: <Network size={18} />,

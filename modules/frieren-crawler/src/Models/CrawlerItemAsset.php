@@ -2,34 +2,28 @@
 
 namespace Frieren\Crawler\Models;
 
-use App\Models\Episode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-final class CrawlerItemAudio extends Model
+final class CrawlerItemAsset extends Model
 {
-    protected $table = 'crawler_item_audios';
+    protected $table = 'crawler_item_assets';
 
     protected $fillable = [
         'crawler_item_id',
         'last_crawler_run_id',
-        'episode_id',
+        'asset_type',
         'external_id',
         'title',
         'position',
-        'audio_url',
-        'audio_url_hash',
-        'http_status',
-        'content_type',
-        'content_length',
+        'url',
+        'url_hash',
+        'mime_type',
         'duration_seconds',
+        'content_length',
         'status',
-        'duplicate_of_id',
-        'content_hash',
         'metadata',
         'error_message',
-        'crawl_count',
-        'failure_count',
         'first_discovered_at',
         'last_crawled_at',
         'last_changed_at',
@@ -52,15 +46,5 @@ final class CrawlerItemAudio extends Model
     public function lastRun(): BelongsTo
     {
         return $this->belongsTo(CrawlerRun::class, 'last_crawler_run_id');
-    }
-
-    public function episode(): BelongsTo
-    {
-        return $this->belongsTo(Episode::class);
-    }
-
-    public function duplicateOf(): BelongsTo
-    {
-        return $this->belongsTo(self::class, 'duplicate_of_id');
     }
 }

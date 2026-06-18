@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 final class AdminCrawlerController
 {
@@ -89,11 +90,36 @@ final class AdminCrawlerController
                         ->orWhere('host', 'like', $search);
                 });
             })
-            ->when($request->string('status')->isNotEmpty(), fn ($query) => $query->where('status', $request->string('status')->toString()))
-            ->latest()
+            ->when($request->string('status')->isNotEmpty(), function ($query) use ($request): void {
+                $statuses = array_filter(explode(',', $request->string('status')->toString()));
+                $query->whereIn('status', $statuses);
+            })
+            ->when($request->string('type')->isNotEmpty(), function ($query) use ($request): void {
+                $types = array_filter(explode(',', $request->string('type')->toString()));
+                $query->whereIn('type', $types);
+            })
+            ->when($request->input('filter.created_from'), fn ($query, $value) => $query->whereDate('created_at', '>=', $value))
+            ->when($request->input('filter.created_to'), fn ($query, $value) => $query->whereDate('created_at', '<=', $value))
+            ->when($request->string('sort')->isNotEmpty(), function ($query) use ($request): void {
+                $sort = $request->string('sort')->toString();
+                $direction = Str::startsWith($sort, '-') ? 'desc' : 'asc';
+                $column = ltrim($sort, '-');
+                $allowed = ['id', 'name', 'type', 'host', 'base_url', 'status', 'last_crawled_at', 'created_at'];
+
+                if (in_array($column, $allowed, true)) {
+                    $query->orderBy($column, $direction);
+                }
+            }, fn ($query) => $query->latest())
             ->paginate((int) $request->integer('per_page', 10));
 
         return response()->json($sources);
+    }
+
+    public function showSource(CrawlerSource $crawlerSource): JsonResponse
+    {
+        return response()->json([
+            'data' => $crawlerSource->load('profile:id,name,key,driver,version'),
+        ]);
     }
 
     public function storeSource(Request $request): JsonResponse
@@ -144,7 +170,7 @@ final class AdminCrawlerController
     {
         $items = CrawlerItem::query()
             ->with(['source:id,name,type,base_url,host', 'podcast:id,title'])
-            ->withCount('audios')
+            ->withCount(['audios', 'assets'])
             ->when($request->integer('source_id') ?: $request->input('filter.source_id'), fn ($query, $sourceId) => $query->where('crawler_source_id', $sourceId))
             ->when($request->string('status')->isNotEmpty(), fn ($query) => $query->where('status', $request->string('status')->toString()))
             ->when($request->input('filter.status'), function ($query, $status): void {
@@ -165,7 +191,7 @@ final class AdminCrawlerController
                 $sort = $request->string('sort')->toString();
                 $direction = Str::startsWith($sort, '-') ? 'desc' : 'asc';
                 $column = ltrim($sort, '-');
-                $allowed = ['id', 'title', 'status', 'audio_count', 'last_crawled_at', 'created_at'];
+                $allowed = ['id', 'title', 'item_type', 'status', 'audio_count', 'last_crawled_at', 'created_at'];
 
                 if (in_array($column, $allowed, true)) {
                     $query->orderBy($column, $direction);
@@ -179,7 +205,7 @@ final class AdminCrawlerController
     public function showItem(CrawlerItem $crawlerItem): JsonResponse
     {
         return response()->json([
-            'data' => $crawlerItem->loadCount('audios')->load([
+            'data' => $crawlerItem->loadCount(['audios', 'assets'])->load([
                 'source:id,name,type,base_url,host,status,last_crawled_at',
                 'lastRun',
                 'podcast:id,title,slug',
@@ -189,12 +215,18 @@ final class AdminCrawlerController
 
     public function storeItem(Request $request): JsonResponse
     {
-        $data = $this->validatedItemData($request);
-        $item = CrawlerItem::query()->create($data);
+        $data = $this->validatedItemData($request, allowExisting: true);
+        $item = $this->findExistingCrawlerItem($data);
+
+        if ($item) {
+            $item->update($data);
+        } else {
+            $item = CrawlerItem::query()->create($data);
+        }
 
         return response()->json([
-            'data' => $item->load(['source:id,name,type,base_url,host', 'podcast:id,title'])->loadCount('audios'),
-        ], 201);
+            'data' => $item->load(['source:id,name,type,base_url,host', 'podcast:id,title'])->loadCount(['audios', 'assets']),
+        ], $item->wasRecentlyCreated ? 201 : 200);
     }
 
     public function updateItem(Request $request, CrawlerItem $crawlerItem): JsonResponse
@@ -203,7 +235,7 @@ final class AdminCrawlerController
         $crawlerItem->update($data);
 
         return response()->json([
-            'data' => $crawlerItem->refresh()->load(['source:id,name,type,base_url,host', 'podcast:id,title'])->loadCount('audios'),
+            'data' => $crawlerItem->refresh()->load(['source:id,name,type,base_url,host', 'podcast:id,title'])->loadCount(['audios', 'assets']),
         ]);
     }
 
@@ -313,7 +345,9 @@ final class AdminCrawlerController
         $connector = $data['connector'] ?? $source?->type ?? $type;
         $connector = $this->inferConnector($targetUrl, $connector);
         $options = $data['options'] ?? $source?->options_override ?? [];
-        $selectors = $data['selectors'] ?? $source?->profile?->selectors ?? [];
+        $selectors = $this->normalizeRecordPayload(
+            $data['selectors'] ?? $source?->options_override['selectors'] ?? $source?->profile?->selectors ?? null
+        );
         $item = $this->firstOrCreateCrawlerItem($source, (string) $targetUrl);
         $run = CrawlerRun::query()->create([
             'crawler_source_id' => $source->id,
@@ -494,6 +528,7 @@ final class AdminCrawlerController
 
         $item->update([
             'podcast_id' => $podcast->id,
+            'item_type' => 'podcast',
             'last_crawler_run_id' => $run->id,
             'status' => 'ready',
             'audio_count' => count($created),
@@ -583,6 +618,7 @@ final class AdminCrawlerController
                 ],
                 [
                     'podcast_id' => $podcast->id,
+                    'item_type' => 'podcast',
                     'title' => $podcast->title,
                     'normalized_title' => Str::lower($podcast->title),
                     'source_url' => (string) ($episode->audio_url ?? $episode->audio_path),
@@ -655,6 +691,7 @@ final class AdminCrawlerController
             'crawler_profile_id' => $data['crawler_profile_id'] ?? null,
             'name' => $data['name'],
             'type' => $this->inferConnector($baseUrl, $data['type']),
+            'url' => $baseUrl,
             'base_url' => $baseUrl,
             'host' => Str::lower((string) $host),
             'status' => $data['status'],
@@ -663,15 +700,70 @@ final class AdminCrawlerController
         ];
     }
 
-    private function validatedItemData(Request $request, ?CrawlerItem $item = null): array
+    private function validatedItemData(Request $request, ?CrawlerItem $item = null, bool $allowExisting = false): array
     {
+        $sourceId = $request->integer('crawler_source_id');
+        $sourceUrl = $request->input('source_url');
+        $externalId = $this->resolveItemExternalId(
+            is_string($request->input('external_id')) ? $request->input('external_id') : null,
+            is_string($sourceUrl) ? $sourceUrl : null,
+            is_string($request->input('canonical_url')) ? $request->input('canonical_url') : null,
+        );
+
         $data = $request->validate([
             'crawler_source_id' => ['required', 'integer', 'exists:crawler_sources,id'],
             'podcast_id' => ['nullable', 'integer', 'exists:podcasts,id'],
-            'external_id' => ['nullable', 'string', 'max:255'],
+            'item_type' => ['nullable', Rule::in(['unknown', 'podcast', 'article', 'video', 'book', 'document', 'product', 'course', 'gallery'])],
+            'external_id' => [
+                'nullable',
+                'string',
+                'max:255',
+                function (string $attribute, mixed $value, \Closure $fail) use ($sourceId, $item, $externalId, $allowExisting): void {
+                    if ($allowExisting || ! is_string($externalId) || $externalId === '' || $sourceId <= 0) {
+                        return;
+                    }
+
+                    if ($item && $item->external_id === $externalId) {
+                        return;
+                    }
+
+                    $exists = CrawlerItem::query()
+                        ->where('crawler_source_id', $sourceId)
+                        ->where('external_id', $externalId)
+                        ->when($item, fn ($query) => $query->whereKeyNot($item->id))
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('This external ID is already used in the selected crawler source. Use external ID only for the page-level item, not for episodes inside the same page.');
+                    }
+                },
+            ],
             'title' => ['nullable', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255'],
-            'source_url' => ['required', 'url', 'max:2048'],
+            'source_url' => [
+                'required',
+                'url',
+                'max:2048',
+                function (string $attribute, mixed $value, \Closure $fail) use ($sourceId, $item, $sourceUrl, $allowExisting): void {
+                    if ($allowExisting || ! is_string($sourceUrl) || $sourceUrl === '' || $sourceId <= 0) {
+                        return;
+                    }
+
+                    if ($item && $item->source_url_hash === hash('sha256', $sourceUrl)) {
+                        return;
+                    }
+
+                    $exists = CrawlerItem::query()
+                        ->where('crawler_source_id', $sourceId)
+                        ->where('source_url_hash', hash('sha256', $sourceUrl))
+                        ->when($item, fn ($query) => $query->whereKeyNot($item->id))
+                        ->exists();
+
+                    if ($exists) {
+                        $fail('This page URL already exists for the selected crawler source. Reuse the existing crawler item and manage multiple episodes in Item Audios instead of creating another item.');
+                    }
+                },
+            ],
             'canonical_url' => ['nullable', 'url', 'max:2048'],
             'description' => ['nullable', 'string'],
             'thumbnail_url' => ['nullable', 'url', 'max:2048'],
@@ -680,13 +772,106 @@ final class AdminCrawlerController
             'error_message' => ['nullable', 'string'],
         ]);
 
+        if (! $allowExisting && $sourceId > 0 && $externalId !== '') {
+            if ($item && $item->external_id === $externalId) {
+                // Keep the current record editable even when the external ID is already normalized
+                // from the same page URL.
+            } else {
+                $externalIdExists = CrawlerItem::query()
+                    ->where('crawler_source_id', $sourceId)
+                    ->where('external_id', $externalId)
+                    ->when($item, fn ($query) => $query->whereKeyNot($item->id))
+                    ->exists();
+
+                if ($externalIdExists) {
+                    throw ValidationException::withMessages([
+                        'external_id' => 'This external ID is already used in the selected crawler source. Use external ID only for the page-level item, not for episodes inside the same page.',
+                    ]);
+                }
+            }
+        }
+
+        if (! $allowExisting && $sourceId > 0 && is_string($sourceUrl) && $sourceUrl !== '') {
+            if (! ($item && $item->source_url_hash === hash('sha256', $sourceUrl))) {
+                $sourceUrlExists = CrawlerItem::query()
+                    ->where('crawler_source_id', $sourceId)
+                    ->where('source_url_hash', hash('sha256', $sourceUrl))
+                    ->when($item, fn ($query) => $query->whereKeyNot($item->id))
+                    ->exists();
+
+                if ($sourceUrlExists) {
+                    throw ValidationException::withMessages([
+                        'source_url' => 'This page URL already exists for the selected crawler source. Reuse the existing crawler item and manage multiple episodes in Item Audios instead of creating another item.',
+                    ]);
+                }
+            }
+        }
+
         return [
             ...$data,
+            'item_type' => $data['item_type'] ?? $this->inferItemType($data),
+            'external_id' => $externalId,
             'normalized_title' => isset($data['title']) ? Str::of((string) $data['title'])->lower()->squish()->toString() : null,
             'source_url_hash' => hash('sha256', $data['source_url']),
             'canonical_url_hash' => isset($data['canonical_url']) ? hash('sha256', $data['canonical_url']) : null,
             'first_discovered_at' => $item?->first_discovered_at ?? now(),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function findExistingCrawlerItem(array $data): ?CrawlerItem
+    {
+        return CrawlerItem::query()
+            ->where('crawler_source_id', $data['crawler_source_id'])
+            ->where(function ($query) use ($data): void {
+                if (is_string($data['external_id'] ?? null) && $data['external_id'] !== '') {
+                    $query->where('external_id', $data['external_id'])
+                        ->orWhere('source_url_hash', $data['source_url_hash']);
+
+                    return;
+                }
+
+                $query->where('source_url_hash', $data['source_url_hash']);
+            })
+            ->first();
+    }
+
+    private function resolveItemExternalId(?string $externalId, ?string $sourceUrl, ?string $canonicalUrl = null): string
+    {
+        $externalId = trim((string) $externalId);
+
+        if ($externalId !== '') {
+            return $externalId;
+        }
+
+        $identityUrl = $canonicalUrl ?: $sourceUrl;
+
+        if (is_string($identityUrl) && preg_match('/-(\d+)(?:\.html?)?(?:[?#].*)?$/', $identityUrl, $matches)) {
+            return $matches[1];
+        }
+
+        return sha1((string) $identityUrl);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function inferItemType(array $data): string
+    {
+        if (! empty($data['podcast_id'])) {
+            return 'podcast';
+        }
+
+        $sourceUrl = (string) ($data['source_url'] ?? '');
+
+        return match (true) {
+            Str::contains($sourceUrl, ['/sach-noi/', '/podcast']) => 'podcast',
+            Str::contains($sourceUrl, ['/video/', '/watch']) => 'video',
+            Str::contains($sourceUrl, ['/article/', '/tin-tuc/', '/blog/']) => 'article',
+            default => 'unknown',
+        };
     }
 
     private function crawlerHttp(): \Illuminate\Http\Client\PendingRequest
@@ -736,17 +921,40 @@ final class AdminCrawlerController
 
     private function firstOrCreateCrawlerItem(CrawlerSource $source, string $url): CrawlerItem
     {
-        return CrawlerItem::query()->firstOrCreate(
-            [
-                'crawler_source_id' => $source->id,
-                'source_url_hash' => hash('sha256', $url),
-            ],
-            [
+        $externalId = $this->resolveItemExternalId(null, $url);
+        $sourceUrlHash = hash('sha256', $url);
+
+        $item = CrawlerItem::query()
+            ->where('crawler_source_id', $source->id)
+            ->where('source_url_hash', $sourceUrlHash)
+            ->first();
+
+        if ($item) {
+            $item->update([
+                'external_id' => $item->external_id ?: $externalId,
+                'item_type' => $item->item_type ?: $this->inferItemType([
+                    'source_url' => $url,
+                    'podcast_id' => null,
+                ]),
                 'source_url' => $url,
-                'status' => 'pending',
-                'first_discovered_at' => now(),
-            ],
-        );
+                'source_url_hash' => $sourceUrlHash,
+            ]);
+
+            return $item;
+        }
+
+        return CrawlerItem::query()->create([
+            'crawler_source_id' => $source->id,
+            'external_id' => $externalId,
+            'item_type' => $this->inferItemType([
+                'source_url' => $url,
+                'podcast_id' => null,
+            ]),
+            'source_url' => $url,
+            'source_url_hash' => $sourceUrlHash,
+            'status' => 'pending',
+            'first_discovered_at' => now(),
+        ]);
     }
 
     private function syncSourceStartItems(CrawlerSource $source): void
@@ -772,7 +980,9 @@ final class AdminCrawlerController
         }
 
         $connector = $this->inferConnector($item->source_url, $source->type);
-        $selectors = $source->profile?->selectors ?? [];
+        $selectors = $this->normalizeRecordPayload(
+            $source->options_override['selectors'] ?? $source->profile?->selectors ?? null
+        );
         $options = $source->options_override ?? $source->profile?->options ?? [];
         $run = CrawlerRun::query()->create([
             'crawler_source_id' => $source->id,
@@ -881,5 +1091,37 @@ final class AdminCrawlerController
         }
 
         return $candidate;
+    }
+
+    /**
+     * Normalize list-like selector payloads into object-like records for the crawler service.
+     *
+     * @param mixed $value
+     * @return array<string, mixed>
+     */
+    private function normalizeRecordPayload(mixed $value): mixed
+    {
+        if ($value === null) {
+            return (object) [];
+        }
+
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        if ($value === []) {
+            return (object) [];
+        }
+
+        $keys = array_keys($value);
+        $isList = $keys === range(0, count($value) - 1);
+
+        if (! $isList) {
+            return $value;
+        }
+
+        return [
+            'items' => array_values($value),
+        ];
     }
 }

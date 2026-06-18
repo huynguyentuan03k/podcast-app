@@ -13,6 +13,7 @@ final class CrawlerSource extends Model
         'crawler_profile_id',
         'name',
         'type',
+        'url',
         'base_url',
         'host',
         'status',
@@ -59,5 +60,10 @@ final class CrawlerSource extends Model
         if (is_string($host) && $host !== '') {
             $this->attributes['host'] = Str::lower($host);
         }
+    }
+
+    public function setBaseUrlAttribute(string $value): void
+    {
+        $this->setUrlAttribute($value);
     }
 }

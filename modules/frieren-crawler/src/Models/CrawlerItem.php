@@ -13,6 +13,7 @@ final class CrawlerItem extends Model
         'crawler_source_id',
         'last_crawler_run_id',
         'podcast_id',
+        'item_type',
         'external_id',
         'title',
         'normalized_title',
@@ -68,5 +69,10 @@ final class CrawlerItem extends Model
     public function audios(): HasMany
     {
         return $this->hasMany(CrawlerItemAudio::class);
+    }
+
+    public function assets(): HasMany
+    {
+        return $this->hasMany(CrawlerItemAsset::class);
     }
 }

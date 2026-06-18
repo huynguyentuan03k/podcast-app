@@ -50,6 +50,7 @@ export const CrawlerItemAudioSchema = z.object({
 
 export const CrawlerItemSchema = z.object({
     id: z.number(),
+    item_type: z.string().nullable().optional(),
     external_id: z.string().nullable().optional(),
     title: z.string().nullable(),
     normalized_title: z.string().nullable().optional(),
@@ -61,6 +62,7 @@ export const CrawlerItemSchema = z.object({
     status: z.string(),
     audio_count: z.number(),
     audios_count: z.number().nullable().optional(),
+    assets_count: z.number().nullable().optional(),
     crawl_count: z.number(),
     failure_count: z.number(),
     metadata: z.unknown().nullable(),
@@ -82,6 +84,7 @@ export const CrawlerItemAudiosSchema = z.array(CrawlerItemAudioSchema);
 export const CrawlerItemFormSchema = z.object({
     crawler_source_id: z.coerce.number().min(1, 'Crawler source is required.'),
     podcast_id: z.coerce.number().nullable().optional(),
+    item_type: z.string().min(1, 'Item type is required.'),
     external_id: z.string().nullable(),
     title: z.string().nullable(),
     slug: z.string().nullable(),

@@ -1,6 +1,7 @@
+import { MultipleSelect, type MultipleSelectOption } from '@/components/custom/multiple-select';
 import { SpinnerLoading } from '@/components/custom/SpinnerLoading';
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/components/ui/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,7 +15,7 @@ import type { AxiosError } from 'axios';
 import { ArrowLeft, LoaderCircle, Save } from 'lucide-react';
 import { useMemo } from 'react';
 import { useForm, type Resolver } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { crawlerItemConfig, CrawlerItemFormSchema, type CrawlerItem, type CrawlerItemForm as CrawlerItemFormValues } from '../shema';
 
 type LaravelValidationError = {
@@ -28,6 +29,11 @@ type CrawlerSourceOption = {
     type: string | null;
     base_url?: string | null;
     url?: string | null;
+};
+
+type PodcastOption = {
+    id: number;
+    title: string | null;
 };
 
 type CrawlerItemFormProps = {
@@ -53,9 +59,11 @@ function applyLaravelErrors(form: ReturnType<typeof useForm<CrawlerItemFormValue
 
 export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFormProps) {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const title = mode === 'create' ? 'Create Crawler Item' : 'Edit Crawler Item';
+    const sourceIdFromQuery = Number(searchParams.get('source_id') ?? 0);
 
     const sources = useQuery({
         queryKey: ['crawler-sources', 'options'],
@@ -66,10 +74,20 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
         },
     });
 
+    const podcasts = useQuery({
+        queryKey: ['podcasts', 'options'],
+        queryFn: async () => {
+            const response = await http.get<{ data: PodcastOption[] }>('/podcasts', { params: { per_page: 200 } });
+
+            return response.data.data ?? [];
+        },
+    });
+
     const defaultValues = useMemo<CrawlerItemFormValues>(
         () => ({
-            crawler_source_id: item?.source?.id ?? 0,
+            crawler_source_id: item?.source?.id ?? sourceIdFromQuery ?? 0,
             podcast_id: item?.podcast?.id ?? null,
+            item_type: item?.item_type ?? 'podcast',
             external_id: item?.external_id ?? '',
             title: item?.title ?? '',
             slug: item?.slug ?? '',
@@ -81,7 +99,12 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
             metadata: item?.metadata ? JSON.stringify(item.metadata, null, 2) : '',
             error_message: item?.error_message ?? '',
         }),
-        [item],
+        [item, sourceIdFromQuery],
+    );
+
+    const podcastOptions = useMemo<MultipleSelectOption[]>(
+        () => (podcasts.data ?? []).map((podcast) => ({ value: podcast.id, label: podcast.title ?? `Podcast #${podcast.id}` })),
+        [podcasts.data],
     );
 
     const form = useForm<CrawlerItemFormValues>({
@@ -121,7 +144,7 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
         },
     });
 
-    if (isLoading || sources.isLoading) {
+    if (isLoading || sources.isLoading || podcasts.isLoading) {
         return <SpinnerLoading />;
     }
 
@@ -169,6 +192,7 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
                                                     ))}
                                                 </SelectContent>
                                             </Select>
+                                            <FormDescription>Each crawler item belongs to one crawler source.</FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -204,12 +228,37 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
                                     </FormItem>
                                 )} />
 
+                                <FormField control={form.control} name="item_type" render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Item Type <span className="text-destructive">*</span>
+                                        </FormLabel>
+                                        <Select value={field.value} onValueChange={field.onChange}>
+                                            <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="podcast">Podcast</SelectItem>
+                                                <SelectItem value="article">Article</SelectItem>
+                                                <SelectItem value="video">Video</SelectItem>
+                                                <SelectItem value="book">Book</SelectItem>
+                                                <SelectItem value="document">Document</SelectItem>
+                                                <SelectItem value="product">Product</SelectItem>
+                                                <SelectItem value="course">Course</SelectItem>
+                                                <SelectItem value="gallery">Gallery</SelectItem>
+                                                <SelectItem value="unknown">Unknown</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormDescription>This describes the page-level content. Audio/video/image files belong to assets under the item.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} />
+
                                 <FormField control={form.control} name="source_url" render={({ field }) => (
                                     <FormItem className="lg:col-span-3">
                                         <FormLabel>
                                             Source URL <span className="text-destructive">*</span>
                                         </FormLabel>
                                         <FormControl><Input placeholder="https://example.com/podcast-page.html" {...field} /></FormControl>
+                                        <FormDescription>One crawler item represents one page URL. If a page contains many episodes or audios, keep one item and manage them in Item Audios.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
@@ -218,6 +267,7 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
                                     <FormItem className="lg:col-span-2">
                                         <FormLabel>Canonical URL</FormLabel>
                                         <FormControl><Input placeholder="https://example.com/canonical-page.html" {...field} value={field.value ?? ''} /></FormControl>
+                                        <FormDescription>Optional. Only use this when the site exposes another canonical page URL for the same item.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
@@ -234,6 +284,7 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
                                     <FormItem>
                                         <FormLabel>External ID</FormLabel>
                                         <FormControl><Input placeholder="External ID" {...field} value={field.value ?? ''} /></FormControl>
+                                        <FormDescription>Optional. Use a stable page-level ID only if the source website provides one. Do not use episode numbers from the same page here.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )} />
@@ -248,8 +299,18 @@ export default function CrawlerItemForm({ mode, item, isLoading }: CrawlerItemFo
 
                                 <FormField control={form.control} name="podcast_id" render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Podcast ID</FormLabel>
-                                        <FormControl><Input type="number" placeholder="Linked podcast ID" {...field} value={field.value ?? ''} onChange={(event) => field.onChange(event.target.value ? Number(event.target.value) : null)} /></FormControl>
+                                        <FormLabel>Podcast</FormLabel>
+                                        <FormControl>
+                                            <MultipleSelect
+                                                selectionMode="single"
+                                                options={podcastOptions}
+                                                value={field.value ?? null}
+                                                onChange={field.onChange}
+                                                placeholder="Select podcast..."
+                                                searchPlaceholder="Search podcasts..."
+                                            />
+                                        </FormControl>
+                                        <FormDescription>Optional. Link this crawler page to one podcast in the system.</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )} />

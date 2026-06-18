@@ -10,6 +10,7 @@ Route::prefix(config('frieren-crawler.api.prefix'))
         Route::get('/overview', [AdminCrawlerController::class, 'overview']);
         Route::get('/health', [AdminCrawlerController::class, 'health']);
         Route::get('/sources', [AdminCrawlerController::class, 'sources']);
+        Route::get('/sources/{crawlerSource}', [AdminCrawlerController::class, 'showSource']);
         Route::get('/jobs', [AdminCrawlerController::class, 'jobs']);
         Route::get('/items', [AdminCrawlerController::class, 'items']);
         Route::get('/items/{crawlerItem}', [AdminCrawlerController::class, 'showItem']);

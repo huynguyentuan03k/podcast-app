@@ -47,7 +47,7 @@ export const crawlerItemDateRangeFilter: DataTableV1DateRangeFilter = {
     title: 'Created date',
 };
 
-export function buildCrawlerItemIndexUrl(request: DataTableV1Request) {
+export function buildCrawlerItemIndexUrl(request: DataTableV1Request, sourceId?: number) {
     const params = new URLSearchParams({
         page: String(request.pageIndex + 1),
         per_page: String(request.pageSize),
@@ -70,6 +70,10 @@ export function buildCrawlerItemIndexUrl(request: DataTableV1Request) {
     }
 
     const createdAt = request.filters.dateRanges.created_at;
+
+    if (sourceId) {
+        params.set('filter[source_id]', String(sourceId));
+    }
 
     if (createdAt?.from) {
         params.set('filter[created_from]', createdAt.from);

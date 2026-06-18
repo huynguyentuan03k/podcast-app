@@ -42,6 +42,10 @@ import CrawlerItemOverview from '@/pages/crawler-items/overview/CrawlerItemOverv
 import ShowCrawlerItem from '@/pages/crawler-items/show/ShowCrawlerItem';
 import CreateCrawlerItem from '@/pages/crawler-items/create/CreateCrawlerItem';
 import EditCrawlerItem from '@/pages/crawler-items/edit/EditCrawlerItem';
+import CrawlerSourceOverview from '@/pages/crawler-sources/overview/CrawlerSourceOverview';
+import CreateCrawlerSource from '@/pages/crawler-sources/create/CreateCrawlerSource';
+import EditCrawlerSource from '@/pages/crawler-sources/edit/EditCrawlerSource';
+import ShowCrawlerSource from '@/pages/crawler-sources/show/ShowCrawlerSource';
 import http from '@/http/client';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation, useParams } from 'react-router-dom';
@@ -55,6 +59,7 @@ import { adminConfig, type Admin } from '../admins/shema';
 import { userConfig, type User } from '../users/shema';
 import { adminRoleConfig, type AdminRole } from '../admin-roles/shema';
 import { crawlerItemConfig, type CrawlerItem } from '../crawler-items/shema';
+import { crawlerSourceConfig, type CrawlerSource } from '../crawler-sources/shema';
 
 function UnauthorizedPage() {
     return (
@@ -139,6 +144,12 @@ function authorizeResourceAction(resource: string, action: string) {
             overview: 'VIEW_CRAWLER',
         },
         'crawler-items': {
+            overview: 'VIEW_CRAWLER',
+            show: 'VIEW_CRAWLER',
+            create: 'UPDATE_CRAWLER',
+            edit: 'UPDATE_CRAWLER',
+        },
+        'crawler-sources': {
             overview: 'VIEW_CRAWLER',
             show: 'VIEW_CRAWLER',
             create: 'UPDATE_CRAWLER',
@@ -451,6 +462,36 @@ function CrawlerItemRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'sho
     return mode === 'edit' ? <EditCrawlerItem record={data} /> : <ShowCrawlerItem record={data} />;
 }
 
+function CrawlerSourceRecordLoader({ id, mode }: { id: string; mode: 'edit' | 'show' }) {
+    const { data, isLoading } = useQuery({
+        queryKey: ['crawler-sources', id],
+        queryFn: async () => {
+            const response = await http.get<{ data: CrawlerSource }>(`/frieren-crawler/admin/sources/${id}`);
+
+            return response.data.data;
+        },
+        enabled: Boolean(id),
+    });
+
+    if (isLoading) {
+        return (
+            <AppLayout breadcrumbs={crawlerSourceConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Loading crawler source...</div>
+            </AppLayout>
+        );
+    }
+
+    if (!data) {
+        return (
+            <AppLayout breadcrumbs={crawlerSourceConfig.breadcrumbs}>
+                <div className="p-4 text-sm text-muted-foreground">Crawler source not found.</div>
+            </AppLayout>
+        );
+    }
+
+    return mode === 'edit' ? <EditCrawlerSource record={data} /> : <ShowCrawlerSource record={data} />;
+}
+
 export default function PortalResourcePage() {
     const { pathname } = useLocation();
     const params = useParams();
@@ -472,6 +513,7 @@ export default function PortalResourcePage() {
         integrations: 'Integrations',
         crawlers: 'Crawler management',
         'crawler-items': 'Crawler Items',
+        'crawler-sources': 'Crawler Sources',
     };
 
     const title = titleMap[resource] ?? resource;
@@ -646,6 +688,22 @@ export default function PortalResourcePage() {
         }
 
         return <CrawlerItemOverview />;
+    }
+
+    if (resource === 'crawler-sources') {
+        if (action === 'create') {
+            return <CreateCrawlerSource />;
+        }
+
+        if (action === 'edit') {
+            return <CrawlerSourceRecordLoader id={id} mode="edit" />;
+        }
+
+        if (action === 'show') {
+            return <CrawlerSourceRecordLoader id={id} mode="show" />;
+        }
+
+        return <CrawlerSourceOverview />;
     }
 
     return (

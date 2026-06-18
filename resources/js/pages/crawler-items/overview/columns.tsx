@@ -10,6 +10,7 @@ type CrawlerItemColumnsOptions = {
     deletingId: number | null;
     onCrawl: (item: CrawlerItem) => void;
     onRequestDelete: (item: CrawlerItem) => void;
+    hideSourceColumn?: boolean;
 };
 
 function statusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
@@ -20,8 +21,8 @@ function statusVariant(status: string): 'default' | 'secondary' | 'destructive' 
     return 'outline';
 }
 
-export function getCrawlerItemColumns({ crawlingId, deletingId, onCrawl, onRequestDelete }: CrawlerItemColumnsOptions): ColumnDef<CrawlerItem>[] {
-    return [
+export function getCrawlerItemColumns({ crawlingId, deletingId, onCrawl, onRequestDelete, hideSourceColumn = false }: CrawlerItemColumnsOptions): ColumnDef<CrawlerItem>[] {
+    const columns: ColumnDef<CrawlerItem>[] = [
         {
             id: 'thumbnail',
             header: 'Image',
@@ -57,6 +58,11 @@ export function getCrawlerItemColumns({ crawlingId, deletingId, onCrawl, onReque
             enableSorting: false,
         },
         {
+            accessorKey: 'item_type',
+            header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
+            cell: ({ row }) => <Badge variant="secondary">{row.original.item_type ?? 'unknown'}</Badge>,
+        },
+        {
             accessorKey: 'status',
             header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
             cell: ({ row }) => <Badge variant={statusVariant(row.original.status)}>{row.original.status}</Badge>,
@@ -65,6 +71,11 @@ export function getCrawlerItemColumns({ crawlingId, deletingId, onCrawl, onReque
             accessorKey: 'audio_count',
             header: ({ column }) => <DataTableColumnHeader column={column} title="Audios" />,
             cell: ({ row }) => <Badge variant="outline">{row.original.audio_count || row.original.audios_count || 0}</Badge>,
+        },
+        {
+            accessorKey: 'assets_count',
+            header: ({ column }) => <DataTableColumnHeader column={column} title="Assets" />,
+            cell: ({ row }) => <Badge variant="outline">{row.original.assets_count ?? 0}</Badge>,
         },
         {
             accessorKey: 'last_crawled_at',
@@ -92,4 +103,6 @@ export function getCrawlerItemColumns({ crawlingId, deletingId, onCrawl, onReque
             enableHiding: false,
         },
     ];
+
+    return hideSourceColumn ? columns.filter((column) => column.id !== 'source') : columns;
 }

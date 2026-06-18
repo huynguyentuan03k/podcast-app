@@ -3,6 +3,7 @@
 namespace Frieren\Crawler\Jobs;
 
 use Frieren\Crawler\Models\CrawlerItem;
+use Frieren\Crawler\Models\CrawlerItemAsset;
 use Frieren\Crawler\Models\CrawlerItemAudio;
 use Frieren\Crawler\Models\CrawlerRun;
 use Illuminate\Bus\Queueable;
@@ -108,46 +109,51 @@ final class SyncCrawlerResult implements ShouldQueue
         $normalized = is_array($result['normalized'] ?? null) ? $result['normalized'] : [];
         $validation = is_array($result['validation'] ?? null) ? $result['validation'] : [];
         $episodes = is_array($normalized['episodes'] ?? null) ? $normalized['episodes'] : [];
+        $assets = $this->extractAssets($normalized);
+        $hasContent = $this->hasNormalizedContent($normalized, $episodes, $assets);
         $now = now();
 
         if ($item) {
             $item->forceFill([
+                'item_type' => $this->inferItemType($normalized, $item),
                 'title' => data_get($normalized, 'title', $item->title),
                 'normalized_title' => Str::of((string) data_get($normalized, 'title', $item->title))->lower()->squish()->toString(),
                 'description' => data_get($normalized, 'description', $item->description),
                 'thumbnail_url' => data_get($normalized, 'coverImageUrl', $item->thumbnail_url),
                 'canonical_url' => data_get($normalized, 'source.url', $item->canonical_url),
                 'canonical_url_hash' => data_get($normalized, 'source.url') ? hash('sha256', (string) data_get($normalized, 'source.url')) : $item->canonical_url_hash,
-                'status' => empty($episodes) ? 'failed' : 'ready',
+                'status' => $hasContent ? 'ready' : 'failed',
                 'audio_count' => count($episodes),
                 'metadata' => [
                     'validation' => $validation,
                     'warnings' => data_get($normalized, 'warnings', []),
                     'source' => data_get($normalized, 'source'),
+                    'item_type' => $this->inferItemType($normalized, $item),
                     'category' => data_get($normalized, 'category'),
                     'authors' => data_get($normalized, 'authors', []),
                     'narrator' => data_get($normalized, 'narrator'),
                 ],
-                'error_message' => empty($episodes) ? 'Crawler completed without audio episodes.' : null,
+                'error_message' => $hasContent ? null : 'Crawler completed without usable content.',
                 'crawl_count' => ($item->crawl_count ?? 0) + 1,
-                'failure_count' => empty($episodes) ? ($item->failure_count ?? 0) + 1 : $item->failure_count,
+                'failure_count' => $hasContent ? $item->failure_count : ($item->failure_count ?? 0) + 1,
                 'last_crawled_at' => $now,
                 'last_changed_at' => $now,
             ])->save();
 
             $this->storeItemAudios($item, $run, $episodes);
+            $this->storeItemAssets($item, $run, $assets);
         }
 
         $run->forceFill([
-            'status' => empty($episodes) ? 'failed' : 'completed',
+            'status' => $hasContent ? 'completed' : 'failed',
             'processed_count' => 1,
-            'created_count' => $item ? CrawlerItemAudio::query()->where('crawler_item_id', $item->id)->count() : 0,
-            'failed_count' => empty($episodes) ? 1 : 0,
+            'created_count' => $item ? CrawlerItemAsset::query()->where('crawler_item_id', $item->id)->count() : 0,
+            'failed_count' => $hasContent ? 0 : 1,
             'options' => array_merge($run->options ?? [], [
                 'remote_job' => $result['job'] ?? $remoteJob,
                 'validation' => $validation,
             ]),
-            'error_message' => empty($episodes) ? 'Crawler completed without audio episodes.' : null,
+            'error_message' => $hasContent ? null : 'Crawler completed without usable content.',
             'finished_at' => $now,
         ])->save();
 
@@ -201,6 +207,161 @@ final class SyncCrawlerResult implements ShouldQueue
                     ],
                     'error_message' => null,
                     'crawl_count' => 1,
+                    'first_discovered_at' => now(),
+                    'last_crawled_at' => now(),
+                    'last_changed_at' => now(),
+                ],
+            );
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $normalized
+     * @return array<int, array<string, mixed>>
+     */
+    private function extractAssets(array $normalized): array
+    {
+        $assets = [];
+
+        foreach ((array) ($normalized['episodes'] ?? []) as $index => $episode) {
+            if (! is_array($episode) || ! is_string($episode['audioUrl'] ?? null) || $episode['audioUrl'] === '') {
+                continue;
+            }
+
+            $assets[] = [
+                'asset_type' => 'audio',
+                'external_id' => $episode['externalId'] ?? null,
+                'title' => $episode['title'] ?? 'Episode ' . ($index + 1),
+                'position' => $episode['position'] ?? ($index + 1),
+                'url' => $episode['audioUrl'],
+                'duration_seconds' => $episode['durationSeconds'] ?? null,
+                'metadata' => [
+                    'description' => $episode['description'] ?? null,
+                ],
+            ];
+        }
+
+        foreach (['assets', 'images', 'videos', 'documents', 'attachments'] as $key) {
+            foreach ((array) ($normalized[$key] ?? []) as $index => $asset) {
+                if (! is_array($asset)) {
+                    continue;
+                }
+
+                $url = $asset['url'] ?? $asset['src'] ?? $asset['href'] ?? null;
+
+                if (! is_string($url) || $url === '') {
+                    continue;
+                }
+
+                $assets[] = [
+                    'asset_type' => $this->assetTypeFromKey($key, $asset),
+                    'external_id' => $asset['externalId'] ?? $asset['id'] ?? null,
+                    'title' => $asset['title'] ?? $asset['alt'] ?? null,
+                    'position' => $asset['position'] ?? ($index + 1),
+                    'url' => $url,
+                    'mime_type' => $asset['mimeType'] ?? $asset['contentType'] ?? null,
+                    'duration_seconds' => $asset['durationSeconds'] ?? null,
+                    'content_length' => $asset['contentLength'] ?? null,
+                    'metadata' => $asset,
+                ];
+            }
+        }
+
+        return $assets;
+    }
+
+    /**
+     * @param array<string, mixed> $normalized
+     * @param array<int, mixed> $episodes
+     * @param array<int, mixed> $assets
+     */
+    private function hasNormalizedContent(array $normalized, array $episodes, array $assets): bool
+    {
+        return ! empty($episodes)
+            || ! empty($assets)
+            || filled($normalized['title'] ?? null)
+            || filled($normalized['description'] ?? null)
+            || filled($normalized['content'] ?? null)
+            || filled($normalized['body'] ?? null);
+    }
+
+    /**
+     * @param array<string, mixed> $normalized
+     */
+    private function inferItemType(array $normalized, CrawlerItem $item): string
+    {
+        $explicit = $normalized['itemType'] ?? $normalized['entityType'] ?? $normalized['type'] ?? null;
+
+        if (is_string($explicit) && $explicit !== '') {
+            return Str::of($explicit)->lower()->replace('-', '_')->toString();
+        }
+
+        if (! empty($normalized['episodes'])) {
+            return 'podcast';
+        }
+
+        if (! empty($normalized['videos'])) {
+            return 'video';
+        }
+
+        if (! empty($normalized['documents'])) {
+            return 'document';
+        }
+
+        if (filled($normalized['content'] ?? null) || filled($normalized['body'] ?? null)) {
+            return 'article';
+        }
+
+        return $item->item_type ?: 'unknown';
+    }
+
+    /**
+     * @param array<string, mixed> $asset
+     */
+    private function assetTypeFromKey(string $key, array $asset): string
+    {
+        if (is_string($asset['assetType'] ?? null) && $asset['assetType'] !== '') {
+            return (string) $asset['assetType'];
+        }
+
+        return match ($key) {
+            'images' => 'image',
+            'videos' => 'video',
+            'documents' => 'document',
+            default => 'attachment',
+        };
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $assets
+     */
+    private function storeItemAssets(CrawlerItem $item, CrawlerRun $run, array $assets): void
+    {
+        foreach ($assets as $asset) {
+            $url = $asset['url'] ?? null;
+
+            if (! is_string($url) || $url === '') {
+                continue;
+            }
+
+            CrawlerItemAsset::query()->updateOrCreate(
+                [
+                    'crawler_item_id' => $item->id,
+                    'url_hash' => hash('sha256', $url),
+                ],
+                [
+                    'last_crawler_run_id' => $run->id,
+                    'asset_type' => $asset['asset_type'] ?? 'attachment',
+                    'external_id' => $asset['external_id'] ?? null,
+                    'title' => $asset['title'] ?? null,
+                    'position' => $asset['position'] ?? null,
+                    'url' => $url,
+                    'mime_type' => $asset['mime_type'] ?? null,
+                    'duration_seconds' => $asset['duration_seconds'] ?? null,
+                    'content_length' => $asset['content_length'] ?? null,
+                    'status' => 'active',
+                    'metadata' => $asset['metadata'] ?? [],
+                    'error_message' => null,
                     'first_discovered_at' => now(),
                     'last_crawled_at' => now(),
                     'last_changed_at' => now(),

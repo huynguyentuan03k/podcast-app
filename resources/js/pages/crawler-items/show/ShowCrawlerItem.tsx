@@ -77,6 +77,7 @@ export default function ShowCrawlerItem({ record }: { record: CrawlerItem }) {
                     <div className="grid gap-x-12 gap-y-8 md:grid-cols-2 xl:grid-cols-3">
                         <DetailItem label="ID">{record.id}</DetailItem>
                         <DetailItem label="Title">{record.title}</DetailItem>
+                        <DetailItem label="Type"><Badge variant="secondary">{record.item_type ?? 'unknown'}</Badge></DetailItem>
                         <DetailItem label="Status"><Badge variant={statusVariant(record.status)}>{record.status}</Badge></DetailItem>
                         <DetailItem label="Source">{record.source?.name}</DetailItem>
                         <DetailItem label="Podcast">{record.podcast?.title}</DetailItem>
@@ -108,7 +109,7 @@ export default function ShowCrawlerItem({ record }: { record: CrawlerItem }) {
 
                 <div className="rounded-lg border bg-card p-6 shadow-sm">
                     <h2 className="mb-2 text-base font-semibold">Item Audios</h2>
-                    <p className="mb-6 text-sm text-muted-foreground">Audio entries that belong to this crawler item.</p>
+                    <p className="mb-6 text-sm text-muted-foreground">Audio entries that belong to this crawler item. If one page contains many episodes or tracks, keep a single crawler item for the page and manage the episode-level records here.</p>
                     <DataTableV1<CrawlerItemAudio, unknown>
                         title={undefined}
                         columns={crawlerItemAudioColumns}
